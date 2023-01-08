@@ -66,21 +66,21 @@ testQa:
   script:
     - ./gradlew -Pci --console=plain :app:testQa
   only:
-    - develop
+    - dev
 
 lintQa:
   stage: test
   script:
     - ./gradlew -Pci --console=plain :app:lintQa -PbuildDir=lint
   only:
-    - develop
+    - dev
 
 assembleQa:
   stage: build
   script:
     - ./gradlew assembleQa
   only:
-    - develop
+    - dev
   artifacts:
     paths:
       - app/build/outputs/
@@ -104,7 +104,7 @@ lintRelease:
 assembleRelease:
   stage: build
   script:
-    - ./gradlew assembleRelease
+    - ./gradlew publishReleaseBundle
   only:
     - main
   artifacts:
