@@ -1,0 +1,31 @@
+# gcloud args match the official gcloud cli
+# See the docs for full gcloud details https://cloud.google.com/sdk/gcloud/reference/firebase/test/android/run
+gcloud:
+  # -- GcloudYml --
+  record-video: true
+  timeout: 5m
+  async: false
+  num-flaky-test-attempts: 2
+
+  # -- AndroidGcloudYml --
+  app: ./app/build/outputs/apk/debug/app-debug.apk
+  test: ./app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+  auto-google-login: false
+  use-orchestrator: true
+  environment-variables:
+    clearPackageData: true
+    listener: com.miquido.androidtemplate.util.ToastingRunListener
+  performance-metrics: false
+  test-runner-class: com.miquido.android.HiltTestRunner
+  ## Supported are class, notClass, size, annotation, notAnnotation, package, notPackage, testFile, notTestFile
+  ## See https://developer.android.com/reference/android/support/test/runner/AndroidJUnitRunner for more information.
+  test-targets:
+    - annotation com.miquido.androidtemplate.UiTest
+  device:
+    - model: Pixel2
+      version: 27
+
+flank:
+  # -- FlankYml --
+  max-test-shards: 1
+  output-style: single

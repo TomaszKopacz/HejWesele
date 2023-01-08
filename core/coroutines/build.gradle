@@ -1,0 +1,13 @@
+plugins {
+    id "java-library"
+    id "org.jetbrains.kotlin.jvm"
+    id "org.jetbrains.kotlin.kapt"
+    id "com.android.lint"
+}
+
+dependencies {
+    implementation libs.kotlinx.coroutines.core
+
+    implementation libs.hilt.core
+    kapt libs.hilt.compiler
+}

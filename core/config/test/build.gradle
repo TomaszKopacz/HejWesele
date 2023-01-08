@@ -1,0 +1,46 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+    id "com.google.dagger.hilt.android"
+}
+
+android {
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
+    }
+}
+
+dependencies {
+    api projects.core.config.config
+    implementation projects.core.preferences
+
+    implementation projects.common.mvvm
+
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
+
+    api libs.androidx.compose.ui
+    api libs.androidx.navigation.common
+
+    implementation libs.androidx.compose.ui
+    implementation libs.androidx.compose.foundation
+    implementation libs.androidx.compose.material
+    implementation libs.androidx.lifecycle.viewmodel.compose
+    implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation libs.androidx.hilt.navigation.compose
+    implementation libs.accompanist.insets.ui
+    implementation libs.accompanist.navigation.animation
+    implementation libs.accompanist.systemuicontroller
+
+    implementation libs.processPhoenix
+
+    testImplementation libs.junit
+    testImplementation libs.mockito.kotlin
+    testImplementation libs.truth
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.turbine
+}

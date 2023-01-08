@@ -1,0 +1,22 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+}
+
+android {
+    namespace "com.miquido.androidtemplate.dashboard"
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
+    }
+}
+
+dependencies {
+    implementation libs.androidx.compose.ui
+    implementation libs.androidx.compose.foundation
+    implementation libs.androidx.compose.material
+    implementation libs.accompanist.insets.ui
+    implementation libs.accompanist.systemuicontroller
+}

@@ -1,0 +1,16 @@
+boolean isCi = System.getenv().containsKey("CI")
+
+buildCache {
+    local {
+        enabled = false
+    }
+    remote(HttpBuildCache) {
+        enabled = isCi
+        push = isCi
+        url = System.getenv().get("GRADLE_BC_URL") ?: ""
+        credentials {
+            username = System.getenv().get("GRADLE_BC_USERNAME") ?: ""
+            password = System.getenv().get("GRADLE_BC_PASSWORD") ?: ""
+        }
+    }
+}

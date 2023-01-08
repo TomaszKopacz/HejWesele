@@ -1,0 +1,95 @@
+afterEvaluate { project ->
+    def isAndroid = project.plugins.hasPlugin("com.android.library") || project.plugins.hasPlugin("com.android.application")
+    def isAndroidComponent = project.plugins.hasPlugin("com.android.library")
+    def isJava = project.plugins.hasPlugin("java-library")
+
+    if (isAndroid || isJava) {
+        setupModule(isAndroid, isAndroidComponent)
+        setupCommonTasks(isAndroid)
+        setupKapt(project)
+    }
+}
+
+def setupModule(isAndroid, isAndroidComponent) {
+    if (isAndroid) {
+        android {
+            compileSdk projectCompileSdk
+
+            defaultConfig {
+                minSdk projectMinSdk
+                targetSdk projectTargetSdk
+            }
+
+            if (isAndroidComponent) {
+                buildTypes.release.minifyEnabled false
+            }
+
+            compileOptions {
+                sourceCompatibility JavaVersion.VERSION_11
+                targetCompatibility JavaVersion.VERSION_11
+            }
+
+            kotlinOptions {
+                jvmTarget = "11"
+                freeCompilerArgs += [
+                    "-opt-in=kotlin.RequiresOptIn",
+                    "-P",
+                    "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
+                ]
+            }
+
+            lintOptions {
+                checkDependencies true
+                checkReleaseBuilds false
+                ignoreTestSources true
+                warningsAsErrors true
+                disable = [
+                    "GoogleAppIndexingWarning",
+                    "GradleDependency",
+                    "JavaPluginLanguageLevel"
+                ]
+            }
+
+            testOptions {
+                unitTests.all {
+                    maxParallelForks = Runtime.runtime.availableProcessors() - 1
+                }
+            }
+        }
+    } else {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+
+        compileKotlin.kotlinOptions.jvmTarget = "11"
+        compileTestKotlin.kotlinOptions.jvmTarget = "11"
+
+        compileKotlin.kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+        compileTestKotlin.kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+
+        test {
+            maxParallelForks = Runtime.runtime.availableProcessors() - 1
+            maxHeapSize = "256m"
+        }
+    }
+}
+
+def setupCommonTasks(isAndroid) {
+    if (isAndroid) {
+        tasks.register("unitTest") { task ->
+            task.dependsOn(testDebugUnitTest)
+        }
+    } else {
+        tasks.register("unitTest") { task ->
+            task.dependsOn(test)
+        }
+    }
+}
+
+// https://www.zacsweers.dev/kapts-hidden-test-costs/
+def setupKapt(project) {
+    if (project.name != "app") {
+        tasks
+            .matching { it.name.startsWith("kapt") && it.name.endsWith("TestKotlin") }
+            .configureEach { it.enabled = false }
+    }
+}

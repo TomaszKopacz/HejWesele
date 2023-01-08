@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.miquido.androidtemplate.debug.test">
+
+    <instrumentation
+        android:name="com.miquido.android.HiltTestRunner"
+        android:targetPackage="com.miquido.androidtemplate.debug" />
+
+</manifest>

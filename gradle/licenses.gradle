@@ -1,0 +1,21 @@
+/*
+ * Allowed licenses configuration based on
+ * https://miquido.atlassian.net/wiki/spaces/MIQ/pages/250773542/Software+licenses+overview
+ */
+licensee {
+    allow "Apache-2.0"
+    allow "BSD-2-Clause"
+    allow "BSD-3-Clause"
+    allow "CC-BY-3.0"
+    allow "ISC"
+    allow "MIT"
+    allow "Zlib"
+    allowUrl "https://www.bouncycastle.org/licence.html"
+    allowUrl "https://www.zetetic.net/sqlcipher/license/"
+    allowUrl "https://developer.android.com/studio/terms.html"
+}
+
+task licensesCopy(type: Copy, dependsOn: "licenseeRelease") {
+    from "build/reports/licensee/release/artifacts.json"
+    into "src/main/assets/licenses"
+}

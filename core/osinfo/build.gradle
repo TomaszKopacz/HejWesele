@@ -1,0 +1,12 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+}
+
+dependencies {
+    implementation libs.androidx.annotation
+
+    implementation libs.hilt.core
+    kapt libs.hilt.compiler
+}

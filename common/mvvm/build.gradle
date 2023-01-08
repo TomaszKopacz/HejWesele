@@ -1,0 +1,25 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+}
+
+android {
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
+    }
+}
+
+dependencies {
+    api libs.androidx.compose.runtime
+    api libs.androidx.lifecycle.viewmodel
+
+    implementation libs.kotlinx.coroutines.core
+
+    testImplementation libs.junit
+    testImplementation libs.truth
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.turbine
+}

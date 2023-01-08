@@ -1,0 +1,16 @@
+def getReleaseNotes() {
+    if (project.hasProperty("withGitlabReleaseNotes")) {
+        println "Obtaining release notes from GitLab..."
+        def output = new ByteArrayOutputStream()
+        exec {
+            executable "python3"
+            args "${rootDir}/gradle/gitlabReleaseNotes.py"
+            standardOutput = output
+        }
+        println "...obtaining release notes from GitLab: done."
+        return output.toString()
+    }
+    return ""
+}
+
+ext.generatedReleaseNotes = getReleaseNotes()

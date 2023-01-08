@@ -1,0 +1,20 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+}
+
+android {
+    namespace "com.miquido.androidtemplate.customtabs"
+}
+
+dependencies {
+    implementation projects.common.thememanager
+
+    implementation libs.androidx.browser
+
+    api libs.androidx.compose.runtime
+
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
+}

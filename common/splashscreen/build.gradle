@@ -1,0 +1,13 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+}
+
+android {
+    namespace "com.miquido.androidtemplate.splashsceen"
+}
+
+dependencies {
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.core.splashscreen
+}

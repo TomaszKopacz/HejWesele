@@ -1,0 +1,54 @@
+ext.jacocoExcludes = [
+    '**/R.class',
+    '**/R$*.class',
+    '**/BuildConfig.*',
+    '**/Manifest*.*',
+
+    // Android
+    'android/**/*.*',
+    '*/android/databinding/*',
+    '*/androidx/databinding/*',
+
+    // UI
+    '**/*Activity.*',
+    '**/*Activity$*.*',
+
+    // Dagger auto-generated code.
+    '**/*Dagger*.*',
+    '**/*MembersInjector*.*',
+    '**/*_Provide*Factory*.*',
+    '**/*_Factory*.*',
+
+    // Hilt auto-generated code.
+    '**/*_Hilt*.*',
+    '**/*Hilt_*.*',
+    '**/*HiltComponents*.*',
+    '**/*HiltWrapper_*.*',
+    '**/*_ComponentTreeDeps*.*',
+    '**/hilt_aggregated_deps/**/*.*',
+    '**/dagger/hilt/internal/**/*.*',
+
+    // Core/common, untestable classes/packages (mostly wrappers),
+    // and classes/packages covered with instrumented unit tests
+    '**/com/miquido/android/analytics/**/*.*',
+    '**/com/miquido/android/appinfo/AppInfoImpl.class',
+    '**/com/miquido/android/config/**/*.*',
+    '**/com/miquido/android/coroutines/di/**/*.*',
+    '**/com/miquido/android/crashlytics/**/*.*',
+    '**/com/miquido/android/customtabs/**/*.*',
+    '**/com/miquido/android/database/**/*.*',
+    '**/com/miquido/android/datetime/ClockImpl.class',
+    '**/com/miquido/android/datetimeformatter/**/*.*',
+    '**/com/miquido/android/messaging/**/*.*',
+    '**/com/miquido/android/osinfo/**/*.*',
+    '**/com/miquido/android/preferences/**/*.*',
+    '**/com/miquido/android/remoteconfig/**/*.*',
+    '**/com/miquido/android/splashscreen/**/*.*',
+    '**/com/miquido/android/theme/**/*.*',
+    '**/com/miquido/android/thememanager/AppCompatDelegateWrapperImpl.class',
+    '**/com/miquido/android/ui/**/*.*',
+    '**/com/miquido/android/workmanager/**/*.*',
+
+    // Application class
+    '**/com/miquido/androidtemplate/App.*'
+]

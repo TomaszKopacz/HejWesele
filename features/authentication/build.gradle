@@ -1,0 +1,49 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+    id "com.google.dagger.hilt.android"
+}
+
+android {
+    namespace "com.miquido.androidtemplate.authentication"
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
+    }
+    buildTypes {
+        qa {
+            matchingFallbacks = ["release"]
+        }
+    }
+}
+
+dependencies {
+    debugImplementation projects.core.config.test
+    qaImplementation projects.core.config.test
+    releaseImplementation projects.core.config.release
+    implementation projects.common.navigation
+    implementation projects.common.mvvm
+    implementation projects.common.theme
+
+    api libs.androidx.compose.runtime
+    implementation libs.androidx.compose.ui
+    implementation libs.androidx.compose.foundation
+    implementation libs.androidx.compose.material
+    implementation libs.androidx.lifecycle.viewmodel.compose
+    implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation libs.androidx.hilt.navigation.compose
+    implementation libs.accompanist.navigation.animation
+    implementation libs.accompanist.systemuicontroller
+
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
+
+    testImplementation libs.junit
+    testImplementation libs.mockito.kotlin
+    testImplementation libs.truth
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.turbine
+}

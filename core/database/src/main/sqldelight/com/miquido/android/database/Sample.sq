@@ -1,0 +1,13 @@
+CREATE TABLE sample (
+    id INTEGER NOT NULL,
+    name TEXT NOT NULL
+);
+
+CREATE INDEX sample_name ON sample(name);
+
+INSERT INTO sample (id, name)
+VALUES (15, "Miquido Mayor");
+
+selectAll:
+SELECT *
+FROM sample;

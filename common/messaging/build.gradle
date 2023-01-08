@@ -1,0 +1,19 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+}
+
+android {
+    namespace "com.miquido.androidtemplate.messaging"
+}
+
+dependencies {
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.messaging.ktx
+
+    implementation libs.hilt.core
+    kapt libs.hilt.compiler
+
+    implementation libs.kotlinx.coroutines.playServices
+}

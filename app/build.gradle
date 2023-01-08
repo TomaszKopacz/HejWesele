@@ -1,0 +1,176 @@
+plugins {
+    id "com.android.application"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+    id "com.google.dagger.hilt.android"
+    alias libs.plugins.googleServices
+    alias libs.plugins.firebase.appDistribution
+    alias libs.plugins.firebase.crashlytics
+    alias libs.plugins.firebase.perf
+    alias libs.plugins.playPublisher
+    alias libs.plugins.licensee
+}
+
+apply from: "../gradle/licenses.gradle"
+
+android {
+    namespace "com.miquido.androidtemplate"
+    defaultConfig {
+        applicationId "com.miquido.androidtemplate"
+        resValue "string", "app_name", "Android Template"
+        versionCode Integer.valueOf(System.getenv().get("GITLAB_BUILD_NUMBER") ?: projectVersionCode)
+        versionName projectVersionName
+
+        testInstrumentationRunner "com.miquido.android.HiltTestRunner"
+        testInstrumentationRunnerArguments clearPackageData: "true"
+    }
+
+    signingConfigs {
+        qaConfig {
+            storeFile file("certs/qa.keystore")
+            storePassword "storePassword"
+            keyAlias "keyAlias"
+            keyPassword "keyPassword"
+        }
+        releaseConfig {
+            storeFile file("certs/release.keystore")
+            storePassword System.getenv().get("RELEASE_STORE_PASSWORD") ?: ""
+            keyAlias System.getenv().get("RELEASE_KEY_ALIAS") ?: ""
+            keyPassword System.getenv().get("RELEASE_KEY_PASSWORD") ?: ""
+        }
+    }
+
+    buildFeatures {
+        buildConfig true
+        resValues true
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            resValue "string", "app_name", "Android Template Debug"
+            debuggable true
+            minifyEnabled false
+            firebaseCrashlytics {
+                mappingFileUploadEnabled false
+            }
+            FirebasePerformance {
+                instrumentationEnabled false
+            }
+        }
+        qa {
+            applicationIdSuffix ".qa"
+            resValue "string", "app_name", "Android Template QA"
+            debuggable false
+            zipAlignEnabled true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            matchingFallbacks = ["release"]
+            signingConfig signingConfigs.qaConfig
+            firebaseAppDistribution {
+                appId "1:131141411183:android:6573114c8bf775ed0b489a"
+                serviceCredentialsFile findProperty("serviceKey") ?: ""
+                releaseNotes generatedReleaseNotes
+                groups "qa"
+            }
+        }
+        release {
+            debuggable false
+            zipAlignEnabled true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.releaseConfig
+            play {
+                serviceAccountCredentials.set(file(findProperty("playPublisherServiceKey") ?: "playPublisherServiceKey.json"))
+                releaseStatus.set(com.github.triplet.gradle.androidpublisher.ReleaseStatus.DRAFT)
+                resolutionStrategy.set(com.github.triplet.gradle.androidpublisher.ResolutionStrategy.IGNORE)
+                track.set("internal")
+            }
+        }
+    }
+
+    testOptions {
+        execution "ANDROIDX_TEST_ORCHESTRATOR"
+        animationsDisabled = true
+    }
+
+    packagingOptions {
+        exclude "META-INF/AL2.0"
+        exclude "META-INF/LGPL2.1"
+    }
+}
+
+dependencies {
+    implementation projects.core.appinfo
+    debugImplementation projects.core.config.test
+    qaImplementation projects.core.config.test
+    releaseImplementation projects.core.config.release
+    implementation projects.core.coroutines
+    implementation projects.core.database
+    implementation projects.core.datetime
+    implementation projects.core.networking
+    implementation projects.core.preferences
+
+    implementation projects.common.analytics
+    implementation projects.common.crashlytics
+    implementation projects.common.customtabs
+    implementation projects.common.datetimeformatter
+    implementation projects.common.licenses
+    implementation projects.common.messaging
+    implementation projects.common.navigation
+    implementation projects.common.remoteconfig
+    implementation projects.common.splashscreen
+    implementation projects.common.theme
+    implementation projects.common.thememanager
+    implementation projects.common.workmanager
+
+    implementation projects.features.authentication
+    implementation projects.features.dashboard
+    implementation projects.features.main
+    implementation projects.features.settings
+    implementation projects.features.onboarding
+
+    androidTestImplementation libs.androidx.test.runner
+    androidTestImplementation libs.androidx.test.rules
+    androidTestImplementation libs.androidx.test.ext.junit
+    androidTestImplementation libs.androidx.test.ext.truth
+    androidTestImplementation libs.androidx.compose.ui.test.junit4
+    androidTestImplementation libs.androidx.work.testing
+    androidTestImplementation libs.turbine
+    androidTestUtil libs.androidx.test.orchestrator
+
+    debugImplementation libs.leakcanary
+
+    implementation libs.androidx.activity
+    implementation libs.androidx.core
+    implementation libs.androidx.core.splashscreen
+    implementation libs.androidx.lifecycle.common
+    implementation libs.androidx.lifecycle.runtime.ktx
+    implementation libs.androidx.work.runtime.ktx
+    implementation libs.androidx.hilt.work
+
+    implementation libs.androidx.compose.ui
+    implementation libs.androidx.compose.foundation
+    implementation libs.androidx.compose.material
+    implementation libs.androidx.activity.compose
+    implementation libs.accompanist.navigation.animation
+    implementation libs.accompanist.navigation.material
+    implementation libs.accompanist.systemuicontroller
+
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.perf
+
+    implementation libs.hilt.android
+    androidTestImplementation libs.hilt.android.testing
+    kapt libs.hilt.compiler
+    kaptAndroidTest libs.hilt.compiler
+
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.kotlinx.coroutines.android
+
+    implementation libs.logcat
+}

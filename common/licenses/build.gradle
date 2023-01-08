@@ -1,0 +1,20 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+    id "dev.zacsweers.moshix"
+}
+
+android {
+    namespace "com.miquido.androidtemplate.licenses"
+}
+
+dependencies {
+    implementation projects.core.coroutines
+    implementation projects.core.json
+
+    implementation libs.kotlinx.coroutines.core
+
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
+}

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="first_onboarding_page_title">Android Template</string>
+    <string name="second_onboarding_page_title">Miquido</string>
+    <string name="last_onboarding_page_title">Jetpack Compose</string>
+    <string name="first_onboarding_page_description">First Onboarding Page</string>
+    <string name="second_onboarding_page_description">Second Onboarding Page</string>
+    <string name="last_onboarding_page_description">Last Onboarding Page</string>
+    <string name="next_button_text">Next</string>
+    <string name="privacy_policy_button_text">Privacy Policy</string>
+</resources>

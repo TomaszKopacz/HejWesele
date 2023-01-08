@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="system_name" translatable="false">Android</string>
+    <string name="system_version_format" translatable="false">API %d</string>
+    <string name="client_name_format">%s/%s %s/%s</string>
+</resources>

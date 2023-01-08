@@ -1,0 +1,24 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+}
+
+android {
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
+    }
+}
+
+dependencies {
+    api projects.core.config.config
+
+    api libs.androidx.compose.ui
+    api libs.androidx.navigation.common
+
+    implementation libs.hilt.core
+    kapt libs.hilt.compiler
+}

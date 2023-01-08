@@ -1,0 +1,23 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+}
+
+android {
+    namespace "com.miquido.androidtemplate.remoteconfig"
+    buildFeatures {
+        buildConfig true
+    }
+}
+
+dependencies {
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.config.ktx
+
+    implementation libs.androidx.lifecycle.common
+    implementation libs.androidx.lifecycle.process
+
+    implementation libs.hilt.core
+    kapt libs.hilt.compiler
+}

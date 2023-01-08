@@ -1,0 +1,32 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+    alias libs.plugins.sqldelight
+}
+
+android {
+    namespace "com.miquido.androidtemplate.database"
+    defaultConfig {
+        consumerProguardFiles "consumer-rules.pro"
+    }
+}
+
+dependencies {
+    implementation libs.androidx.sqlite
+
+    implementation libs.sqldelight.android.driver
+
+    implementation libs.sqlcipher
+
+    implementation libs.androidx.security.crypto
+
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
+
+    testImplementation libs.junit
+    testImplementation libs.truth
+    testImplementation libs.kotlinx.coroutines.core
+    testImplementation libs.sqldelight.coroutines
+    testImplementation libs.sqldelight.sqlite.driver
+}

@@ -1,0 +1,18 @@
+plugins {
+    id "java-library"
+    id "org.jetbrains.kotlin.jvm"
+    id "org.jetbrains.kotlin.kapt"
+    id "dev.zacsweers.moshix"
+    id "com.android.lint"
+}
+
+dependencies {
+    implementation libs.moshi
+    implementation libs.moshi.adapters
+
+    implementation libs.hilt.core
+    kapt libs.hilt.compiler
+
+    testImplementation libs.junit
+    testImplementation libs.truth
+}

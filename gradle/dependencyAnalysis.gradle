@@ -1,0 +1,37 @@
+dependencyAnalysis {
+    dependencies {
+        bundle("kotlinx-coroutines") { include(".*kotlinx-coroutines.*") }
+        bundle("kotlinx-datetime") { include(".*kotlinx-datetime.*") }
+        bundle("coroutines-extensions") { include(".*coroutines-extensions.*") }
+        bundle("turbine") { includeGroup("app.cash.turbine") }
+        bundle("compose-ui") { includeGroup("androidx.compose.ui") }
+        bundle("compose-animation") { includeGroup("androidx.compose.animation") }
+        bundle("compose-foundation") { includeGroup("androidx.compose.foundation") }
+        bundle("compose-material") { includeGroup("androidx.compose.material") }
+    }
+    issues {
+        all {
+            ignoreKtx true
+            onUnusedDependencies {
+                exclude(
+                    "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+                )
+            }
+            onUsedTransitiveDependencies {
+                exclude(
+                    "javax.inject:javax.inject",
+                    "com.google.dagger:dagger",
+                    "com.google.dagger:hilt-core",
+                    "androidx.navigation:navigation-common",
+                    "androidx.navigation:navigation-runtime",
+                    "androidx.compose.runtime:runtime",
+                    "androidx.compose.animation:animation",
+                    "androidx.datastore:datastore-core",
+                    "androidx.datastore:datastore-preferences-core",
+                    "com.google.guava:guava",
+                    "org.mockito:mockito-core"
+                )
+            }
+        }
+    }
+}

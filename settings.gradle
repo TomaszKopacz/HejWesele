@@ -1,0 +1,71 @@
+pluginManagement {
+    apply from: "gradle/repositories.gradle"
+    repositories {
+        maven { url projectRepositories.mavenCentral }
+        maven { url projectRepositories.google }
+        maven { url projectRepositories.gradlePlugins }
+    }
+}
+
+plugins {
+    id "com.gradle.enterprise" version "3.8.1"
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        maven { url projectRepositories.mavenCentral }
+        maven { url projectRepositories.google }
+        maven {
+            url projectRepositories.kotlinxHtml
+            content { includeModule "org.jetbrains.kotlinx", "kotlinx-html-jvm" }
+        }
+    }
+}
+
+gradleEnterprise {
+    buildScan {
+        termsOfServiceUrl = "https://gradle.com/terms-of-service"
+        termsOfServiceAgree = "yes"
+        uploadInBackground = false
+    }
+}
+
+include ":app"
+
+include ":features:authentication"
+include ":features:dashboard"
+include ":features:main"
+include ":features:settings"
+include ':features:onboarding'
+
+include ":common:analytics"
+include ":common:crashlytics"
+include ":common:customtabs"
+include ":common:datetimeformatter"
+include ":common:licenses"
+include ":common:messaging"
+include ":common:mvvm"
+include ":common:navigation"
+include ":common:remoteconfig"
+include ":common:splashscreen"
+include ":common:theme"
+include ":common:thememanager"
+include ":common:ui"
+include ":common:workmanager"
+
+include ":core:appinfo"
+include ":core:config:config"
+include ":core:config:test"
+include ":core:config:release"
+include ":core:coroutines"
+include ":core:database"
+include ":core:datetime"
+include ":core:json"
+include ":core:networking"
+include ":core:osinfo"
+include ":core:preferences"
+
+apply from: new File(settingsDir, "gradle/buildCache.gradle")
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

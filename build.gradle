@@ -1,0 +1,36 @@
+plugins {
+    alias libs.plugins.android.application apply false
+    alias libs.plugins.android.library apply false
+    alias libs.plugins.kotlin.jvm apply false
+    alias libs.plugins.kotlin.android apply false
+    alias libs.plugins.kotlin.kapt apply false
+    alias libs.plugins.hilt apply false
+    alias libs.plugins.moshix apply false
+    alias libs.plugins.versions
+    alias libs.plugins.versionCatalogUpdate
+    alias libs.plugins.dependencyAnalysis
+    alias libs.plugins.snyk
+}
+
+apply from: "gradle/versions.gradle"
+apply from: "gradle/modules.gradle"
+
+subprojects {
+    if (isSourcesModule(it)) {
+        apply from: "${rootDir}/gradle/ktlint.gradle"
+        apply from: "${rootDir}/gradle/detekt.gradle"
+        apply from: "${rootDir}/gradle/jacocoModule.gradle"
+        apply from: "${rootDir}/gradle/moduleSetup.gradle"
+    }
+}
+
+apply from: "gradle/jacocoProject.gradle"
+apply from: "gradle/dependencyUpdates.gradle"
+apply from: "gradle/versionCatalogUpdate.gradle"
+apply from: "gradle/dependencyAnalysis.gradle"
+apply from: "gradle/snyk.gradle"
+apply from: "gradle/releaseNotes.gradle"
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

@@ -1,0 +1,28 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+}
+
+android {
+    namespace "com.miquido.androidtemplate.navigation"
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
+    }
+}
+
+dependencies {
+    implementation libs.accompanist.navigation.animation
+
+    api libs.kotlinx.coroutines.core
+
+    implementation libs.hilt.core
+    kapt libs.hilt.compiler
+
+    testImplementation libs.junit
+    testImplementation libs.truth
+    testImplementation libs.turbine
+}

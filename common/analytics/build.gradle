@@ -1,0 +1,19 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+}
+
+android {
+    namespace "com.miquido.androidtemplate.analytics"
+}
+
+dependencies {
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.analytics.ktx
+    api libs.androidx.annotation
+    api libs.androidx.compose.runtime
+
+    implementation libs.hilt.core
+    kapt libs.hilt.compiler
+}

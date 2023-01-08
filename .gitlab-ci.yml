@@ -1,0 +1,204 @@
+include:
+  - local: ".gitlab-ci-variables.yml"
+  - local: ".gitlab-ci-templates.yml"
+  - remote: "https://raw.githubusercontent.com/miquido/gitlab-templates/1.3.56/gitlab-toolkit.yml"
+
+# jobs need to be defined in a single stage in order to be executed in parallel
+# conditions if a job is started for a particular commit/push are defined under 'rules' sections
+stages:
+  - build-image
+  - build
+  - test-automation
+  - release
+
+miquido-ci-schema-validation:
+  stage: .pre
+  extends: .miquido-ci-schema-validation
+  only:
+    refs:
+      - branches
+      - merge_requests
+    changes:
+      - .miquido-ci.yml
+  except:
+    - schedules
+
+build-image:
+  image: docker:20.10.12
+  tags:
+    - docker
+    - miquido
+  services:
+    - docker:20.10.12-dind
+  stage: build-image
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    - >
+      docker build --cache-from $CI_REGISTRY_IMAGE:latest
+      --tag $CI_REGISTRY_IMAGE:$BASE_IMAGE_TAG --tag $CI_REGISTRY_IMAGE:latest
+      --build-arg ANDROID_SDK_VERSION=$ANDROID_SDK_VERSION
+      --build-arg BUILDTOOLS_VERSION=$BUILDTOOLS_VERSION
+      --build-arg FLANK_VERSION=$FLANK_VERSION
+      .
+    - docker push $CI_REGISTRY_IMAGE:$BASE_IMAGE_TAG
+    - docker push $CI_REGISTRY_IMAGE:latest
+  only:
+    refs:
+      - branches
+      - merge_requests
+    changes:
+      - .gitlab-ci-variables.yml
+      - Dockerfile
+  except:
+    - schedules
+
+verification:
+  extends: .base
+  stage: build
+  script:
+    - ./gradlew --no-daemon --no-configuration-cache --build-cache ktlint detekt :app:licenseeDebug :app:lintDebug unitTest jacocoProjectReport
+  after_script:
+    # jacoco report is printed to the console in order to capture it later
+    # using following regex: Total.*?([0-9]{1,3})% and display in the Gitlab UI
+    # https://docs.gitlab.com/ee/ci/pipelines/settings.html#test-coverage-parsing
+    - echo "Jacoco console report"
+    - cat build/reports/jacoco/jacocoProjectReport/html/index.html
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "push"
+  coverage: "/Total.*?([0-9]{1,3})%/"
+  artifacts:
+    when: always
+    expire_in: 72 hrs
+    paths:
+      - "**/reports/ktlint-report.xml"
+      - "**/reports/detekt-report.xml"
+      - app/build/reports/licensee/debug/**
+      - "**/lint-results-*.html"
+      - "**/lint-results-*.xml"
+      - build/reports/jacoco/jacocoProjectReport/**
+    reports:
+      junit: "**/test-results/**/TEST-*.xml"
+
+dependencies-scan:
+  extends: .base
+  stage: build
+  script:
+    - ./gradlew --no-daemon --no-configuration-cache --build-cache snyk-test
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: manual # current Snyk config has 200 runs per month for all projects - when limit reached it fails the build;
+  allow_failure: true
+  artifacts:
+    when: always
+    expire_in: 72 hrs
+    paths:
+      - build/reports/snyk.json
+
+instrumented-unit-tests:
+  extends: .flank-tests
+  stage: build
+  variables:
+    FLANK_ENV: flankInstrumentedUnit.yml
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" || $CI_COMMIT_TAG
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: manual
+  allow_failure: true
+
+ui-tests:
+  extends: .flank-tests
+  stage: build
+  variables:
+    FLANK_ENV: flankUi.yml
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" || $CI_COMMIT_TAG
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "push"
+      when: manual
+  allow_failure: true
+
+instrumented-unit-tests-scheduled:
+  extends: .flank-tests
+  stage: test-automation
+  variables:
+    FLANK_ENV: flankInstrumentedUnit.yml
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $SCHEDULE_NAME == "scheduled-tests"
+
+ui-tests-scheduled:
+  extends: .flank-tests
+  stage: test-automation
+  variables:
+    FLANK_ENV: flankUi.yml
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $SCHEDULE_NAME == "scheduled-tests"
+
+main:
+  extends: .base
+  stage: build
+  script:
+    - python3 -m pip install -r gradle/requirements.txt
+    - export GITLAB_BUILD_NUMBER="$(python3 gradle/gitlabBuildNumber.py "MAIN_BUILD_NUMBER")"
+    - export FIREBASE_DIR="$HOME/.config/firebase"
+    - install -d $FIREBASE_DIR
+    - echo ${FIREBASE_SERVICE_KEY} | base64 --decode > "$FIREBASE_DIR/service_key.json"
+    - >
+      ./gradlew --no-daemon --no-configuration-cache --build-cache -PwithGitlabReleaseNotes -PserviceKey="$FIREBASE_DIR/service_key.json"
+      assembleQa appDistributionUploadQa
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  environment:
+    name: qa
+    deployment_tier: staging
+    url: https://console.firebase.google.com/u/0/project/mq-android-template/appdistribution/app/android:com.miquido.androidtemplate.qa/releases
+  artifacts:
+    expire_in: 72 hrs
+    paths:
+      - "**/build/outputs/apk/**/*.apk"
+
+release:
+  extends: .base
+  stage: build
+  script:
+    - python3 -m pip install -r gradle/requirements.txt
+    - export GITLAB_BUILD_NUMBER="$(python3 gradle/gitlabBuildNumber.py "RELEASE_BUILD_NUMBER")"
+    - export KEYS_DIR="$HOME/.config/keys"
+    - mkdir -p $KEYS_DIR
+    - echo ${PLAY_PUBLISHER_SERVICE_KEY} | base64 --decode > "$KEYS_DIR/service_key.json"
+    - ./gradlew --no-daemon --no-configuration-cache --build-cache :app:licensesCopy
+    - ./gradlew --no-daemon --no-configuration-cache --build-cache -PplayPublisherServiceKey="$KEYS_DIR/service_key.json" :app:publishReleaseBundle
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG
+  environment:
+    name: release
+    deployment_tier: production
+    url: https://play.google.com/console/u/0/developers/7639042371955492332/app/4974278177302157093/app-dashboard
+  artifacts:
+    expire_in: 72 hrs
+    paths:
+      - "app/build/reports/licensee/release/**"
+      - "app/build/outputs/bundle/**/*.aab"
+
+gitlab-release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  tags:
+    - docker
+    - miquido
+  needs:
+    - job: release
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG
+  script:
+    - echo "Creating GitLab release for $CI_COMMIT_TAG"
+  release:
+    name: "Release $CI_COMMIT_TAG"
+    description: "Created using the release-cli"
+    tag_name: "$CI_COMMIT_TAG"
+    ref: "$CI_COMMIT_TAG"
