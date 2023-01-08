@@ -1,15 +1,6 @@
-def NEXUS_PREFIX = "https://nexus.miquido.net/repository/"
-
 ext.projectRepositories = [:]
 
-if (System.getenv().containsKey("CI")) {
-    projectRepositories.google = NEXUS_PREFIX + "google"
-    projectRepositories.mavenCentral = NEXUS_PREFIX + "central"
-    projectRepositories.gradlePlugins = NEXUS_PREFIX + "gradle-plugins"
-    projectRepositories.kotlinxHtml = NEXUS_PREFIX + "kotlinx-html"
-} else {
-    projectRepositories.google = "https://dl.google.com/dl/android/maven2/"
-    projectRepositories.mavenCentral = "https://repo.maven.apache.org/maven2/"
-    projectRepositories.gradlePlugins = "https://plugins.gradle.org/m2/"
-    projectRepositories.kotlinxHtml = "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven"
-}
+projectRepositories.google = "https://dl.google.com/dl/android/maven2/"
+projectRepositories.mavenCentral = "https://repo.maven.apache.org/maven2/"
+projectRepositories.gradlePlugins = "https://plugins.gradle.org/m2/"
+projectRepositories.kotlinxHtml = "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven"

@@ -49,12 +49,6 @@ def setupModule(isAndroid, isAndroidComponent) {
                     "JavaPluginLanguageLevel"
                 ]
             }
-
-            testOptions {
-                unitTests.all {
-                    maxParallelForks = Runtime.runtime.availableProcessors() - 1
-                }
-            }
         }
     } else {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -67,7 +61,6 @@ def setupModule(isAndroid, isAndroidComponent) {
         compileTestKotlin.kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
 
         test {
-            maxParallelForks = Runtime.runtime.availableProcessors() - 1
             maxHeapSize = "256m"
         }
     }
