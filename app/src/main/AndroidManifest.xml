@@ -2,10 +2,10 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.miquido.androidtemplate">
+    package="com.hejwesele">
 
     <application
-        android:name=".App"
+        android:name="com.hejwesele.App"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -14,7 +14,7 @@
         android:theme="@style/Theme.Splash"
         tools:ignore="DataExtractionRules,UnusedAttribute">
         <activity
-            android:name=".MainActivity"
+            android:name="com.hejwesele.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,7 +35,7 @@
         </provider>
 
         <activity
-            android:name="com.miquido.androidtemplate.TestActivity"
+            android:name="com.hejwesele.TestActivity"
             android:exported="true" />
     </application>
 

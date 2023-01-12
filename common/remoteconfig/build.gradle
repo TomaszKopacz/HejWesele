@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace "com.miquido.androidtemplate.remoteconfig"
+    namespace "com.hejwesele.remoteconfig"
     buildFeatures {
         buildConfig true
     }

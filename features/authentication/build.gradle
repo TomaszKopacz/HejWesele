@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace "com.miquido.androidtemplate.authentication"
+    namespace "com.hejwesele.authentication"
     buildFeatures {
         compose true
     }

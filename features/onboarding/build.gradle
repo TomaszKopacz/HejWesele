@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace "com.miquido.androidtemplate.onboarding"
+    namespace "com.hejwesele.onboarding"
     buildFeatures {
         compose true
     }

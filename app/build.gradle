@@ -14,14 +14,14 @@ plugins {
 apply from: "../gradle/licenses.gradle"
 
 android {
-    namespace "com.miquido.androidtemplate"
+    namespace "com.hejwesele"
     defaultConfig {
-        applicationId "com.miquido.androidtemplate"
-        resValue "string", "app_name", "Android Template"
+        applicationId "com.hejwesele"
+        resValue "string", "app_name", "Hej Wesele"
         versionCode Integer.valueOf(System.getenv().get("GITLAB_BUILD_NUMBER") ?: projectVersionCode)
         versionName projectVersionName
 
-        testInstrumentationRunner "com.miquido.android.HiltTestRunner"
+        testInstrumentationRunner "com.hejwesele.android.HiltTestRunner"
         testInstrumentationRunnerArguments clearPackageData: "true"
     }
 
@@ -52,7 +52,7 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
-            resValue "string", "app_name", "Android Template Debug"
+            resValue "string", "app_name", "Hej Wesele Debug"
             debuggable true
             minifyEnabled false
             firebaseCrashlytics {
@@ -64,7 +64,7 @@ android {
         }
         qa {
             applicationIdSuffix ".qa"
-            resValue "string", "app_name", "Android Template QA"
+            resValue "string", "app_name", "Hej Wesele QA"
             debuggable false
             zipAlignEnabled true
             minifyEnabled true

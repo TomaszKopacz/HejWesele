@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace "com.miquido.androidtemplate.licenses"
+    namespace "com.hejwesele.licenses"
 }
 
 dependencies {

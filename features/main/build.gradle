@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace "com.miquido.androidtemplate.main"
+    namespace "com.hejwesele.main"
     buildFeatures {
         compose true
     }

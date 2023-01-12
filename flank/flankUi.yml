@@ -14,13 +14,13 @@ gcloud:
   use-orchestrator: true
   environment-variables:
     clearPackageData: true
-    listener: com.miquido.androidtemplate.util.ToastingRunListener
+    listener: com.hejwesele.util.ToastingRunListener
   performance-metrics: false
-  test-runner-class: com.miquido.android.HiltTestRunner
+  test-runner-class: com.hejwesele.android.HiltTestRunner
   ## Supported are class, notClass, size, annotation, notAnnotation, package, notPackage, testFile, notTestFile
   ## See https://developer.android.com/reference/android/support/test/runner/AndroidJUnitRunner for more information.
   test-targets:
-    - annotation com.miquido.androidtemplate.UiTest
+    - annotation com.hejwesele.UiTest
   device:
     - model: Pixel2
       version: 27

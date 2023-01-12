@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace "com.miquido.androidtemplate.database"
+    namespace "com.hejwesele.database"
     defaultConfig {
         consumerProguardFiles "consumer-rules.pro"
     }

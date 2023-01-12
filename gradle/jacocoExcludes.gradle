@@ -50,5 +50,5 @@ ext.jacocoExcludes = [
     '**/com/miquido/android/workmanager/**/*.*',
 
     // Application class
-    '**/com/miquido/androidtemplate/App.*'
+    '**/com/hejwesele/App.*'
 ]

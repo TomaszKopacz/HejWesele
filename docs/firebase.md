@@ -30,7 +30,7 @@ Use DebugView in Firebase console to test events in convenient way and receive t
 Useful link for this project analytics view:
 [Firebase Analytics View](https://console.firebase.google.com/project/mq-android-template/analytics/app/android:com.miquido.androidtemplate.debug/overview/)
 
-You can add some additional analytics libraries just by adding your implementation to [analytics package](../common/analytics/src/main/kotlin/com/miquido/android/analytics)
+You can add some additional analytics libraries just by adding your implementation to [analytics package](../common/analytics/src/main/kotlin/com/hejwesele/android/analytics)
 and implementing Analytics interface in your wrapper class.
 
 ## Firebase Crashlytics
@@ -45,7 +45,7 @@ To use crashlytics in your app you need to attach [crashlytics](../common/crashl
 
 Keep in mind that exceptions with `@Unreportable` annotations won't be logged into Firebase Crashlytics.
 
-You can add some additional crash reporting libraries just by adding your implementation to [crashlytics package](../common/crashlytics/src/main/kotlin/com/miquido/android/crashlytics)
+You can add some additional crash reporting libraries just by adding your implementation to [crashlytics package](../common/crashlytics/src/main/kotlin/com/hejwesele/android/crashlytics)
 and implementing Crashlytics interface in your wrapper class.
 
 ## Firebase Performance Monitoring
@@ -61,7 +61,7 @@ Firebase Remote Config provides remote key-value configuration service.
 
 To use Firebase Remote Config, first set it up in the [Firebase console](https://console.firebase.google.com/) by adding some entries.
 You can access Remote Config values by injecting `RemoteConfig` interface from [remoteconfig module](../common/remoteconfig).
-All the initialization code is already called in the [default Application class](../app/src/main/kotlin/com/miquido/androidtemplate/App.kt).
+All the initialization code is already called in the [default Application class](../app/src/main/kotlin/com/hejwesele/androidtemplate/App.kt).
 
 Remote Config values will be fetched when the process starts and each time the first Activity of the already running process reaches
 *Started* state. In other words, Remote Config values are fetched when app comes to the foreground.

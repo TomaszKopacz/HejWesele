@@ -13,7 +13,7 @@ configurations.all {
 }
 
 android {
-    namespace "com.miquido.androidtemplate.workmanager"
+    namespace "com.hejwesele.workmanager"
 }
 
 dependencies {

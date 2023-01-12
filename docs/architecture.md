@@ -13,7 +13,7 @@ or replaced with other solution.
 
 ## Single Activity
 
-Application module contains [single main Activity](../app/src/main/kotlin/com/miquido/androidtemplate/MainActivity.kt),
+Application module contains [single main Activity](../app/src/main/kotlin/com/hejwesele/androidtemplate/MainActivity.kt),
 which is the entry point of the app, and serves as a minimal container for all Composables.
 This means that in most of the cases you won't need to add any other Activity class to your project.
 
@@ -34,23 +34,23 @@ See "Nested navigation" section for more information.
 >>>
 
 Navigation module introduces following concepts:
-* [Direction](../common/navigation/src/main/kotlin/com/miquido/android/navigation/Direction.kt),
+* [Direction](../common/navigation/src/main/kotlin/com/hejwesele/android/navigation/Direction.kt),
   which is a definition of where the user can navigate. It defines route (with navigation argument placeholders, if any)
   and its arguments.
-* [Destination](../common/navigation/src/main/kotlin/com/miquido/android/navigation/Destination.kt),
+* [Destination](../common/navigation/src/main/kotlin/com/hejwesele/android/navigation/Destination.kt),
   which contains an actual route where the user can navigate (route with filled navigation arguments, built upon `Direction`)
   and additional navigation options (like `popUpTo`).
 
 Globally available directions and destinations are kept in the
-[Directions](../common/navigation/src/main/kotlin/com/miquido/android/navigation/Directions.kt) and
-[Destinations](../common/navigation/src/main/kotlin/com/miquido/android/navigation/Destinations.kt) files, respectively.
+[Directions](../common/navigation/src/main/kotlin/com/hejwesele/android/navigation/Directions.kt) and
+[Destinations](../common/navigation/src/main/kotlin/com/hejwesele/android/navigation/Destinations.kt) files, respectively.
 
 To navigate from one feature to another, inject
-[Navigator](../common/navigation/src/main/kotlin/com/miquido/android/navigation/Navigator.kt) interface
+[Navigator](../common/navigation/src/main/kotlin/com/hejwesele/android/navigation/Navigator.kt) interface
 (in most cases to your `ViewModel`) and call `navigate(Destination)` method.
 
-[Main Activity](../app/src/main/kotlin/com/miquido/androidtemplate/MainActivity.kt) utilizes
-[Navigation](../common/navigation/src/main/kotlin/com/miquido/android/navigation/Navigation.kt) interface
+[Main Activity](../app/src/main/kotlin/com/hejwesele/androidtemplate/MainActivity.kt) utilizes
+[Navigation](../common/navigation/src/main/kotlin/com/hejwesele/android/navigation/Navigation.kt) interface
 to collect navigation events and pass them to the `NavController`. Finally, in the main Activity, within `NavHost`,
 you should define your globally available Composables and bind them to your Directions.
 
@@ -58,10 +58,10 @@ you should define your globally available Composables and bind them to your Dire
 
 Bottom navigation is defined in the [main module](../features/main) which is the entry point for the app after authentication.
 
-Items are defined as a [BottomNavigationItem](../features/main/src/main/kotlin/com/miquido/androidtemplate/main/BottomNavigation.kt) sealed class
+Items are defined as a [BottomNavigationItem](../features/main/src/main/kotlin/com/hejwesele/androidtemplate/main/BottomNavigation.kt) sealed class
 containing a route, an icon, and a label. They are used for bottom navigation entries definition.
 
-Bottom navigation definition itself can be found in the [Main composable](../features/main/src/main/kotlin/com/miquido/androidtemplate/main/Main.kt).
+Bottom navigation definition itself can be found in the [Main composable](../features/main/src/main/kotlin/com/hejwesele/androidtemplate/main/Main.kt).
 It contains logic for the correct behavior of a back button to not create a large stack of destinations when users select items.
 It also gives a possibility to restore the state between tabs.
 
@@ -86,14 +86,14 @@ For an example of nested navigation implementation, see [settings](../features/s
 
 In order to add transition animation between screens, `enterTransition` and/or `exitTransition` parameters need to be provided
 for Composables definitions. Global transitions for the whole app (e.g. animation time is defined there) can be found
-in the [Transitions object](../common/theme/src/main/kotlin/com/miquido/android/theme/Transitions.kt) in the theme module.
+in the [Transitions object](../common/theme/src/main/kotlin/com/hejwesele/android/theme/Transitions.kt) in the theme module.
 They should be reused across the app.
 
 Additionally, default transitions can be provided for a whole `AnimatedNavHost` or nested navigation graph in the `navigation`
 definition using the same parameters as mentioned above. However, transitions provided for a particular Composable take
 precedence over global ones defined for the whole (sub)graph.
 
-For an example of transitions definition, look at the [MainActivity](../app/src/main/kotlin/com/miquido/androidtemplate/MainActivity.kt).
+For an example of transitions definition, look at the [MainActivity](../app/src/main/kotlin/com/hejwesele/androidtemplate/MainActivity.kt).
 
 ## Screen architecture
 
@@ -118,12 +118,12 @@ screen is, for example, in background, as they shouldn't be collected.
 
 The easiest way to not waste resources and produce values only when the Composable is present is to return cold flow from the 
 ViewModel (to see how to wrap any flow with the cold flow, check 
-[ThemeInfoViewModel](../features/settings/src/main/kotlin/com/miquido/androidtemplate/settings/theme/ThemeInfoViewModel.kt)). 
+[ThemeInfoViewModel](../features/settings/src/main/kotlin/com/hejwesele/androidtemplate/settings/theme/ThemeInfoViewModel.kt)). 
 To avoid multiple invocations of flow construction after each recomposition, you can use `remember` method with ViewModel as a key. 
 
 You can also use `flowWithLifecycle` method to make your flow lifecycle-aware, but this requires additional amount of code in the 
 Composable. It can sometimes be a better solution, though (e.g. if your screen is purely UI-based and you don't use ViewModel).
-You can see how this is done in theme observing in [MainActivity](../app/src/main/kotlin/com/miquido/androidtemplate/MainActivity.kt).
+You can see how this is done in theme observing in [MainActivity](../app/src/main/kotlin/com/hejwesele/androidtemplate/MainActivity.kt).
 
 >>>
 Further reading on Flows, ViewModel and Composables:

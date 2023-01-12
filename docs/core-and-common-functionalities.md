@@ -98,10 +98,10 @@ For debug and qa builds, cleartext traffic is permitted, and user-added CA certi
 For release builds, cleartext traffic is forbidden, and only system CA certificates are trusted.
 
 To configure SSL certificate pinning, update pinning information (hostname, pin hash) in
-[CertificatePinnerProvider](../core/networking/src/main/kotlin/com/miquido/android/networking/CertificatePinnerProvider.kt).
+[CertificatePinnerProvider](../core/networking/src/main/kotlin/com/hejwesele/android/networking/CertificatePinnerProvider.kt).
 
 To change the content of the User-Agent header that your application sends, see
-[UserAgentInterceptor](../core/networking/src/main/kotlin/com/miquido/android/networking/UserAgentInterceptor.kt).
+[UserAgentInterceptor](../core/networking/src/main/kotlin/com/hejwesele/android/networking/UserAgentInterceptor.kt).
 At the same time it's the example of how to add OkHttp interceptor that extends the request with additional header(s).
 
 ## JSON (de)serialization (Moshi)
@@ -133,7 +133,7 @@ SQL statements are stored under [src/main/sqldelight](../core/database/src/main/
 `.sq` files. Coroutines are supported by using `asFlow()` extension method. Refer to the [documentation](https://cashapp.github.io/sqldelight/android_sqlite/)
 for more information about using SqlDelight.
 
-[DatabaseModule](../core/database/src/main/kotlin/com/miquido/android/database/di/DatabaseModule.kt) provides `Database` interface implementation.
+[DatabaseModule](../core/database/src/main/kotlin/com/hejwesele/android/database/di/DatabaseModule.kt) provides `Database` interface implementation.
 By default it uses SqlCipher-based provider, but if you don't need to have your database encrypted, you can replace `SqlDelightSqlCipherDatabaseProvider`
 with `SqlDelightDatabaseProvider` and remove SqlCipher and AndroidX Security-Crypto usage.
 
@@ -201,7 +201,7 @@ Note that this functionality uses Chrome (or other installed browser that suppor
 If there's no browser that supports Custom Tabs available, simple `ACTION_VIEW` Intent will be launched.
 
 You can customize colors, animations and other features of Custom Tabs by changing the method providing `CustomTabsIntent` in
-[AndroidXCustomTabs class](../common/customtabs/src/main/kotlin/com/miquido/android/customtabs/AndroidXCustomTabs.kt)
+[AndroidXCustomTabs class](../common/customtabs/src/main/kotlin/com/hejwesele/android/customtabs/AndroidXCustomTabs.kt)
 (`buildCustomTabsIntent` method).
 
 ## DateTime provider and formatter (kotlinx-datetime)
@@ -213,7 +213,7 @@ If `LocalDateTime` or `LocalDate` is needed instead of `Instant` use `localDateT
 [DateTimeFormatter](../common/datetimeformatter) common module provides functionality of formatting datetime objects of types: `Instant`, `LocalDateTime` and `LocalDate`.
 Use Hilt to inject an object of type `DateTimeFormatter` and call `format(dateTime, format)` on it with dateTime, you want to format, and an instance of the `Format` sealed class.
 
-Use provided `Format`, `TimePattern` and `DatePattern` subclasses or create your own subclasses in the [Format](../common/datetimeformatter/src/main/kotlin/com/miquido/android/datetimeformatter/Format.kt) file.
+Use provided `Format`, `TimePattern` and `DatePattern` subclasses or create your own subclasses in the [Format](../common/datetimeformatter/src/main/kotlin/com/hejwesele/android/datetimeformatter/Format.kt) file.
 
 `Format` class includes parameters:
 * `closeDateRange: Int?`: range in which a given date is treated as 'close'. Pass this value to `Format` subclasses that accepts it to achieve formats like: "yesterday", "in 10 days"
@@ -226,6 +226,6 @@ Use provided `Format`, `TimePattern` and `DatePattern` subclasses or create your
 
 [Square Logcat](https://github.com/square/logcat) simplifies logging info to Logcat.
 
-Logging all priorities in debuggable builds is already set up in the [Application class](../app/src/main/kotlin/com/miquido/androidtemplate/App.kt).
+Logging all priorities in debuggable builds is already set up in the [Application class](../app/src/main/kotlin/com/hejwesele/androidtemplate/App.kt).
 No logs will be printed in other build types.
 To use Square Logcat in any module, add `implementation libs.logcat` dependency and then use `logcat()` function.
