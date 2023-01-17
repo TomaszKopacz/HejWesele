@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "769408858773",
+    "project_id": "hejwesele-test",
+    "storage_bucket": "hejwesele-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:769408858773:android:25a9a019aed6911460799c",
+        "android_client_info": {
+          "package_name": "com.hejwesele.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "769408858773-5cn91vlknimfrq3epl4l0a12e6o8kujq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6RlXcvuTTE-00hJZe3JP4SCH05LmcCas"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "769408858773-5cn91vlknimfrq3epl4l0a12e6o8kujq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:769408858773:android:128385c64b7eac9860799c",
+        "android_client_info": {
+          "package_name": "com.hejwesele.qa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "769408858773-5cn91vlknimfrq3epl4l0a12e6o8kujq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6RlXcvuTTE-00hJZe3JP4SCH05LmcCas"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "769408858773-5cn91vlknimfrq3epl4l0a12e6o8kujq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

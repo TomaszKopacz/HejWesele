@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "661226087913",
+    "project_id": "hejwesele-prod",
+    "storage_bucket": "hejwesele-prod.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:661226087913:android:cdb728a3b906bd3acc1778",
+        "android_client_info": {
+          "package_name": "com.hejwesele"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "661226087913-gji4kjn6mq8sdr31fouujlsfkidn78po.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoVdKDTsQqdIhEfnZecPpiDZJDI5r4LL4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "661226087913-gji4kjn6mq8sdr31fouujlsfkidn78po.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
