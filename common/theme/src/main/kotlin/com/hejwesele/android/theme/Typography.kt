@@ -1,6 +1,6 @@
 package com.hejwesele.android.theme
 
-import androidx.compose.material.Typography
+import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -8,76 +8,102 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.hejwesele.theme.R
 
-private val Poppins = FontFamily(
+private val Lato = FontFamily(
     listOf(
-        Font(R.font.poppins_light, FontWeight.Light),
-        Font(R.font.poppins_regular, FontWeight.Normal),
-        Font(R.font.poppins_semibold, FontWeight.SemiBold),
-        Font(R.font.poppins_bold, FontWeight.Bold)
+        Font(R.font.lato_light, FontWeight.Light),
+        Font(R.font.lato, FontWeight.Normal),
+        Font(R.font.lato_bold, FontWeight.SemiBold),
+        Font(R.font.lato_black, FontWeight.Bold)
     )
 )
 
 internal val Typography = Typography(
-    defaultFontFamily = Poppins,
-    h1 = TextStyle(
+    displayLarge = TextStyle(
+        fontFamily = Lato,
         fontSize = 96.sp,
         fontWeight = FontWeight.Light,
         letterSpacing = (-1.5).sp
     ),
-    h2 = TextStyle(
+    displayMedium = TextStyle(
+        fontFamily = Lato,
         fontSize = 60.sp,
         fontWeight = FontWeight.Light,
         letterSpacing = (-0.5).sp
     ),
-    h3 = TextStyle(
+    displaySmall = TextStyle(
+        fontFamily = Lato,
         fontSize = 48.sp,
         fontWeight = FontWeight.Normal
     ),
-    h4 = TextStyle(
-        fontSize = 30.sp,
-        fontWeight = FontWeight.SemiBold
+    headlineLarge = TextStyle(
+        fontFamily = Lato,
+        fontSize = 44.sp,
+        fontWeight = FontWeight.Light,
+        letterSpacing = 0.5.sp
     ),
-    h5 = TextStyle(
+    headlineMedium = TextStyle(
+        fontFamily = Lato,
+        fontSize = 34.sp,
+        fontWeight = FontWeight.Normal,
+        letterSpacing = 0.25.sp
+    ),
+    headlineSmall = TextStyle(
+        fontFamily = Lato,
         fontSize = 24.sp,
-        fontWeight = FontWeight.SemiBold
+        fontWeight = FontWeight.Normal
     ),
-    h6 = TextStyle(
+    titleLarge = TextStyle(
+        fontFamily = Lato,
         fontSize = 20.sp,
-        fontWeight = FontWeight.SemiBold
-    ),
-    subtitle1 = TextStyle(
-        fontSize = 16.sp,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Medium,
         letterSpacing = 0.15.sp
     ),
-    subtitle2 = TextStyle(
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Bold,
-        letterSpacing = 0.1.sp
-    ),
-    body1 = TextStyle(
+    titleMedium = TextStyle(
+        fontFamily = Lato,
         fontSize = 16.sp,
         fontWeight = FontWeight.Normal,
         letterSpacing = 0.15.sp
     ),
-    body2 = TextStyle(
+    titleSmall = TextStyle(
+        fontFamily = Lato,
         fontSize = 14.sp,
         fontWeight = FontWeight.Medium,
+        letterSpacing = 0.1.sp
+    ),
+    bodyLarge = TextStyle(
+        fontFamily = Lato,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Normal,
+        letterSpacing = 0.5.sp
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = Lato,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Normal,
         letterSpacing = 0.25.sp
     ),
-    button = TextStyle(
-        fontSize = 14.sp,
-        fontWeight = FontWeight.SemiBold,
-        letterSpacing = 1.25.sp
-    ),
-    caption = TextStyle(
+    bodySmall = TextStyle(
+        fontFamily = Lato,
         fontSize = 12.sp,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.Normal,
         letterSpacing = 0.4.sp
     ),
-    overline = TextStyle(
+    labelLarge = TextStyle(
+        fontFamily = Lato,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Normal,
+        letterSpacing = 0.4.sp
+    ),
+    labelMedium = TextStyle(
+        fontFamily = Lato,
         fontSize = 12.sp,
-        fontWeight = FontWeight.SemiBold,
-        letterSpacing = 1.sp
+        fontWeight = FontWeight.Normal,
+        letterSpacing = 0.8.sp
+    ),
+    labelSmall = TextStyle(
+        fontFamily = Lato,
+        fontSize = 10.sp,
+        fontWeight = FontWeight.Normal,
+        letterSpacing = 0.15.sp
     )
 )

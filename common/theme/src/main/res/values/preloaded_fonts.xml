@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/lato</item>
+        <item>@font/lato_black</item>
+        <item>@font/lato_black_italic</item>
+        <item>@font/lato_bold</item>
+        <item>@font/lato_bold_italic</item>
+        <item>@font/lato_italic</item>
+        <item>@font/lato_light</item>
+        <item>@font/lato_light_italic</item>
+        <item>@font/lato_thin_italic</item>
+    </array>
+</resources>
