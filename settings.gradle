@@ -21,11 +21,23 @@ dependencyResolutionManagement {
 
 include ":app"
 
-include ":features:authentication"
-include ":features:dashboard"
-include ":features:main"
-include ":features:settings"
-include ':features:onboarding'
+include ":presentation:features:event"
+include ":presentation:features:gallery"
+include ":presentation:features:home"
+include ":presentation:features:schedule"
+include ":presentation:features:services"
+
+/* TODO - Features below are not mine, remove them */
+include ":presentation:features:authentication"
+include ":presentation:features:dashboard"
+include ":presentation:features:main"
+include ":presentation:features:settings"
+include ':presentation:features:onboarding'
+
+include ":presentation:navigation"
+
+include ":presentation:ui:components"
+include ":presentation:ui:theme"
 
 include ":common:analytics"
 include ":common:crashlytics"
@@ -34,12 +46,9 @@ include ":common:datetimeformatter"
 include ":common:licenses"
 include ":common:messaging"
 include ":common:mvvm"
-include ":common:navigation"
 include ":common:remoteconfig"
-include ":common:splashscreen"
-include ":common:theme"
+include ":common:splash"
 include ":common:thememanager"
-include ":common:ui"
 include ":common:workmanager"
 
 include ":core:appinfo"

@@ -121,18 +121,21 @@ dependencies {
     implementation projects.common.datetimeformatter
     implementation projects.common.licenses
     implementation projects.common.messaging
-    implementation projects.common.navigation
     implementation projects.common.remoteconfig
-    implementation projects.common.splashscreen
-    implementation projects.common.theme
+    implementation projects.common.splash
     implementation projects.common.thememanager
     implementation projects.common.workmanager
 
-    implementation projects.features.authentication
-    implementation projects.features.dashboard
-    implementation projects.features.main
-    implementation projects.features.settings
-    implementation projects.features.onboarding
+    implementation projects.presentation.features.event
+    implementation projects.presentation.features.authentication
+    implementation projects.presentation.features.dashboard
+    implementation projects.presentation.features.main
+    implementation projects.presentation.features.settings
+    implementation projects.presentation.features.onboarding
+
+    implementation projects.presentation.navigation
+
+    implementation projects.presentation.ui.theme
 
     androidTestImplementation libs.androidx.test.runner
     androidTestImplementation libs.androidx.test.rules

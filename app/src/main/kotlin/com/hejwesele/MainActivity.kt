@@ -27,6 +27,8 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.customtabs.CustomTabs
 import com.hejwesele.android.customtabs.LocalCustomTabs
 import com.hejwesele.android.navigation.AuthenticationDirection
+import com.hejwesele.android.navigation.EventDirection
+import com.hejwesele.android.navigation.EventDirection.getEventId
 import com.hejwesele.android.navigation.MainDirection
 import com.hejwesele.android.navigation.MainDirection.getUserId
 import com.hejwesele.android.navigation.Navigation
@@ -43,6 +45,7 @@ import com.hejwesele.android.thememanager.Theme.LIGHT
 import com.hejwesele.android.thememanager.Theme.SYSTEM_DEFAULT
 import com.hejwesele.android.thememanager.ThemeManager
 import com.hejwesele.authentication.authenticationGraph
+import com.hejwesele.event.Event
 import com.hejwesele.main.Main
 import com.hejwesele.onboarding.Onboarding
 import com.hejwesele.onboarding.OnboardingViewModel
@@ -120,6 +123,14 @@ class MainActivity : ComponentActivity() {
             exitTransition = { Transitions.fadeOut },
             startDestination = getStartDestination(onboardingDisplayedState)
         ) {
+            composable(
+                direction = EventDirection,
+                enterTransition = { Transitions.slideInHorizontally }
+            ) { backStackEntry ->
+                Event(
+                    eventId = backStackEntry.arguments?.getEventId() ?: 0
+                )
+            }
             composable(direction = OnboardingDirection) { Onboarding(navController) }
             authenticationGraph(AuthenticationDirection.route, navController)
             composable(
