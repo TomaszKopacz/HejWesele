@@ -39,6 +39,13 @@ include ":presentation:navigation"
 include ":presentation:ui:components"
 include ":presentation:ui:theme"
 
+include ":data:datastore"
+include ":data:repository"
+
+include ":domain:model"
+include ":domain:repository"
+include ":domain:usecase"
+
 include ":common:analytics"
 include ":common:crashlytics"
 include ":common:customtabs"

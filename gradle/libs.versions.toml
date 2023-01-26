@@ -137,6 +137,7 @@ firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx"
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-config-ktx = { module = "com.google.firebase:firebase-config-ktx" }
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx" }
+firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx" }
 firebase-messaging-ktx = { module = "com.google.firebase:firebase-messaging-ktx" }
 firebase-perf = { module = "com.google.firebase:firebase-perf" }
 # Dependency injection

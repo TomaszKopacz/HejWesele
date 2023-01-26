@@ -19,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -35,7 +34,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Transitions
 import com.hejwesele.gallery.Gallery
-import com.hejwesele.home.Home
+import com.hejwesele.home.homeGraph
 import com.hejwesele.schedule.Schedule
 import com.hejwesele.services.Services
 
@@ -65,7 +64,11 @@ fun Event(eventId: Int) {
                 enterTransition = { Transitions.fadeIn },
                 exitTransition = { Transitions.fadeOut }
             ) {
-                composable(EventRoutes.home) { Home(eventId) }
+                homeGraph(
+                    route = EventRoutes.home,
+                    eventId = eventId,
+                    navController = navController
+                )
                 composable(EventRoutes.schedule) { Schedule() }
                 composable(EventRoutes.services) { Services() }
                 composable(EventRoutes.gallery) { Gallery() }

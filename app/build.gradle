@@ -126,15 +126,17 @@ dependencies {
     implementation projects.common.thememanager
     implementation projects.common.workmanager
 
+    implementation projects.data.repository
+
+    implementation projects.domain.usecase
+
     implementation projects.presentation.features.event
     implementation projects.presentation.features.authentication
     implementation projects.presentation.features.dashboard
     implementation projects.presentation.features.main
     implementation projects.presentation.features.settings
     implementation projects.presentation.features.onboarding
-
     implementation projects.presentation.navigation
-
     implementation projects.presentation.ui.theme
 
     androidTestImplementation libs.androidx.test.runner

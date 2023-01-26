@@ -1,0 +1,11 @@
+plugins {
+    id "java-library"
+    id "org.jetbrains.kotlin.jvm"
+    id "com.android.lint"
+}
+
+dependencies {
+    implementation projects.domain.model
+
+    implementation libs.kotlinx.coroutines.core
+}

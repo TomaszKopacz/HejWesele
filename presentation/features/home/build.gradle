@@ -1,6 +1,7 @@
 plugins {
     id "com.android.library"
     id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
 }
 
 android {
@@ -14,11 +15,16 @@ android {
 }
 
 dependencies {
-    // Modules
+    implementation projects.domain.model
+    implementation projects.domain.usecase
+
     implementation projects.presentation.ui.components
     implementation projects.presentation.ui.theme
 
-    // Compose
+    implementation projects.data.datastore
+
+    implementation projects.common.mvvm
+
     implementation libs.accompanist.insets.ui
     implementation libs.accompanist.navigation.animation
     implementation libs.accompanist.navigation.material
@@ -26,5 +32,10 @@ dependencies {
     implementation libs.androidx.compose.foundation
     implementation libs.androidx.compose.material3
     implementation libs.androidx.compose.ui
+    implementation libs.androidx.hilt.navigation.compose
+    implementation libs.androidx.lifecycle.viewmodel.ktx
     implementation libs.airbnb.compose.lottie
+
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
 }
