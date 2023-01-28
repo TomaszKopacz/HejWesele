@@ -46,6 +46,7 @@ androidx-compose-material3 = "1.0.1"
 androidx-hilt-navigation-compose = "1.0.0"
 accompanist = "0.24.7-alpha"
 airbnb-compose-lottie = "5.2.0"
+glide-compose = "1.0.0-alpha.1"
 # Firebase/Play Services/Google Services/Play Store
 firebase-bom = "31.1.0"
 firebase-appDistribution-plugin = "3.0.2"
@@ -132,6 +133,7 @@ accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
 airbnb-compose-lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "airbnb-compose-lottie" }
+glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glide-compose" }
 # Firebase/Play Services/Google Services/Play Store
 firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }

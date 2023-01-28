@@ -1,17 +1,11 @@
-package com.hejwesele.model.home
+package com.hejwesele.home.model
 
-data class HomeTile(
+import com.hejwesele.model.home.HomeTileType
+
+internal data class HomeTileUiModel(
     val type: HomeTileType,
     val title: String,
     val subtitle: String?,
     val description: String,
     val photoUrls: List<String>
 )
-
-enum class HomeTileType {
-    COUPLE,
-    DATE,
-    CHURCH,
-    VENUE,
-    WISHES
-}

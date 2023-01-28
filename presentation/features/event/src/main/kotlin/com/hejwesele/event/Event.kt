@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -34,7 +35,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Transitions
 import com.hejwesele.gallery.Gallery
-import com.hejwesele.home.homeGraph
+import com.hejwesele.home.navigation.homeGraph
 import com.hejwesele.schedule.Schedule
 import com.hejwesele.services.Services
 
@@ -52,7 +53,8 @@ fun Event(eventId: Int) {
 
     Scaffold(
         modifier = Modifier.background(color = MaterialTheme.colorScheme.surface),
-        bottomBar = { EventBottomNavigation(navController) }
+        bottomBar = { EventBottomNavigation(navController) },
+        contentWindowInsets = WindowInsets(top = 0.dp),
     ) { innerPadding ->
         ModalBottomSheetLayout(
             bottomSheetNavigator = bottomSheetNavigator,
@@ -124,7 +126,7 @@ internal fun RowScope.EventBottomNavigationItem(
             Icon(
                 painter = painterResource(iconResId),
                 tint = iconTint,
-                modifier = Modifier.size(Dimension.iconNormal),
+                modifier = Modifier.size(Dimension.iconSizeNormal),
                 contentDescription = null
             )
         },

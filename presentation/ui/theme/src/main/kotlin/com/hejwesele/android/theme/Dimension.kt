@@ -3,8 +3,24 @@ package com.hejwesele.android.theme
 import androidx.compose.ui.unit.dp
 
 object Dimension {
+    val marginSmall = 12.dp
     val marginNormal = 16.dp
     val marginLarge = 24.dp
 
-    val iconNormal = 24.dp
+    val marginLarge2X = 48.dp
+    val marginLarge3X = 72.dp
+
+    val marginLarge_1_4 = 6.dp
+    val marginLarge_3_4 = 18.dp
+
+    val radiusRoundedCornerNormal = 24.dp
+
+    val borderWidthNormal = 2.dp
+
+    val iconSizeNormal = 24.dp
+
+    val imageSizeSmall = 48.dp
+
+    val progressIndicatorSize = 24.dp
+    val progressIndicatorThickness = 2.dp
 }

@@ -5,7 +5,6 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.PropertyName
 
 data class EventDto (
-
     @DocumentId
     val id: String = "",
 

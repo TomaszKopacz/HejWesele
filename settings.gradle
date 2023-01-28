@@ -37,6 +37,7 @@ include ':presentation:features:onboarding'
 include ":presentation:navigation"
 
 include ":presentation:ui:components"
+include ":presentation:ui:extensions"
 include ":presentation:ui:theme"
 
 include ":data:datastore"

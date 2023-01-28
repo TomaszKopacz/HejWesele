@@ -1,9 +1,15 @@
 package com.hejwesele.home
 
-data class HomeUiState(
-    val eventName: String
+import com.hejwesele.home.model.HomeTileUiModel
+
+internal data class HomeUiState(
+    val isLoading: Boolean,
+    val tiles: List<HomeTileUiModel>
 ) {
     companion object {
-        val DEFAULT = HomeUiState(eventName = "Loading...")
+        val DEFAULT = HomeUiState(
+            isLoading = true,
+            tiles = emptyList()
+        )
     }
 }

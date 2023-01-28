@@ -14,7 +14,11 @@ internal class HomeRemoteSource @Inject constructor(
 
     suspend fun getHomeTiles(eventId: String): DataResult<List<HomeTile>> {
         return datastore.getHomeTiles(eventId)
-            .mapSuccess { it.map { dto -> dto.toModel() } }
+            .mapSuccess { tilesList ->
+                tilesList
+                    .sortedBy { dto -> dto.order }
+                    .map { dto -> dto.toModel() }
+            }
             .toDataResult()
     }
 }

@@ -28,7 +28,7 @@ fun <DATA : Any> DataResult<DATA>.onSuccess(
             action(value)
             this
         }
-        is Failure -> Failure(error)
+        is Failure -> failure(error)
     }
 }
 
