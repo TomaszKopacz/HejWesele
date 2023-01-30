@@ -1,10 +1,12 @@
 package com.hejwesele.datastore.dto.event
 
+import androidx.annotation.Keep
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.PropertyName
 
-data class EventDto (
+@Keep
+data class EventDto(
     @DocumentId
     val id: String = "",
 

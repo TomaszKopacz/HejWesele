@@ -16,7 +16,6 @@ internal class EventRepository @Inject constructor(
     }
 
     override suspend fun observeEvent(eventId: String, coroutineScope: CoroutineScope): SharedFlow<Event> {
-        return  remoteSource.observeEvent(eventId, coroutineScope)
+        return remoteSource.observeEvent(eventId, coroutineScope)
     }
-
 }

@@ -54,7 +54,7 @@ fun Event(eventId: Int) {
     Scaffold(
         modifier = Modifier.background(color = MaterialTheme.colorScheme.surface),
         bottomBar = { EventBottomNavigation(navController) },
-        contentWindowInsets = WindowInsets(top = 0.dp),
+        contentWindowInsets = WindowInsets(top = 0.dp)
     ) { innerPadding ->
         ModalBottomSheetLayout(
             bottomSheetNavigator = bottomSheetNavigator,
@@ -67,9 +67,7 @@ fun Event(eventId: Int) {
                 exitTransition = { Transitions.fadeOut }
             ) {
                 homeGraph(
-                    route = EventRoutes.home,
-                    eventId = eventId,
-                    navController = navController
+                    route = EventRoutes.home
                 )
                 composable(EventRoutes.schedule) { Schedule() }
                 composable(EventRoutes.services) { Services() }
@@ -85,7 +83,6 @@ internal fun EventBottomNavigation(navController: NavController) {
         contentPadding = WindowInsets.navigationBars.asPaddingValues(),
         backgroundColor = MaterialTheme.colorScheme.surface
     ) {
-
         val eventTabItems = listOf(
             EventTabItem.Home,
             EventTabItem.Schedule,

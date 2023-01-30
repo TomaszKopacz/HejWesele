@@ -1,9 +1,11 @@
 package com.hejwesele.datastore.dto.home
 
+import androidx.annotation.Keep
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.PropertyName
 
-data class HomeTileDto (
+@Keep
+data class HomeTileDto(
     @DocumentId
     val id: String = "",
 
@@ -29,5 +31,9 @@ data class HomeTileDto (
 
     @get:PropertyName(value = "photo_urls")
     @set:PropertyName(value = "photo_urls")
-    var photoUrls: List<String> = emptyList()
+    var photoUrls: List<String> = emptyList(),
+
+    @get:PropertyName(value = "urls")
+    @set:PropertyName(value = "urls")
+    var urls: List<String>? = null
 )

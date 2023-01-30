@@ -2,7 +2,6 @@ package com.hejwesele.onboarding
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.hejwesele.onboarding.R
 
 enum class OnboardingPages(
     @StringRes val title: Int,

@@ -37,10 +37,10 @@ import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.jakewharton.processphoenix.ProcessPhoenix
 import com.hejwesele.android.config.switcher.ConfigurationItem.RadioGroup
 import com.hejwesele.android.config.switcher.ConfigurationUiState.Loading
 import com.hejwesele.android.mvvm.ActionsEffect
+import com.jakewharton.processphoenix.ProcessPhoenix
 
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.configurationScreen(route: String) = composable(route) { ConfigurationScreen(viewModel = hiltViewModel()) }

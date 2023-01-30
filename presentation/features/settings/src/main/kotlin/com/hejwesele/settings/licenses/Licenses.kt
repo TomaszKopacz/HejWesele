@@ -24,8 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.hejwesele.android.customtabs.LocalCustomTabs
 import com.hejwesele.android.components.HeaderMedium
+import com.hejwesele.android.customtabs.LocalCustomTabs
 import com.hejwesele.settings.R
 
 @OptIn(ExperimentalMaterialApi::class)

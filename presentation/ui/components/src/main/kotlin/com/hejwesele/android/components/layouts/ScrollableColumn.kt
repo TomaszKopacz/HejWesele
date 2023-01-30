@@ -1,4 +1,4 @@
-package com.hejwesele.android.components
+package com.hejwesele.android.components.layouts
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
@@ -7,14 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -31,15 +25,15 @@ fun ScrollableColumn(
     content: @Composable (ColumnScope.() -> Unit)
 ) {
     Box(
-        modifier = Modifier
+        Modifier
             .fillMaxSize()
-            .background(color = backgroundColor)
+            .background(backgroundColor)
     ) {
         CompositionLocalProvider(
             LocalOverscrollConfiguration provides null
         ) {
             Column(
-                modifier = Modifier
+                Modifier
                     .fillMaxWidth()
                     .verticalScroll(
                         state = rememberScrollState(),

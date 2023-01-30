@@ -1,15 +1,28 @@
 package com.hejwesele.home
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RawRes
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -17,11 +30,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.core.content.ContextCompat.startActivity
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -31,73 +48,132 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.CircleImage
 import com.hejwesele.android.components.Loader
-import com.hejwesele.android.components.ScrollableColumn
 import com.hejwesele.android.components.TextPlaceholder
+import com.hejwesele.android.components.layouts.BottomSheetScaffold
+import com.hejwesele.android.components.layouts.ScrollableColumn
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.extensions.addEmptyLines
 import com.hejwesele.home.constants.Numbers
 import com.hejwesele.home.constants.Strings
 import com.hejwesele.home.model.HomeTileUiModel
-import com.hejwesele.model.home.HomeTileType
+import com.hejwesele.home.model.HomeUiAction.OpenActivity
+import com.hejwesele.home.model.HomeUiAction.ShowTileIntentOptions
+import com.hejwesele.home.model.IntentUiModel
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun Home(
-    eventId: Int,
     viewModel: HomeViewModel
 ) {
     val systemUiController = rememberSystemUiController()
-    SideEffect { systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = true) }
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = Color.Transparent,
+            darkIcons = true
+        )
+    }
 
-    viewModel.init().also {
-        HomeContent(viewModel)
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    val uiState by viewModel.states.collectAsState()
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
+    )
+
+    BottomSheetScaffold(
+        state = sheetState,
+        sheetContent = {
+            HomeBottomSheetContent(
+                intents = uiState.intents,
+                onIntentSelected = {
+                    coroutineScope.launch { sheetState.hide() }
+                    viewModel.onTileIntentOptionSelected(it)
+                }
+            )
+        }
+    ) {
+        when {
+            uiState.isLoading -> Loader()
+            uiState.tiles.isEmpty() -> TextPlaceholder(text = Strings.noHomeTilesText)
+            else -> HomeContent(
+                tiles = uiState.tiles,
+                onTileClicked = { viewModel.onTileClicked(it) }
+            )
+        }
+    }
+
+    SideEffect {
+        coroutineScope.launch {
+            viewModel.actions.collect { action ->
+                when (action) {
+                    is ShowTileIntentOptions -> sheetState.show()
+                    is OpenActivity -> openActivity(context, action.intent)
+                }
+            }
+        }
+    }
+
+    BackHandler(sheetState.isVisible) {
+        coroutineScope.launch { sheetState.hide() }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun HomeContent(viewModel: HomeViewModel) {
-    val uiState by viewModel.states.collectAsState()
-
-    when {
-        uiState.isLoading -> Loader()
-        uiState.tiles.isEmpty() -> TextPlaceholder(text = Strings.noHomeTilesText)
-        else -> ScrollableColumn {
-            CoupleLottieAnimation()
-            HomeTilesCarousel(tiles = uiState.tiles)
-        }
+private fun HomeContent(
+    tiles: List<HomeTileUiModel>,
+    onTileClicked: (HomeTileUiModel) -> Unit
+) {
+    ScrollableColumn {
+        CoupleLottieAnimation()
+        HomeTilesCarousel(
+            tiles = tiles,
+            onTileClicked = onTileClicked
+        )
     }
 }
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-private fun HomeTilesCarousel(tiles: List<HomeTileUiModel>) {
+private fun HomeTilesCarousel(tiles: List<HomeTileUiModel>, onTileClicked: (HomeTileUiModel) -> Unit) {
     HorizontalPager(
         count = tiles.count(),
         contentPadding = PaddingValues(Dimension.marginLarge_3_4)
     ) { page ->
-        HomeTile(tile = tiles[page])
+        HomeTile(
+            tile = tiles[page],
+            onTileClicked = onTileClicked
+        )
     }
 }
 
 @Composable
-private fun HomeTile(tile: HomeTileUiModel) {
+private fun HomeTile(tile: HomeTileUiModel, onTileClicked: (HomeTileUiModel) -> Unit) {
     Surface(
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        shape = RoundedCornerShape(Dimension.radiusRoundedCornerNormal),
-        modifier = Modifier
+        Modifier
             .padding(horizontal = Dimension.marginLarge_1_4)
-            .shadow(elevation = 2.dp, shape = RoundedCornerShape(Dimension.radiusRoundedCornerNormal))
+            .shadow(
+                elevation = Dimension.elevationSmall,
+                shape = RoundedCornerShape(Dimension.radiusRoundedCornerNormal)
+            )
             .fillMaxWidth()
+            .clickable(enabled = tile.clickable) {
+                onTileClicked(tile)
+            },
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        shape = RoundedCornerShape(Dimension.radiusRoundedCornerNormal)
     ) {
         Column(
-            modifier = Modifier
+            Modifier
                 .padding(Dimension.marginNormal)
                 .fillMaxWidth()
         ) {
             with(tile) {
                 when {
-                    photoUrls.isNotEmpty() -> HomeTilePhotos(type, photoUrls)
-                    else -> HomeTileLottieAnimation(getAnimationResource(type))
+                    photoUrls.isNotEmpty() -> HomeTilePhotos(tile)
+                    else -> HomeTileLottieAnimation(tile.animationResId)
                 }
                 HomeTileTitle(title, subtitle)
                 HomeTileDescription(description)
@@ -109,8 +185,8 @@ private fun HomeTile(tile: HomeTileUiModel) {
 @Composable
 private fun HomeTileTitle(title: String, subtitle: String?) {
     Row(
-        verticalAlignment = Alignment.Bottom,
-        modifier = Modifier.padding(bottom = Dimension.marginSmall),
+        Modifier.padding(bottom = Dimension.marginSmall),
+        verticalAlignment = Alignment.Bottom
     ) {
         Text(
             text = title,
@@ -140,16 +216,16 @@ private fun HomeTileDescription(text: String) {
 }
 
 @Composable
-private fun HomeTilePhotos(type: HomeTileType, photoUrls: List<String>) {
-    if (photoUrls.isEmpty()) {
-        HomeTileLottieAnimation(animationRes = getAnimationResource(type))
+private fun HomeTilePhotos(tile: HomeTileUiModel) {
+    if (tile.photoUrls.isEmpty()) {
+        HomeTileLottieAnimation(animationRes = tile.animationResId)
     } else {
         Row(
-            modifier = Modifier
+            Modifier
                 .padding(bottom = Dimension.marginNormal)
                 .fillMaxWidth()
         ) {
-            photoUrls.forEachIndexed { index, url ->
+            tile.photoUrls.forEachIndexed { index, url ->
                 CircleImage(
                     url = url,
                     size = Dimension.imageSizeSmall,
@@ -185,11 +261,57 @@ private fun CoupleLottieAnimation() {
     )
 }
 
-private fun getAnimationResource(tileType: HomeTileType) = when (tileType) {
-    HomeTileType.COUPLE -> R.raw.lottie_heart
-    HomeTileType.DATE -> R.raw.lottie_calendar
-    HomeTileType.CHURCH -> R.raw.lottie_church
-    HomeTileType.VENUE -> R.raw.lottie_home
-    HomeTileType.WISHES -> R.raw.lottie_toast
+@Composable
+private fun HomeBottomSheetContent(intents: List<IntentUiModel>, onIntentSelected: (IntentUiModel) -> Unit) {
+    intents.forEach { intent ->
+        HomeIntentItem(
+            intent = intent,
+            onClick = onIntentSelected
+        )
+        Spacer(Modifier.height(Dimension.marginNormal))
+    }
 }
 
+@Composable
+fun HomeIntentItem(
+    intent: IntentUiModel,
+    onClick: (IntentUiModel) -> Unit
+) {
+    Surface(
+        Modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = { onClick(intent) }
+            )
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(
+                painter = painterResource(id = intent.iconResId),
+                contentDescription = null,
+                modifier = Modifier.size(Dimension.iconSizeNormal),
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(Modifier.width(Dimension.marginNormal))
+            Text(
+                text = intent.title,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+}
+
+@Suppress("SwallowedException")
+private fun openActivity(context: Context, intentUrl: IntentUiModel) {
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(intentUrl.url))
+    try {
+        intent.setPackage(intentUrl.intentPackage)
+        startActivity(context, intent, null)
+    } catch (exception: ActivityNotFoundException) {
+        startActivity(context, intent, null)
+    }
+}

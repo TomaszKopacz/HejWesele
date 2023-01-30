@@ -9,11 +9,11 @@ object EventDirection : Direction {
     private const val eventIdKey = "eventId"
 
     override val route = "event/{$eventIdKey}"
-    override val args = listOf(navArgument(eventIdKey) { type =  NavType.IntType })
+    override val args = listOf(navArgument(eventIdKey) { type = NavType.IntType })
 
     internal fun toDestination(eventId: Int) = route.replace("{$eventIdKey}", eventId.toString())
 
-    fun Bundle.getEventId(): Int  = getInt(eventIdKey)
+    fun Bundle.getEventId(): Int = getInt(eventIdKey)
 }
 
 object AuthenticationDirection : Direction {
@@ -37,6 +37,7 @@ object OnboardingDirection : Direction {
     override val args = emptyList<NamedNavArgument>()
 }
 
+@Suppress("UnusedPrivateMember")
 fun getStartDestination(onboardingDisplayed: Boolean): String {
     // if (onboardingDisplayed) AuthenticationDirection.route else OnboardingDirection.route
     return EventDirection.route

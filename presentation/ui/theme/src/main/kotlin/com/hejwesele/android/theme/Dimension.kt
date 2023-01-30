@@ -17,10 +17,15 @@ object Dimension {
 
     val borderWidthNormal = 2.dp
 
+    val elevationSmall = 2.dp
+
     val iconSizeNormal = 24.dp
 
     val imageSizeSmall = 48.dp
 
     val progressIndicatorSize = 24.dp
     val progressIndicatorThickness = 2.dp
+
+    val bottomSheetHandleWidth = 72.dp
+    val bottomSheetHandleHeight = 4.dp
 }

@@ -13,31 +13,35 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+@Suppress("TooGenericExceptionCaught", "SwallowedException")
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class Firestore @Inject constructor() : Datastore {
 
-    private val firestore = Firebase.firestore
+    private val firestoreReference = Firebase.firestore
     private val firestoreScope = CoroutineScope(Dispatchers.Default)
 
     override suspend fun getEvent(eventId: String): DatastoreResult<EventDto> = suspendCoroutine { continuation ->
 
-        firestore
+        firestoreReference
             .collection(Collections.events)
             .document(eventId)
             .get()
             .addOnSuccessListener { snapshot ->
                 if (snapshot.exists()) {
-                    continuation.resume(Success(requireNotNull(snapshot.toObject(EventDto::class.java))))
+                    try {
+                        val event = requireNotNull(snapshot.toObject(EventDto::class.java))
+                        continuation.resume(Success(event))
+                    } catch (exception: RuntimeException) {
+                        continuation.resume(Failure(exception))
+                    }
                 } else {
                     continuation.resume(Failure(DocumentNotExistsException(snapshot.id)))
                 }
-
             }
             .addOnFailureListener { exception ->
                 continuation.resume(Failure(exception))
@@ -45,7 +49,7 @@ internal class Firestore @Inject constructor() : Datastore {
     }
 
     override suspend fun getAllEvents(): DatastoreResult<List<EventDto>> = suspendCoroutine { continuation ->
-        firestore
+        firestoreReference
             .collection(Collections.events)
             .get()
             .addOnSuccessListener { snapshot ->
@@ -53,7 +57,13 @@ internal class Firestore @Inject constructor() : Datastore {
                     Success(
                         snapshot.documents
                             .filter { it.exists() }
-                            .map { requireNotNull(it.toObject(EventDto::class.java)) }
+                            .mapNotNull {
+                                try {
+                                    requireNotNull(it.toObject(EventDto::class.java))
+                                } catch (exception: RuntimeException) {
+                                    null
+                                }
+                            }
                     )
                 )
             }
@@ -63,7 +73,7 @@ internal class Firestore @Inject constructor() : Datastore {
     }
 
     override suspend fun getHomeTiles(eventId: String): DatastoreResult<List<HomeTileDto>> = suspendCoroutine { continuation ->
-        firestore
+        firestoreReference
             .collection(Collections.events)
             .document(eventId)
             .collection(Collections.homeTiles)
@@ -73,7 +83,13 @@ internal class Firestore @Inject constructor() : Datastore {
                     Success(
                         snapshot.documents
                             .filter { it.exists() }
-                            .map { requireNotNull(it.toObject(HomeTileDto::class.java)) }
+                            .mapNotNull {
+                                try {
+                                    requireNotNull(it.toObject(HomeTileDto::class.java))
+                                } catch (e: RuntimeException) {
+                                    null
+                                }
+                            }
                     )
                 )
             }
@@ -85,14 +101,19 @@ internal class Firestore @Inject constructor() : Datastore {
     override suspend fun observeEvent(eventId: String): SharedFlow<EventDto> {
         val snapshots = MutableSharedFlow<EventDto>()
 
-        firestore
+        firestoreReference
             .collection(Collections.events)
             .addSnapshotListener { snapshot, _ ->
                 if (snapshot != null) {
                     for (change in snapshot.documentChanges) {
                         if (change.type == DocumentChange.Type.MODIFIED && change.document.id == eventId) {
-                            firestoreScope.launch {
-                                snapshots.emit(change.document.toObject(EventDto::class.java))
+                            try {
+                                val event = change.document.toObject(EventDto::class.java)
+                                firestoreScope.launch {
+                                    snapshots.emit(event)
+                                }
+                            } catch (e: RuntimeException) {
+                                // no-op
                             }
                         }
                     }

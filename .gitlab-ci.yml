@@ -46,7 +46,7 @@ testDebug:
 lintDebug:
   stage: test
   script:
-    - ./gradlew -Pci --console=plain :app:lintDebug -PbuildDir=lint
+    - ./gradlew -Pci --console=plain ktlint -PbuildDir=lint
   only:
     - /^feat.*$/
     - /^fix.*$/
@@ -71,7 +71,7 @@ testQa:
 lintQa:
   stage: test
   script:
-    - ./gradlew -Pci --console=plain :app:lintQa -PbuildDir=lint
+    - ./gradlew -Pci --console=plain ktlint -PbuildDir=lint
   only:
     - dev
 
@@ -97,7 +97,7 @@ testRelease:
 lintRelease:
   stage: test
   script:
-    - ./gradlew -Pci --console=plain :app:lintRelease -PbuildDir=lint
+    - ./gradlew -Pci --console=plain ktlint -PbuildDir=lint
   only:
     - main
 
