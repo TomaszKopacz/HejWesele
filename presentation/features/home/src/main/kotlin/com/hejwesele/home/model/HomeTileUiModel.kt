@@ -1,7 +1,7 @@
 package com.hejwesele.home.model
 
 import androidx.annotation.RawRes
-import com.hejwesele.model.home.HomeTileType
+import com.hejwesele.events.model.HomeTileType
 
 internal data class HomeTileUiModel(
     val type: HomeTileType,

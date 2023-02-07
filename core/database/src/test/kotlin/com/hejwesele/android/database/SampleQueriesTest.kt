@@ -1,7 +1,7 @@
 package com.hejwesele.android.database
 
 import com.google.common.truth.Truth.assertThat
-import com.hejwesele.database.Database
+import com.hejwesele.realtimedatabase.Database
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver

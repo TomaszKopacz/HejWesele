@@ -2,6 +2,11 @@ package com.hejwesele.home
 
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateActionsViewModel
+import com.hejwesele.events.model.HomeTile
+import com.hejwesele.events.model.HomeTileType
+import com.hejwesele.events.model.IntentType
+import com.hejwesele.events.model.IntentUrl
+import com.hejwesele.events.model.UrlPrefix
 import com.hejwesele.home.constants.Strings
 import com.hejwesele.home.model.HomeTileUiModel
 import com.hejwesele.home.model.HomeUiAction
@@ -9,14 +14,9 @@ import com.hejwesele.home.model.HomeUiAction.OpenActivity
 import com.hejwesele.home.model.HomeUiAction.ShowTileIntentOptions
 import com.hejwesele.home.model.HomeUiState
 import com.hejwesele.home.model.IntentUiModel
-import com.hejwesele.model.common.IntentType
-import com.hejwesele.model.common.IntentUrl
-import com.hejwesele.model.common.UrlPrefix
-import com.hejwesele.model.home.HomeTile
-import com.hejwesele.model.home.HomeTileType
-import com.hejwesele.model.onError
-import com.hejwesele.model.onSuccess
-import com.hejwesele.usecase.home.GetHomeTiles
+import com.hejwesele.home.usecase.GetHomeTiles
+import com.hejwesele.result.onError
+import com.hejwesele.result.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,7 +28,7 @@ internal class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getHomeTiles("7AtxeYEUkKYB5M6cUK2g")
+            getHomeTiles("-NNcZtoxOovK9JxKWeNN")
                 .onSuccess { homeTiles ->
                     updateState {
                         copy(
@@ -63,12 +63,6 @@ internal class HomeViewModel @Inject constructor(
     fun onTileIntentOptionSelected(intent: IntentUiModel) {
         viewModelScope.launch {
             emitAction(OpenActivity(intent))
-        }
-    }
-
-    fun onTileIntentOptionsDismissed() {
-        viewModelScope.launch {
-            updateState { copy(intents = emptyList()) }
         }
     }
 

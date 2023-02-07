@@ -1,0 +1,17 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+}
+
+android {
+    namespace "com.hejwesele.realtimedatabase"
+}
+
+dependencies {
+    implementation platform('com.google.firebase:firebase-bom:31.2.0')
+    implementation 'com.google.firebase:firebase-database-ktx'
+
+    implementation libs.hilt.core
+    kapt libs.hilt.compiler
+}

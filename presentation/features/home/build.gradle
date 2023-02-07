@@ -15,14 +15,13 @@ android {
 }
 
 dependencies {
-    implementation projects.domain.model
-    implementation projects.domain.usecase
+    implementation projects.libraries.result
 
     implementation projects.presentation.ui.components
     implementation projects.presentation.ui.extensions
     implementation projects.presentation.ui.theme
 
-    implementation projects.data.datastore
+    implementation projects.repositories.events
 
     implementation projects.common.mvvm
 

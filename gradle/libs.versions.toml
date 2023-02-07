@@ -48,7 +48,7 @@ accompanist = "0.24.7-alpha"
 airbnb-compose-lottie = "5.2.0"
 glide-compose = "1.0.0-alpha.1"
 # Firebase/Play Services/Google Services/Play Store
-firebase-bom = "31.1.0"
+firebase-bom = "31.2.0"
 firebase-appDistribution-plugin = "3.0.2"
 firebase-crashlytics-plugin = "2.9.2"
 firebase-perf-plugin = "1.4.2"
@@ -139,7 +139,7 @@ firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx"
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-config-ktx = { module = "com.google.firebase:firebase-config-ktx" }
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx" }
-firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx" }
+firebase-database-ktx = { module = "com.google.firebase:firebase-realtimedatabase-ktx" }
 firebase-messaging-ktx = { module = "com.google.firebase:firebase-messaging-ktx" }
 firebase-perf = { module = "com.google.firebase:firebase-perf" }
 # Dependency injection
