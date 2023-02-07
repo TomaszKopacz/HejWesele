@@ -34,7 +34,7 @@ import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Transitions
-import com.hejwesele.gallery.Gallery
+import com.hejwesele.gallery.navigation.galleryGraph
 import com.hejwesele.home.navigation.homeGraph
 import com.hejwesele.schedule.Schedule
 import com.hejwesele.services.Services
@@ -71,7 +71,9 @@ fun Event(eventId: Int) {
                 )
                 composable(EventRoutes.schedule) { Schedule() }
                 composable(EventRoutes.services) { Services() }
-                composable(EventRoutes.gallery) { Gallery() }
+                galleryGraph(
+                    route = EventRoutes.gallery
+                )
             }
         }
     }

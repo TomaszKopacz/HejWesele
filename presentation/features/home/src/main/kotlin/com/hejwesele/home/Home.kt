@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -228,8 +229,9 @@ private fun HomeTilePhotos(tile: HomeTileUiModel) {
             tile.photoUrls.forEachIndexed { index, url ->
                 CircleImage(
                     url = url,
-                    size = Dimension.imageSizeSmall,
-                    offset = -Dimension.marginSmall.times(index)
+                    modifier = Modifier
+                        .size(Dimension.imageSizeSmall)
+                        .offset(-Dimension.marginSmall.times(index))
                 )
             }
         }

@@ -13,6 +13,7 @@ object Dimension {
     val marginLarge_1_4 = 6.dp
     val marginLarge_3_4 = 18.dp
 
+    val radiusRoundedCornerSmall = 16.dp
     val radiusRoundedCornerNormal = 24.dp
 
     val borderWidthNormal = 2.dp
@@ -22,6 +23,8 @@ object Dimension {
     val iconSizeNormal = 24.dp
 
     val imageSizeSmall = 48.dp
+
+    val gridPaddingThin = 2.dp
 
     val progressIndicatorSize = 24.dp
     val progressIndicatorThickness = 2.dp
