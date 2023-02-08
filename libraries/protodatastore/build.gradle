@@ -1,0 +1,18 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+}
+
+android {
+    namespace "com.hejwesele.protodatastore"
+}
+
+dependencies {
+    implementation projects.libraries.result
+
+    implementation libs.androidx.datastore.proto
+
+    implementation libs.hilt.core
+    kapt libs.hilt.compiler
+}

@@ -136,9 +136,11 @@ dependencies {
     implementation projects.presentation.ui.theme
 
     implementation projects.services.events
+    implementation projects.services.galleries
+    implementation projects.services.invitations
+    implementation projects.services.settings
 
-    implementation projects.repositories.events
-
+    implementation projects.libraries.protodatastore
     implementation projects.libraries.realtimedatabase
     implementation projects.libraries.result
 

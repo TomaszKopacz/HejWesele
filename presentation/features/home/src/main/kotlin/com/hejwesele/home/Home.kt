@@ -56,7 +56,7 @@ import com.hejwesele.android.theme.Dimension
 import com.hejwesele.extensions.addEmptyLines
 import com.hejwesele.home.constants.Numbers
 import com.hejwesele.home.constants.Strings
-import com.hejwesele.home.model.HomeTileUiModel
+import com.hejwesele.home.model.InvitationTileUiModel
 import com.hejwesele.home.model.HomeUiAction.OpenActivity
 import com.hejwesele.home.model.HomeUiAction.ShowTileIntentOptions
 import com.hejwesele.home.model.IntentUiModel
@@ -87,7 +87,7 @@ internal fun Home(
     BottomSheetScaffold(
         state = sheetState,
         sheetContent = {
-            HomeBottomSheetContent(
+            InvitationBottomSheetContent(
                 intents = uiState.intents,
                 onIntentSelected = {
                     coroutineScope.launch { sheetState.hide() }
@@ -98,7 +98,7 @@ internal fun Home(
     ) {
         when {
             uiState.isLoading -> Loader()
-            uiState.tiles.isEmpty() -> TextPlaceholder(text = Strings.noHomeTilesText)
+            uiState.error != null -> TextPlaceholder(text = Strings.errorMessage)
             else -> HomeContent(
                 tiles = uiState.tiles,
                 onTileClicked = { viewModel.onTileClicked(it) }
@@ -124,26 +124,31 @@ internal fun Home(
 
 @Composable
 private fun HomeContent(
-    tiles: List<HomeTileUiModel>,
-    onTileClicked: (HomeTileUiModel) -> Unit
+    tiles: List<InvitationTileUiModel>,
+    onTileClicked: (InvitationTileUiModel) -> Unit
 ) {
     ScrollableColumn {
         CoupleLottieAnimation()
-        HomeTilesCarousel(
-            tiles = tiles,
-            onTileClicked = onTileClicked
-        )
+        when {
+            tiles.isEmpty() -> TextPlaceholder(
+                text = Strings.noInvitationTilesMessage
+            )
+            else -> InvitationsTilesCarousel(
+                tiles = tiles,
+                onTileClicked = onTileClicked
+            )
+        }
     }
 }
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-private fun HomeTilesCarousel(tiles: List<HomeTileUiModel>, onTileClicked: (HomeTileUiModel) -> Unit) {
+private fun InvitationsTilesCarousel(tiles: List<InvitationTileUiModel>, onTileClicked: (InvitationTileUiModel) -> Unit) {
     HorizontalPager(
         count = tiles.count(),
         contentPadding = PaddingValues(Dimension.marginLarge_3_4)
     ) { page ->
-        HomeTile(
+        InvitationTile(
             tile = tiles[page],
             onTileClicked = onTileClicked
         )
@@ -151,7 +156,7 @@ private fun HomeTilesCarousel(tiles: List<HomeTileUiModel>, onTileClicked: (Home
 }
 
 @Composable
-private fun HomeTile(tile: HomeTileUiModel, onTileClicked: (HomeTileUiModel) -> Unit) {
+private fun InvitationTile(tile: InvitationTileUiModel, onTileClicked: (InvitationTileUiModel) -> Unit) {
     Surface(
         Modifier
             .padding(horizontal = Dimension.marginLarge_1_4)
@@ -173,18 +178,18 @@ private fun HomeTile(tile: HomeTileUiModel, onTileClicked: (HomeTileUiModel) -> 
         ) {
             with(tile) {
                 when {
-                    photoUrls.isNotEmpty() -> HomeTilePhotos(tile)
-                    else -> HomeTileLottieAnimation(tile.animationResId)
+                    avatars.isNotEmpty() -> InvitationTileAvatars(tile)
+                    else -> InvitationTileLottieAnimation(tile.animationResId)
                 }
-                HomeTileTitle(title, subtitle)
-                HomeTileDescription(description)
+                InvitationTileTitle(title, subtitle)
+                InvitationTileDescription(description)
             }
         }
     }
 }
 
 @Composable
-private fun HomeTileTitle(title: String, subtitle: String?) {
+private fun InvitationTileTitle(title: String, subtitle: String?) {
     Row(
         Modifier.padding(bottom = Dimension.marginSmall),
         verticalAlignment = Alignment.Bottom
@@ -206,8 +211,8 @@ private fun HomeTileTitle(title: String, subtitle: String?) {
 }
 
 @Composable
-private fun HomeTileDescription(text: String) {
-    val linesCount = Numbers.homeTileDescriptionLinesCount
+private fun InvitationTileDescription(text: String) {
+    val linesCount = Numbers.invitationTileDescriptionLinesCount
     Text(
         text = text.addEmptyLines(linesCount),
         style = MaterialTheme.typography.bodyMedium,
@@ -217,16 +222,16 @@ private fun HomeTileDescription(text: String) {
 }
 
 @Composable
-private fun HomeTilePhotos(tile: HomeTileUiModel) {
-    if (tile.photoUrls.isEmpty()) {
-        HomeTileLottieAnimation(animationRes = tile.animationResId)
+private fun InvitationTileAvatars(tile: InvitationTileUiModel) {
+    if (tile.avatars.isEmpty()) {
+        InvitationTileLottieAnimation(animationRes = tile.animationResId)
     } else {
         Row(
             Modifier
                 .padding(bottom = Dimension.marginNormal)
                 .fillMaxWidth()
         ) {
-            tile.photoUrls.forEachIndexed { index, url ->
+            tile.avatars.forEachIndexed { index, url ->
                 CircleImage(
                     url = url,
                     modifier = Modifier
@@ -239,7 +244,7 @@ private fun HomeTilePhotos(tile: HomeTileUiModel) {
 }
 
 @Composable
-private fun HomeTileLottieAnimation(@RawRes animationRes: Int) {
+private fun InvitationTileLottieAnimation(@RawRes animationRes: Int) {
     val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(animationRes))
     LottieAnimation(
         composition = composition,
@@ -247,7 +252,7 @@ private fun HomeTileLottieAnimation(@RawRes animationRes: Int) {
         modifier = Modifier
             .padding(bottom = Dimension.marginNormal)
             .size(Dimension.imageSizeSmall)
-            .aspectRatio(Numbers.homeAnimationsRatio)
+            .aspectRatio(Numbers.invitationAnimationsRatio)
     )
 }
 
@@ -259,14 +264,14 @@ private fun CoupleLottieAnimation() {
         iterations = LottieConstants.IterateForever,
         modifier = Modifier
             .padding(top = Dimension.marginLarge)
-            .aspectRatio(Numbers.homeAnimationsRatio)
+            .aspectRatio(Numbers.invitationAnimationsRatio)
     )
 }
 
 @Composable
-private fun HomeBottomSheetContent(intents: List<IntentUiModel>, onIntentSelected: (IntentUiModel) -> Unit) {
+private fun InvitationBottomSheetContent(intents: List<IntentUiModel>, onIntentSelected: (IntentUiModel) -> Unit) {
     intents.forEach { intent ->
-        HomeIntentItem(
+        IntentItem(
             intent = intent,
             onClick = onIntentSelected
         )
@@ -275,7 +280,7 @@ private fun HomeBottomSheetContent(intents: List<IntentUiModel>, onIntentSelecte
 }
 
 @Composable
-fun HomeIntentItem(
+fun IntentItem(
     intent: IntentUiModel,
     onClick: (IntentUiModel) -> Unit
 ) {

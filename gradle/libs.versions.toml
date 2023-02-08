@@ -33,6 +33,7 @@ androidx-browser = "1.4.0"
 androidx-core = "1.9.0"
 androidx-core-splashscreen = "1.0.0"
 androidx-datastore-preferences = "1.0.0"
+androidx-datastore-proto = "1.0.0"
 androidx-hilt = "1.0.0"
 androidx-lifecycle = "2.5.1"
 androidx-navigation = "2.5.3"
@@ -59,9 +60,10 @@ hilt = "2.44.2"
 okhttp = "4.10.0"
 retrofit = "2.9.0"
 eithernet = "1.2.1"
-# JSON parsing
+# Json and serialization
 moshi = "1.14.0"
 moshix = "0.20.0"
+kotlinx-serialization-json = "1.3.3"
 # Database
 sqldelight = "1.5.4"
 sqlcipher = "4.5.2"
@@ -101,6 +103,7 @@ androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidx-core-splashscreen" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore-preferences" }
+androidx-datastore-proto = { module = "androidx.datastore:datastore", version.ref = "androidx-datastore-proto" }
 androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "androidx-hilt" }
 androidx-lifecycle-common = { module = "androidx.lifecycle:lifecycle-common", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "androidx-lifecycle" }
@@ -155,9 +158,10 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 retrofit-converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
 retrofit-converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofit" }
 eithernet = { module = "com.slack.eithernet:eithernet", version.ref = "eithernet" }
-# JSON parsing
+# Json and serialization
 moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 moshi-adapters = { module = "com.squareup.moshi:moshi-adapters", version.ref = "moshi" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json"}
 # Database
 sqldelight-android-driver = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-sqlite-driver = { module = "com.squareup.sqldelight:sqlite-driver", version.ref = "sqldelight" }
@@ -189,7 +193,9 @@ firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "fireb
 googleServices = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 # Dependency injection
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
-# JSON parsing
+# Json and serialization
 moshix = { id = "dev.zacsweers.moshix", version.ref = "moshix" }
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 # Database
 sqldelight = { id = "com.squareup.sqldelight", version.ref = "sqldelight" }
+

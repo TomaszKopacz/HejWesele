@@ -32,9 +32,16 @@ include ":presentation:ui:extensions"
 include ":presentation:ui:theme"
 
 include ":services:events"
+include ":services:galleries"
+include ":services:invitations"
+include ":services:settings"
 
 include ":repositories:events"
+include ":repositories:galleries"
+include ":repositories:invitations"
+include ":repositories:settings"
 
+include ":libraries:protodatastore"
 include ":libraries:realtimedatabase"
 include ":libraries:result"
 

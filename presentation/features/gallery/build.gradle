@@ -18,8 +18,14 @@ dependencies {
     implementation projects.presentation.ui.components
     implementation projects.presentation.ui.theme
 
+    implementation projects.repositories.galleries
+    implementation projects.repositories.settings
+
+    implementation projects.libraries.result
+
     implementation projects.common.mvvm
 
+    api libs.kotlinx.datetime
     implementation libs.airbnb.compose.lottie
     implementation libs.androidx.compose.ui
     implementation libs.androidx.compose.foundation

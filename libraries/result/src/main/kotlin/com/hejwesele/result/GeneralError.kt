@@ -1,12 +1,22 @@
 package com.hejwesele.result
 
-import java.lang.Exception
+import kotlin.Exception
 
-sealed class GeneralError {
-    class ServiceError(val message: String? = null, val exception: Exception? = null) : GeneralError()
-    class NetworkError(val message: String) : GeneralError()
-    class UnknownError(val message: String) : GeneralError()
+open class GeneralError(
+    val exception: Exception?,
+    val message: String?
+) {
+    class ServiceError(exception: Exception? = null, message: String? = null) : GeneralError(exception, message)
+    class NotFoundError(message: String? = null) : GeneralError(null, message)
+    class NetworkError(message: String? = null) : GeneralError(null, message)
+    class UnknownError(message: String? = null) : GeneralError(null, message)
 }
 
-fun serviceError(message: String? = null, exception: Exception? = null) =
-    GeneralError.ServiceError(message, exception)
+fun serviceError(exception: Exception? = null, message: String? = null) = GeneralError.ServiceError(exception, message)
+
+fun notFoundError(message: String? = null) = GeneralError.NotFoundError(message)
+
+fun networkError(message: String? = null) = GeneralError.NetworkError(message)
+
+fun unknownError(message: String? = null) = GeneralError.UnknownError(message)
+

@@ -64,8 +64,12 @@ internal fun Gallery(
 
     val uiState by viewModel.states.collectAsState()
 
-    val items = List(100) { "Item nr: $it" }
-    GalleryContent(items = items)
+    GalleryContent(
+        photos = uiState.photos,
+        galleryHintVisible = uiState.galleryHintVisible,
+        galleryLinkVisible = uiState.galleryLinkVisible,
+        onHintDismissed = { viewModel.onGalleryHintDismissed() }
+    )
 
     SideEffect {
         coroutineScope.launch {
@@ -81,9 +85,19 @@ internal fun Gallery(
 }
 
 @Composable
-internal fun GalleryContent(items: List<String>) {
+internal fun GalleryContent(
+    photos: List<String>,
+    galleryHintVisible: Boolean,
+    galleryLinkVisible: Boolean,
+    onHintDismissed: () -> Unit
+) {
     Box(modifier = Modifier.fillMaxSize()) {
-        ScrollableContent(items = items)
+        ScrollableContent(
+            photos = photos,
+            galleryHintVisible = galleryHintVisible,
+            galleryLinkVisible = galleryLinkVisible,
+            onHintDismissed = onHintDismissed
+        )
         FloatingAddButton(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -96,7 +110,12 @@ internal fun GalleryContent(items: List<String>) {
 }
 
 @Composable
-internal fun ScrollableContent(items: List<String>) {
+internal fun ScrollableContent(
+    photos: List<String>,
+    galleryHintVisible: Boolean,
+    galleryLinkVisible: Boolean,
+    onHintDismissed: () -> Unit
+) {
     val topPadding = WindowInsets.statusBars
         .only(WindowInsetsSides.Top)
         .asPaddingValues()
@@ -104,30 +123,36 @@ internal fun ScrollableContent(items: List<String>) {
 
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         margin(topPadding + Dimension.marginSmall)
-        singleItem(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Dimension.marginNormal)
-        ) {
-            GalleryHintTile()
+        if (galleryHintVisible) {
+            singleItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimension.marginNormal)
+            ) {
+                GalleryHintTile(
+                    onCloseClick = onHintDismissed
+                )
+            }
+            margin(Dimension.marginNormal)
         }
-        margin(Dimension.marginNormal)
-        singleItem(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Dimension.marginNormal)
-        ) {
-            GalleryTile()
+        if (galleryLinkVisible) {
+            singleItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimension.marginNormal)
+            ) {
+                GalleryTile()
+            }
+            margin(Dimension.marginNormal)
         }
-        margin(Dimension.marginNormal)
         gridItems(
-            items = items,
+            items = photos,
             columnCount = Numbers.galleryColumnCount,
             padding = Dimension.gridPaddingThin,
             innerPadding = Dimension.gridPaddingThin
-        ) {
+        ) { url ->
             RoundedCornerImage(
-                url = "https://picsum.photos/200",
+                url = url,
                 modifier = Modifier
                     .shadow(
                         elevation = Dimension.elevationSmall,
@@ -143,7 +168,7 @@ internal fun ScrollableContent(items: List<String>) {
 }
 
 @Composable
-private fun GalleryHintTile() {
+private fun GalleryHintTile(onCloseClick: () -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.tertiaryContainer,
@@ -172,9 +197,7 @@ private fun GalleryHintTile() {
             Icon(
                 imageVector = Icons.Default.Close,
                 contentDescription = null,
-                modifier = Modifier.clickable {
-                    // no-op
-                }
+                modifier = Modifier.clickable { onCloseClick() }
             )
         }
     }
@@ -228,16 +251,16 @@ private fun GalleryLottieAnimation() {
 }
 
 @Composable
-private fun FloatingAddButton(modifier: Modifier = Modifier) {
+private fun FloatingAddButton(
+    modifier: Modifier = Modifier
+) {
     Surface(
         modifier = modifier
             .shadow(
                 elevation = Dimension.elevationSmall,
                 shape = RoundedCornerShape(Dimension.radiusRoundedCornerSmall)
             )
-            .clickable {
-                // no-op
-            },
+            .clickable { /* no-op */ },
         color = MaterialTheme.colorScheme.tertiaryContainer,
         shape = RoundedCornerShape(Dimension.radiusRoundedCornerSmall)
     ) {

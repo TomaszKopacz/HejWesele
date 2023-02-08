@@ -7,5 +7,5 @@ class GetEvent @Inject constructor(
     private val repository: EventsRepository
 ) {
 
-    suspend operator fun invoke(id: String) = repository.getEvent(id)
+    suspend operator fun invoke(eventId: String) = repository.getEvent("-NNxhUpPm4DzrEhKItsY")
 }

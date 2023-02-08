@@ -3,6 +3,7 @@ plugins {
     id "org.jetbrains.kotlin.android"
     id "org.jetbrains.kotlin.kapt"
     id "com.google.dagger.hilt.android"
+    id "org.jetbrains.kotlin.plugin.serialization"
 }
 
 android {
@@ -15,10 +16,14 @@ android {
 }
 
 dependencies {
+    implementation projects.libraries.protodatastore
     implementation projects.libraries.realtimedatabase
     implementation projects.libraries.result
 
     implementation projects.repositories.events
+
+    api libs.kotlinx.datetime
+    implementation libs.kotlinx.serialization.json
 
     implementation libs.hilt.android
     kapt libs.hilt.compiler

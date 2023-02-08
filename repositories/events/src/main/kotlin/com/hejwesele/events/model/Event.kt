@@ -1,7 +1,11 @@
 package com.hejwesele.events.model
 
+import kotlinx.datetime.LocalDateTime
+
 data class Event(
-    val id: String?,
+    val id: String,
     val name: String,
-    val homeTiles: List<HomeTile>
+    val date: LocalDateTime,
+    val invitationId: String?,
+    val galleryId: String?
 )
