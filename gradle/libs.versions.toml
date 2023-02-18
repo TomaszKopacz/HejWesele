@@ -48,6 +48,7 @@ androidx-hilt-navigation-compose = "1.0.0"
 accompanist = "0.24.7-alpha"
 airbnb-compose-lottie = "5.2.0"
 glide-compose = "1.0.0-alpha.1"
+imagecropper-compose = "4.5.0"
 # Firebase/Play Services/Google Services/Play Store
 firebase-bom = "31.2.0"
 firebase-appDistribution-plugin = "3.0.2"
@@ -137,6 +138,7 @@ accompanist-pager = { module = "com.google.accompanist:accompanist-pager", versi
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
 airbnb-compose-lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "airbnb-compose-lottie" }
 glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glide-compose" }
+imagecropper-compose = { module  = "com.vanniktech:android-image-cropper", version.ref = "imagecropper-compose"}
 # Firebase/Play Services/Google Services/Play Store
 firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }

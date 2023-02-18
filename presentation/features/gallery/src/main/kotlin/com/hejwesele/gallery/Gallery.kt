@@ -1,5 +1,7 @@
 package com.hejwesele.gallery
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -23,10 +25,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -37,6 +39,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.canhub.cropper.CropImageContract
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.RoundedCornerImage
 import com.hejwesele.android.components.layouts.gridItems
@@ -46,7 +49,12 @@ import com.hejwesele.android.theme.Dimension
 import com.hejwesele.gallery.constants.Numbers
 import com.hejwesele.gallery.constants.Strings
 import com.hejwesele.gallery.model.GalleryUiAction.OpenDeviceGallery
-import kotlinx.coroutines.launch
+import com.hejwesele.gallery.model.GalleryUiAction.OpenImageCropper
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlin.coroutines.CoroutineContext
 
 @Composable
 internal fun Gallery(
@@ -60,28 +68,30 @@ internal fun Gallery(
         )
     }
 
-    val coroutineScope = rememberCoroutineScope()
+    val imageCropperLauncher = rememberLauncherForActivityResult(CropImageContract()) { cropResult ->
+        viewModel.onImageCropped(cropResult)
+    }
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(GetContent()) { uri ->
+        viewModel.onImageSelected(uri)
+    }
 
     val uiState by viewModel.states.collectAsState()
+
+    when (val action = uiState.action) {
+        is OpenDeviceGallery -> imagePickerLauncher.launch(action.directory)
+        is OpenImageCropper -> imageCropperLauncher.launch(action.options)
+        null -> { /*no-op*/ }
+    }
+    viewModel.onActionConsumed()
 
     GalleryContent(
         photos = uiState.photos,
         galleryHintVisible = uiState.galleryHintVisible,
         galleryLinkVisible = uiState.galleryLinkVisible,
-        onHintDismissed = { viewModel.onGalleryHintDismissed() }
+        onHintDismissed = { viewModel.onGalleryHintDismissed() },
+        onAddClicked = { viewModel.onAddPhotoClicked() },
     )
-
-    SideEffect {
-        coroutineScope.launch {
-            viewModel.actions.collect { action ->
-                when (action) {
-                    OpenDeviceGallery -> {
-
-                    }
-                }
-            }
-        }
-    }
 }
 
 @Composable
@@ -89,7 +99,8 @@ internal fun GalleryContent(
     photos: List<String>,
     galleryHintVisible: Boolean,
     galleryLinkVisible: Boolean,
-    onHintDismissed: () -> Unit
+    onHintDismissed: () -> Unit,
+    onAddClicked: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         ScrollableContent(
@@ -104,7 +115,8 @@ internal fun GalleryContent(
                 .padding(
                     end = Dimension.marginSmall,
                     bottom = Dimension.marginSmall
-                )
+                ),
+            action = { onAddClicked() }
         )
     }
 }
@@ -252,7 +264,8 @@ private fun GalleryLottieAnimation() {
 
 @Composable
 private fun FloatingAddButton(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    action: () -> Unit
 ) {
     Surface(
         modifier = modifier
@@ -260,7 +273,7 @@ private fun FloatingAddButton(
                 elevation = Dimension.elevationSmall,
                 shape = RoundedCornerShape(Dimension.radiusRoundedCornerSmall)
             )
-            .clickable { /* no-op */ },
+            .clickable { action() },
         color = MaterialTheme.colorScheme.tertiaryContainer,
         shape = RoundedCornerShape(Dimension.radiusRoundedCornerSmall)
     ) {
@@ -270,5 +283,15 @@ private fun FloatingAddButton(
             tint = MaterialTheme.colorScheme.onTertiaryContainer,
             modifier = Modifier.padding(Dimension.marginNormal)
         )
+    }
+}
+
+@Composable
+private fun <T> SharedFlow<T>.CollectAsEffect(
+    context: CoroutineContext,
+    block: (T) -> Unit
+) {
+    LaunchedEffect(key1 = Unit) {
+        this@CollectAsEffect.onEach { block(it) }.flowOn(context).launchIn(this)
     }
 }

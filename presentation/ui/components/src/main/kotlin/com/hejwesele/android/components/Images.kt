@@ -1,6 +1,8 @@
 package com.hejwesele.android.components
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CircleShape
@@ -10,6 +12,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -55,6 +58,24 @@ fun RoundedCornerImage(
             model = url,
             contentDescription = null,
             contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
+// TODO - remove if not used
+@Composable
+fun RoundedCornerBitmap(
+    bitmap: Bitmap,
+    modifier: Modifier
+) {
+    Surface(
+        shape = RoundedCornerShape(Dimension.radiusRoundedCornerSmall),
+        modifier = modifier
+    ) {
+        Image(
+            bitmap = bitmap.asImageBitmap(),
+            contentDescription = null,
             modifier = Modifier.fillMaxSize()
         )
     }

@@ -16,6 +16,7 @@ android {
 
 dependencies {
     implementation projects.presentation.ui.components
+    implementation projects.presentation.ui.extensions
     implementation projects.presentation.ui.theme
 
     implementation projects.repositories.galleries
@@ -37,6 +38,7 @@ dependencies {
     implementation libs.accompanist.navigation.animation
     implementation libs.accompanist.navigation.material
     implementation libs.accompanist.systemuicontroller
+    implementation libs.imagecropper.compose
 
     implementation libs.hilt.android
     kapt libs.hilt.compiler

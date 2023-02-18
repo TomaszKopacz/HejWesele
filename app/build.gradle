@@ -170,6 +170,7 @@ dependencies {
     implementation libs.accompanist.navigation.animation
     implementation libs.accompanist.navigation.material
     implementation libs.accompanist.systemuicontroller
+    implementation libs.imagecropper.compose
 
     implementation platform(libs.firebase.bom)
     implementation libs.firebase.perf

@@ -1,5 +1,8 @@
 package com.hejwesele.gallery.model
 
+import com.canhub.cropper.CropImageContractOptions
+
 sealed class GalleryUiAction {
-    object OpenDeviceGallery : GalleryUiAction()
+    class OpenDeviceGallery(val directory: String) : GalleryUiAction()
+    class OpenImageCropper(val options: CropImageContractOptions) : GalleryUiAction()
 }

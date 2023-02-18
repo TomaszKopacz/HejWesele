@@ -1,9 +1,17 @@
 package com.hejwesele.gallery
 
+import android.net.Uri
 import androidx.lifecycle.viewModelScope
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView.CropResult
+import com.canhub.cropper.CropImageView.CropShape
 import com.hejwesele.android.mvvm.StateActionsViewModel
+import com.hejwesele.extensions.BitmapResolver
 import com.hejwesele.galleries.model.Gallery
 import com.hejwesele.gallery.model.GalleryUiAction
+import com.hejwesele.gallery.model.GalleryUiAction.OpenDeviceGallery
+import com.hejwesele.gallery.model.GalleryUiAction.OpenImageCropper
 import com.hejwesele.gallery.model.GalleryUiState
 import com.hejwesele.gallery.usecase.DismissGalleryHint
 import com.hejwesele.gallery.usecase.GetEventSettings
@@ -25,6 +33,7 @@ internal class GalleryViewModel @Inject constructor(
     private val getEventSettings: GetEventSettings,
     private val observeGallery: ObserveGallery,
     private val dismissGalleryHint: DismissGalleryHint,
+    private val bitmapResolver: BitmapResolver
 ) : StateActionsViewModel<GalleryUiState, GalleryUiAction>(GalleryUiState.DEFAULT) {
 
     init {
@@ -98,9 +107,46 @@ internal class GalleryViewModel @Inject constructor(
         }
     }
 
-    fun onAddClicked() {
+    fun onAddPhotoClicked() {
         viewModelScope.launch {
-
+            updateState { copy(action = OpenDeviceGallery(IMAGE_DIRECTORY)) }
         }
+    }
+
+    fun onImageSelected(uri: Uri?) {
+        viewModelScope.launch {
+            if (uri != null) {
+                val options = CropImageContractOptions(
+                    uri = uri,
+                    cropImageOptions = cropOptions
+                )
+                updateState { copy(action = OpenImageCropper(options)) }
+            }
+        }
+    }
+
+    fun onImageCropped(result: CropResult) {
+        viewModelScope.launch {
+            val uri = result.uriContent
+            if (result.isSuccessful && uri != null) {
+                val bitmap = bitmapResolver.getBitmap(uri)
+            } else {
+                updateState { copy(error = GeneralError(null, null)) }
+            }
+        }
+    }
+
+    fun onActionConsumed() {
+        updateState { copy(action = null) }
+    }
+
+    companion object {
+        private const val IMAGE_DIRECTORY = "image/*"
+        private val cropOptions = CropImageOptions(
+            cropShape = CropShape.RECTANGLE,
+            fixAspectRatio = true,
+            aspectRatioX = 1,
+            aspectRatioY = 1
+        )
     }
 }
