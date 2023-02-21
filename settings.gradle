@@ -71,8 +71,6 @@ include ":core:config:release"
 include ":core:coroutines"
 include ":core:database"
 include ":core:datetime"
-include ":core:json"
-include ":core:networking"
 include ":core:osinfo"
 include ":core:preferences"
 

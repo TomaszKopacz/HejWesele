@@ -1,6 +1,7 @@
 plugins {
     id "com.android.library"
     id "org.jetbrains.kotlin.android"
+    alias libs.plugins.ksp
 }
 
 android {
@@ -24,4 +25,7 @@ dependencies {
     implementation libs.accompanist.navigation.animation
     implementation libs.accompanist.navigation.material
     implementation libs.accompanist.systemuicontroller
+
+    implementation libs.destinations.core
+    ksp libs.destinations.ksp
 }

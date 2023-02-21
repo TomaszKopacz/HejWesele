@@ -6,12 +6,18 @@ afterEvaluate { project ->
     if (isAndroid || isJava) {
         setupModule(isAndroid, isAndroidComponent)
         setupCommonTasks(isAndroid)
+        setupKsp(project)
         setupKapt(project)
     }
 }
 
 def setupModule(isAndroid, isAndroidComponent) {
     if (isAndroid) {
+        kotlin {
+            jvmToolchain {
+                languageVersion.set(JavaLanguageVersion.of(11))
+            }
+        }
         android {
             compileSdk projectCompileSdk
 
@@ -29,14 +35,9 @@ def setupModule(isAndroid, isAndroidComponent) {
                 targetCompatibility JavaVersion.VERSION_11
             }
 
-            kotlinOptions {
-                jvmTarget = "11"
-                freeCompilerArgs += [
-                    "-opt-in=kotlin.RequiresOptIn",
-                    "-P",
-                    "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
-                ]
-            }
+            kotlinOptions.freeCompilerArgs += [
+                "-opt-in=kotlin.RequiresOptIn"
+            ]
 
             lintOptions {
                 checkDependencies true
@@ -49,18 +50,25 @@ def setupModule(isAndroid, isAndroidComponent) {
                     "JavaPluginLanguageLevel"
                 ]
             }
+
+            testOptions {
+                unitTests.all {
+                    maxParallelForks = Runtime.runtime.availableProcessors() - 1
+                }
+            }
         }
     } else {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-
-        compileKotlin.kotlinOptions.jvmTarget = "11"
-        compileTestKotlin.kotlinOptions.jvmTarget = "11"
+        kotlin {
+            jvmToolchain {
+                languageVersion.set(JavaLanguageVersion.of(11))
+            }
+        }
 
         compileKotlin.kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
         compileTestKotlin.kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
 
         test {
+            maxParallelForks = Runtime.runtime.availableProcessors() - 1
             maxHeapSize = "256m"
         }
     }
@@ -74,6 +82,28 @@ def setupCommonTasks(isAndroid) {
     } else {
         tasks.register("unitTest") { task ->
             task.dependsOn(test)
+        }
+    }
+}
+
+// https://githubcom/google/ksp/issues/746
+def setupKsp(project) {
+    plugins.withId("com.google.devtools.ksp") {
+        if (project.plugins.hasPlugin('com.android.application')) {
+            setupKspSourceSets(android.applicationVariants)
+        } else if (project.plugins.hasPlugin('com.android.library')) {
+            setupKspSourceSets(android.libraryVariants)
+        }
+    }
+}
+
+def setupKspSourceSets(variants) {
+    variants.all { variant ->
+        def name = variant.name
+        kotlin.sourceSets {
+            getByName(name) {
+                kotlin.srcDirs += ["$buildDir/generated/ksp/$name/kotlin"]
+            }
         }
     }
 }

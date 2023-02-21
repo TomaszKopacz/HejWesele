@@ -3,6 +3,7 @@ plugins {
     id "org.jetbrains.kotlin.android"
     id "org.jetbrains.kotlin.kapt"
     id "com.google.dagger.hilt.android"
+    alias libs.plugins.ksp
 }
 
 android {
@@ -22,6 +23,9 @@ dependencies {
 
     implementation libs.hilt.android
     kapt libs.hilt.compiler
+
+    implementation libs.destinations.core
+    ksp libs.destinations.ksp
 
     api libs.androidx.compose.ui
     api libs.androidx.navigation.common

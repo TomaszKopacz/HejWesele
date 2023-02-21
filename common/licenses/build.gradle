@@ -2,7 +2,6 @@ plugins {
     id "com.android.library"
     id "org.jetbrains.kotlin.android"
     id "org.jetbrains.kotlin.kapt"
-    id "dev.zacsweers.moshix"
 }
 
 android {
@@ -11,7 +10,6 @@ android {
 
 dependencies {
     implementation projects.core.coroutines
-    implementation projects.core.json
 
     implementation libs.kotlinx.coroutines.core
 

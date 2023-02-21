@@ -3,6 +3,7 @@ plugins {
     id "org.jetbrains.kotlin.android"
     id "org.jetbrains.kotlin.kapt"
     id "com.google.dagger.hilt.android"
+    alias libs.plugins.ksp
 }
 
 android {
@@ -41,6 +42,9 @@ dependencies {
 
     implementation libs.hilt.android
     kapt libs.hilt.compiler
+
+    implementation libs.destinations.core
+    ksp libs.destinations.ksp
 
     testImplementation libs.junit
     testImplementation libs.mockito.kotlin
