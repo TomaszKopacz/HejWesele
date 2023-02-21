@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
@@ -63,12 +64,12 @@ internal fun Authentication(viewModel: AuthenticationViewModel = hiltViewModel()
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPadding)
+                .systemBarsPadding()
         ) {
             Switcher(
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .statusBarsPadding(),
-                onClick = { /*navController.navigate(AuthenticationRoutes.configuration)*/ }
+                    .align(Alignment.TopEnd),
+                onClick = { viewModel.configure() }
             )
             LoadingButton(
                 modifier = Modifier

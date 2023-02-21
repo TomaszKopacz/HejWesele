@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.core.content.ContextCompat.startActivity
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -67,7 +68,7 @@ import kotlinx.coroutines.launch
 @Composable
 @Destination
 internal fun Home(
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val systemUiController = rememberSystemUiController()
     SideEffect {

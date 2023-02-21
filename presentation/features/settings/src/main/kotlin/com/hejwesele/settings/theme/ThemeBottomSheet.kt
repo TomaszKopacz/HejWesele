@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -36,7 +37,9 @@ internal fun ThemeBottomSheet(viewModel: ThemeBottomSheetViewModel = hiltViewMod
         .collectAsState(initial = null)
 
     LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .systemBarsPadding(),
         contentPadding = PaddingValues(vertical = 8.dp)
     ) {
         item {
@@ -47,7 +50,7 @@ internal fun ThemeBottomSheet(viewModel: ThemeBottomSheetViewModel = hiltViewMod
                 ListItem(
                     modifier = Modifier.clickable { viewModel.switchTheme(theme) },
                     icon = { SelectedIcon(theme == selectedTheme) },
-                    text = { Text(text = themeText(theme)) }
+                    text = { Text(text = stringResource(id = theme.text())) }
                 )
             }
         }

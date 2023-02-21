@@ -16,11 +16,7 @@ import com.hejwesele.settings.theme.ThemeBottomSheet
 fun NavGraphBuilder.settingsGraph(route: String, navController: NavHostController) {
     navigation(startDestination = SettingsRoutes.main, route = route) {
         composable(SettingsRoutes.main) {
-            Settings(
-                themeInfoViewModel = hiltViewModel(),
-                appInfoViewModel = hiltViewModel(),
-                logoutViewModel = hiltViewModel()
-            )
+            Settings()
         }
         bottomSheet(SettingsRoutes.theme) {
             ThemeBottomSheet(

@@ -14,6 +14,11 @@ import dagger.multibindings.StringKey
 @InstallIn(SingletonComponent::class)
 @Module
 internal class HomeDestinationModule {
+
+//    @Provides
+//    @StartModuleDestination
+//    fun provideStart(): DirectionModuleDestination = DirectDestinationSpec(HomeDestination)
+
     @Provides
     @IntoMap
     @StringKey(FeatureModules.HOME)

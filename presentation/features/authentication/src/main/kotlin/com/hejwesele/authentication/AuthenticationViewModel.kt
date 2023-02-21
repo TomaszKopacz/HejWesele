@@ -10,17 +10,17 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class AuthenticationUiState(
+internal data class AuthenticationUiState(
     val isAuthenticating: Boolean = false
 )
 
-sealed class AuthenticationUiAction {
+internal sealed class AuthenticationUiAction {
     object ShowLoggingInMessage : AuthenticationUiAction()
 }
 
 @HiltViewModel
-class AuthenticationViewModel @Inject constructor(
-    private val navigator: Navigator
+internal class AuthenticationViewModel @Inject constructor(
+    private val navigator: AuthenticationNavigator
 ) : StateActionsViewModel<AuthenticationUiState, AuthenticationUiAction>(AuthenticationUiState()) {
 
     @Suppress("MagicNumber")
@@ -28,6 +28,10 @@ class AuthenticationViewModel @Inject constructor(
         updateState { copy(isAuthenticating = true) }
         emitAction(ShowLoggingInMessage)
         delay(5000L)
-        navigator.navigate(Destinations.main(userId = 44))
+        navigator.openDashboard()
+    }
+
+    fun configure() = viewModelScope.launch {
+        navigator.openConfiguration()
     }
 }

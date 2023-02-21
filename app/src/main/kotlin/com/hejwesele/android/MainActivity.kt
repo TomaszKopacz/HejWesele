@@ -73,7 +73,7 @@ internal class MainActivity : ComponentActivity() {
             AppTheme(themeManager) {
                 SystemBarsColor()
                 CompositionLocalProvider(LocalCustomTabs provides customTabs) {
-                    AppRoot(navGraph = navGraph, customTabs = customTabs)
+                    AppRoot(navGraph = navGraph, navigation = navigation, customTabs = customTabs)
                 }
             }
         }
