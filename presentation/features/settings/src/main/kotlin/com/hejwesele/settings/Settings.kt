@@ -37,6 +37,7 @@ import com.hejwesele.settings.navigation.SettingsNavGraph
 import com.hejwesele.settings.theme.ThemeInfoViewModel
 import com.hejwesele.settings.theme.themeText
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.NavGraph
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

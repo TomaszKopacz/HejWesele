@@ -1,4 +1,4 @@
-package com.hejwesele
+package com.hejwesele.android
 
 import androidx.activity.ComponentActivity
 import com.hejwesele.android.customtabs.CustomTabs

@@ -126,6 +126,10 @@ dependencies {
     implementation projects.common.workmanager
 
     implementation projects.presentation.features.event
+    implementation projects.presentation.features.home
+    implementation projects.presentation.features.schedule
+    implementation projects.presentation.features.services
+    implementation projects.presentation.features.gallery
     implementation projects.presentation.features.authentication
     implementation projects.presentation.features.dashboard
     implementation projects.presentation.features.main
@@ -166,6 +170,7 @@ dependencies {
     implementation libs.androidx.compose.foundation
     implementation libs.androidx.compose.material
     implementation libs.androidx.activity.compose
+    implementation libs.accompanist.insets.ui
     implementation libs.accompanist.navigation.animation
     implementation libs.accompanist.navigation.material
     implementation libs.accompanist.systemuicontroller

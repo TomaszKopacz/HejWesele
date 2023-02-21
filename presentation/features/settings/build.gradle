@@ -14,7 +14,7 @@ android {
         kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
     }
     ksp {
-        arg("compose-destinations.mode", "destinations")
+        arg("compose-destinations.mode", "navgraphs")
     }
 }
 

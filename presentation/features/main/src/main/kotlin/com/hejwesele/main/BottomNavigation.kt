@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.hejwesele.main.BottomNavigationItem.Dashboard
 import com.hejwesele.main.BottomNavigationItem.Settings
+import com.hejwesele.main.MainRoutes.settings
 
 internal sealed class BottomNavigationItem(
     val route: String,
@@ -18,13 +19,13 @@ internal sealed class BottomNavigationItem(
     object Dashboard : BottomNavigationItem(
         route = MainRoutes.dashboard,
         icon = Icons.Filled.Home,
-        label = R.string.dashboard
+        label = R.string.home
     )
 
     object Settings : BottomNavigationItem(
         route = MainRoutes.settings,
         icon = Icons.Filled.Settings,
-        label = R.string.settings
+        label = R.string.schedule
     )
 }
 

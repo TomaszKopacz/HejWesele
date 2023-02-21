@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.config.ConfigurationSwitcher.Switcher
@@ -36,7 +37,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 
 @Composable
 @Destination
-internal fun Authentication(viewModel: AuthenticationViewModel) {
+internal fun Authentication(viewModel: AuthenticationViewModel = hiltViewModel()) {
     val systemUiController = rememberSystemUiController()
     val useDarkIcons = MaterialTheme.colors.isLight
     SideEffect {

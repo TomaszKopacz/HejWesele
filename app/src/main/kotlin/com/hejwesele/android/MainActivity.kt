@@ -1,4 +1,4 @@
-package com.hejwesele
+package com.hejwesele.android
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -24,6 +24,7 @@ import androidx.lifecycle.flowWithLifecycle
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hejwesele.R
 import com.hejwesele.android.customtabs.CustomTabs
 import com.hejwesele.android.customtabs.LocalCustomTabs
 import com.hejwesele.android.navigation.AuthenticationDirection
@@ -78,7 +79,7 @@ class MainActivity : ComponentActivity() {
             AppTheme(themeManager) {
                 SystemBarsColor()
                 CompositionLocalProvider(LocalCustomTabs provides customTabs) {
-                    Content()
+                    AppRoot(customTabs = customTabs)
                 }
             }
         }
