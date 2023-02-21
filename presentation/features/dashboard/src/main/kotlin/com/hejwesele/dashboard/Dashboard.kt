@@ -21,7 +21,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 
 @Composable
 @Destination
-fun Dashboard(appName: String, userId: Int) {
+internal fun Dashboard(appName: String, userId: Int) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setStatusBarColor(Color.Transparent, darkIcons = false)

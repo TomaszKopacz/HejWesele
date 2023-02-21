@@ -19,6 +19,8 @@ android {
 }
 
 dependencies {
+    implementation projects.presentation.navigation
+
     api projects.core.config.config
     implementation projects.core.preferences
 

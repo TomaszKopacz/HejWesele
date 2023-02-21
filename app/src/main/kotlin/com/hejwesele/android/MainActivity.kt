@@ -17,23 +17,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.stringResource
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.flowWithLifecycle
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.hejwesele.R
 import com.hejwesele.android.customtabs.CustomTabs
 import com.hejwesele.android.customtabs.LocalCustomTabs
-import com.hejwesele.android.navigation.AuthenticationDirection
 import com.hejwesele.android.navigation.EventDirection
 import com.hejwesele.android.navigation.EventDirection.getEventId
-import com.hejwesele.android.navigation.MainDirection
-import com.hejwesele.android.navigation.MainDirection.getUserId
 import com.hejwesele.android.navigation.Navigation
-import com.hejwesele.android.navigation.OnboardingDirection
 import com.hejwesele.android.navigation.composable
 import com.hejwesele.android.navigation.getStartDestination
 import com.hejwesele.android.navigation.navigate
@@ -45,17 +39,14 @@ import com.hejwesele.android.thememanager.Theme.DARK
 import com.hejwesele.android.thememanager.Theme.LIGHT
 import com.hejwesele.android.thememanager.Theme.SYSTEM_DEFAULT
 import com.hejwesele.android.thememanager.ThemeManager
-import com.hejwesele.authentication.authenticationGraph
 import com.hejwesele.event.Event
-import com.hejwesele.main.Main
-import com.hejwesele.onboarding.Onboarding
 import com.hejwesele.onboarding.OnboardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @OptIn(ExperimentalAnimationApi::class)
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+internal class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var themeManager: ThemeManager
@@ -65,6 +56,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var customTabs: CustomTabs
+
+    @Inject
+    lateinit var navGraph: RootNavGraph
 
     private val viewModel: OnboardingViewModel by viewModels()
 
@@ -79,7 +73,7 @@ class MainActivity : ComponentActivity() {
             AppTheme(themeManager) {
                 SystemBarsColor()
                 CompositionLocalProvider(LocalCustomTabs provides customTabs) {
-                    AppRoot(customTabs = customTabs)
+                    AppRoot(navGraph = navGraph, customTabs = customTabs)
                 }
             }
         }
@@ -130,17 +124,6 @@ class MainActivity : ComponentActivity() {
             ) { backStackEntry ->
                 Event(
                     eventId = backStackEntry.arguments?.getEventId() ?: 0
-                )
-            }
-            composable(direction = OnboardingDirection) { Onboarding() }
-            authenticationGraph(AuthenticationDirection.route, navController)
-            composable(
-                direction = MainDirection,
-                enterTransition = { Transitions.slideInHorizontally }
-            ) { backStackEntry ->
-                Main(
-                    appName = stringResource(id = R.string.app_name),
-                    userId = backStackEntry.arguments!!.getUserId()
                 )
             }
         }

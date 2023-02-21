@@ -30,10 +30,14 @@ import com.hejwesele.services.destinations.ServicesDestination
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
+import com.ramcosta.composedestinations.spec.NavGraphSpec
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
 @Composable
-internal fun AppRoot(customTabs: CustomTabs) {
+internal fun AppRoot(
+    navGraph: NavGraphSpec,
+    customTabs: CustomTabs,
+) {
     val systemUiController = rememberSystemUiController()
     val useDarkIcons = MaterialTheme.colors.isLight
     SideEffect {
@@ -68,8 +72,8 @@ internal fun AppRoot(customTabs: CustomTabs) {
                        )
                    ),
                    navController = navController,
-                   navGraph = RootNavGraph,
-                   startRoute = RootNavGraph.startRoute,
+                   navGraph = navGraph,
+                   startRoute = navGraph.startRoute,
                    modifier = Modifier.padding(innerPadding)
                )
             }

@@ -19,6 +19,7 @@ android {
 }
 
 dependencies {
+    implementation projects.presentation.navigation
     implementation projects.presentation.ui.components
     implementation projects.presentation.ui.extensions
     implementation projects.presentation.ui.theme

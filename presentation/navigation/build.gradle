@@ -16,6 +16,7 @@ android {
 
 dependencies {
     implementation libs.accompanist.navigation.animation
+    implementation libs.destinations.core
 
     api libs.kotlinx.coroutines.core
 
