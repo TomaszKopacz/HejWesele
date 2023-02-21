@@ -24,7 +24,7 @@ fun NavGraphBuilder.authenticationGraph(route: String, navController: NavHostCon
                 }
             }
         ) {
-            Authentication(viewModel = hiltViewModel(), navController)
+            Authentication(viewModel = hiltViewModel())
         }
         configurationScreen(AuthenticationRoutes.configuration)
     }

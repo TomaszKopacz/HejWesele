@@ -60,10 +60,12 @@ import com.hejwesele.home.model.InvitationTileUiModel
 import com.hejwesele.home.model.HomeUiAction.OpenActivity
 import com.hejwesele.home.model.HomeUiAction.ShowTileIntentOptions
 import com.hejwesele.home.model.IntentUiModel
+import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
+@Destination
 internal fun Home(
     viewModel: HomeViewModel
 ) {

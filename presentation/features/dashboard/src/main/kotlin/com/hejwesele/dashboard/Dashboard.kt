@@ -17,8 +17,10 @@ import androidx.compose.ui.graphics.Color
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.ramcosta.composedestinations.annotation.Destination
 
 @Composable
+@Destination
 fun Dashboard(appName: String, userId: Int) {
     val systemUiController = rememberSystemUiController()
     SideEffect {

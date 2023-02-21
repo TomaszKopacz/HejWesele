@@ -35,11 +35,12 @@ import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import com.hejwesele.android.customtabs.LocalCustomTabs
 import com.hejwesele.onboarding.Constants.PRIVACY_POLICY_URL
+import com.ramcosta.composedestinations.annotation.Destination
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
+@Destination
 fun Onboarding(
-    navController: NavHostController,
     onboardingViewModel: OnboardingViewModel = hiltViewModel()
 ) {
     val onboardingPages = OnboardingPages.values()
@@ -73,7 +74,7 @@ fun Onboarding(
                 nextButtonVisible = buttonsVisible
             ) {
                 onboardingViewModel.nextClick()
-                navController.popBackStack()
+                /*navController.popBackStack()*/
             }
         }
     }

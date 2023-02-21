@@ -13,6 +13,9 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
     }
+    ksp {
+        arg("compose-destinations.mode", "destinations")
+    }
 }
 
 dependencies {

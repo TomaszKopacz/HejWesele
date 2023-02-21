@@ -19,12 +19,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.hejwesele.android.components.HeaderSmall
 import com.hejwesele.settings.R
+import com.hejwesele.settings.navigation.SettingsNavGraph
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.spec.DestinationStyle.BottomSheet
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-internal fun ThemeBottomSheet(viewModel: ThemeBottomSheetViewModel) {
+@Destination(route = "theme-switcher", style = BottomSheet::class)
+@SettingsNavGraph
+internal fun ThemeBottomSheet(viewModel: ThemeBottomSheetViewModel = hiltViewModel()) {
     val uiState by viewModel.states.collectAsState()
     val selectedTheme by remember(viewModel) { viewModel.observeSelectedTheme() }
         .collectAsState(initial = null)

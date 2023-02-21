@@ -14,8 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.hejwesele.android.components.TextBodyLarge
+import com.ramcosta.composedestinations.annotation.Destination
 
 @Composable
+@Destination
 fun Schedule() {
     Box(
         modifier = Modifier

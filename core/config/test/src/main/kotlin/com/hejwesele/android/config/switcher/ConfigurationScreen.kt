@@ -41,11 +41,13 @@ import com.hejwesele.android.config.switcher.ConfigurationItem.RadioGroup
 import com.hejwesele.android.config.switcher.ConfigurationUiState.Loading
 import com.hejwesele.android.mvvm.ActionsEffect
 import com.jakewharton.processphoenix.ProcessPhoenix
+import com.ramcosta.composedestinations.annotation.Destination
 
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.configurationScreen(route: String) = composable(route) { ConfigurationScreen(viewModel = hiltViewModel()) }
 
 @Composable
+@Destination
 internal fun ConfigurationScreen(viewModel: ConfigurationViewModel) {
     val systemUiController = rememberSystemUiController()
     SideEffect {

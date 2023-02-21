@@ -131,7 +131,7 @@ class MainActivity : ComponentActivity() {
                     eventId = backStackEntry.arguments?.getEventId() ?: 0
                 )
             }
-            composable(direction = OnboardingDirection) { Onboarding(navController) }
+            composable(direction = OnboardingDirection) { Onboarding() }
             authenticationGraph(AuthenticationDirection.route, navController)
             composable(
                 direction = MainDirection,

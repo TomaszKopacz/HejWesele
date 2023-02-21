@@ -50,6 +50,7 @@ import com.hejwesele.gallery.constants.Numbers
 import com.hejwesele.gallery.constants.Strings
 import com.hejwesele.gallery.model.GalleryUiAction.OpenDeviceGallery
 import com.hejwesele.gallery.model.GalleryUiAction.OpenImageCropper
+import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -57,6 +58,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlin.coroutines.CoroutineContext
 
 @Composable
+@Destination
 internal fun Gallery(
     viewModel: GalleryViewModel
 ) {

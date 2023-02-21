@@ -19,8 +19,7 @@ fun NavGraphBuilder.settingsGraph(route: String, navController: NavHostControlle
             Settings(
                 themeInfoViewModel = hiltViewModel(),
                 appInfoViewModel = hiltViewModel(),
-                logoutViewModel = hiltViewModel(),
-                navController
+                logoutViewModel = hiltViewModel()
             )
         }
         bottomSheet(SettingsRoutes.theme) {

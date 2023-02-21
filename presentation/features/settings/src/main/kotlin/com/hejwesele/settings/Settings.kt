@@ -26,22 +26,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.Footer
 import com.hejwesele.android.components.HeaderLarge
 import com.hejwesele.settings.appinfo.AppInfoViewModel
 import com.hejwesele.settings.logout.LogoutViewModel
+import com.hejwesele.settings.navigation.SettingsNavGraph
 import com.hejwesele.settings.theme.ThemeInfoViewModel
 import com.hejwesele.settings.theme.themeText
+import com.ramcosta.composedestinations.annotation.Destination
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
+@Destination(route = "main")
+@SettingsNavGraph(start = true)
 internal fun Settings(
-    themeInfoViewModel: ThemeInfoViewModel,
-    appInfoViewModel: AppInfoViewModel,
-    logoutViewModel: LogoutViewModel,
-    navController: NavHostController
+    themeInfoViewModel: ThemeInfoViewModel = hiltViewModel(),
+    appInfoViewModel: AppInfoViewModel = hiltViewModel(),
+    logoutViewModel: LogoutViewModel = hiltViewModel()
 ) {
     val systemUiController = rememberSystemUiController()
     val useDarkIcons = MaterialTheme.colors.isLight
@@ -63,7 +67,7 @@ internal fun Settings(
         }
         item {
             ListItem(
-                modifier = Modifier.clickable { navController.navigate(SettingsRoutes.theme) },
+                modifier = Modifier.clickable { /*navController.navigate(SettingsRoutes.theme)*/ },
                 icon = { ListItemIcon(imageVector = Icons.Filled.Palette) },
                 text = { Text(stringResource(id = R.string.settings_theme)) },
                 secondaryText = { Text(text = themeText(selectedTheme)) }
@@ -71,7 +75,7 @@ internal fun Settings(
         }
         item {
             ListItem(
-                modifier = Modifier.clickable { navController.navigate(SettingsRoutes.licenses) },
+                modifier = Modifier.clickable { /*navController.navigate(SettingsRoutes.licenses)*/ },
                 icon = { ListItemIcon(imageVector = Icons.Filled.Info) },
                 text = { Text(stringResource(id = R.string.settings_licenses)) }
             )

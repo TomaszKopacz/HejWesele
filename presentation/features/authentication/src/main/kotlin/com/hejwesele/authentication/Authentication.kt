@@ -32,9 +32,11 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.config.ConfigurationSwitcher.Switcher
 import com.hejwesele.android.mvvm.ActionsEffect
 import com.hejwesele.authentication.AuthenticationUiAction.ShowLoggingInMessage
+import com.ramcosta.composedestinations.annotation.Destination
 
 @Composable
-internal fun Authentication(viewModel: AuthenticationViewModel, navController: NavHostController) {
+@Destination
+internal fun Authentication(viewModel: AuthenticationViewModel) {
     val systemUiController = rememberSystemUiController()
     val useDarkIcons = MaterialTheme.colors.isLight
     SideEffect {
@@ -65,7 +67,7 @@ internal fun Authentication(viewModel: AuthenticationViewModel, navController: N
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .statusBarsPadding(),
-                onClick = { navController.navigate(AuthenticationRoutes.configuration) }
+                onClick = { /*navController.navigate(AuthenticationRoutes.configuration)*/ }
             )
             LoadingButton(
                 modifier = Modifier

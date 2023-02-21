@@ -24,13 +24,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.hejwesele.android.components.HeaderMedium
 import com.hejwesele.android.customtabs.LocalCustomTabs
 import com.hejwesele.settings.R
+import com.hejwesele.settings.navigation.SettingsNavGraph
+import com.ramcosta.composedestinations.annotation.Destination
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-internal fun Licenses(viewModel: LicensesViewModel) {
+@Destination
+@SettingsNavGraph
+internal fun Licenses(viewModel: LicensesViewModel = hiltViewModel()) {
     val uiState by viewModel.states.collectAsState()
 
     LazyColumn(
