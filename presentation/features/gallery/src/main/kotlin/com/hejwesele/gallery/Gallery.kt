@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -60,7 +61,7 @@ import kotlin.coroutines.CoroutineContext
 @Composable
 @Destination
 internal fun Gallery(
-    viewModel: GalleryViewModel
+    viewModel: GalleryViewModel = hiltViewModel()
 ) {
     val systemUiController = rememberSystemUiController()
     SideEffect {

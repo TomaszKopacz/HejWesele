@@ -26,7 +26,6 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.insets.ui.BottomNavigation
 import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
@@ -34,10 +33,6 @@ import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Transitions
-import com.hejwesele.gallery.navigation.galleryGraph
-import com.hejwesele.home.navigation.homeGraph
-import com.hejwesele.schedule.Schedule
-import com.hejwesele.services.Services
 
 @OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -66,14 +61,14 @@ fun Event(eventId: Int) {
                 enterTransition = { Transitions.fadeIn },
                 exitTransition = { Transitions.fadeOut }
             ) {
-                homeGraph(
+                /*homeGraph(
                     route = EventRoutes.home
                 )
                 composable(EventRoutes.schedule) { Schedule() }
                 composable(EventRoutes.services) { Services() }
                 galleryGraph(
                     route = EventRoutes.gallery
-                )
+                )*/
             }
         }
     }
