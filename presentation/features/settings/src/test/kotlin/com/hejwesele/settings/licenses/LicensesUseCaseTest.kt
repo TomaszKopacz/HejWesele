@@ -10,7 +10,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class LicensesUseCaseTest {
+internal class LicensesUseCaseTest {
 
     private val dispatcher = StandardTestDispatcher()
 

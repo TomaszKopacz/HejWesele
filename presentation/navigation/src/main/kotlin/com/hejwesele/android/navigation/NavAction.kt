@@ -5,5 +5,5 @@ import com.ramcosta.composedestinations.spec.Direction
 
 data class NavAction(
     val route: Direction,
-    val options: NavOptionsBuilder.() -> Unit
+    val options: NavOptionsBuilder.() -> Unit = {  }
 )

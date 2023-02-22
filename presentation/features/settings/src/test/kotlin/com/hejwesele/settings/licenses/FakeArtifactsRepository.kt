@@ -3,7 +3,7 @@ package com.hejwesele.settings.licenses
 import com.hejwesele.android.licenses.Artifact
 import com.hejwesele.android.licenses.ArtifactsRepository
 
-class FakeArtifactsRepository : ArtifactsRepository {
+internal class FakeArtifactsRepository : ArtifactsRepository {
 
     lateinit var artifacts: List<Artifact>
 

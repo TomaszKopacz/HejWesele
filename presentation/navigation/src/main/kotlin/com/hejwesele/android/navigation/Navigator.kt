@@ -5,5 +5,5 @@ import com.ramcosta.composedestinations.spec.Direction
 
 interface Navigator {
 
-    suspend fun navigate(direction: Direction, builder: NavOptionsBuilder.() -> Unit = {})
+    suspend fun navigate(direction: Direction, builder: NavOptionsBuilder.() -> Unit = {  })
 }

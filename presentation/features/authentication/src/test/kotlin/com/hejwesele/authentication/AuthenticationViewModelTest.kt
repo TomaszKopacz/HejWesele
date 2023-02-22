@@ -16,9 +16,9 @@ import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class AuthenticationViewModelTest {
+internal class AuthenticationViewModelTest {
 
-    private val navigator: Navigator = mock()
+    private val navigator: AuthenticationNavigator = mock()
 
     private val viewModel = AuthenticationViewModel(navigator)
 
@@ -36,7 +36,7 @@ class AuthenticationViewModelTest {
 
             assertThat(viewModel.states.value).isEqualTo(AuthenticationUiState(isAuthenticating = true))
             assertThat(awaitItem()).isEqualTo(AuthenticationUiAction.ShowLoggingInMessage)
-            verify(navigator).navigate(Destinations.main(userId = 44))
+            verify(navigator).openDashboard()
         }
     }
 }

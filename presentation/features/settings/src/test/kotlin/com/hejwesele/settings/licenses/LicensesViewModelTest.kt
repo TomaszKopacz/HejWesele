@@ -13,7 +13,7 @@ import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class LicensesViewModelTest {
+internal class LicensesViewModelTest {
 
     private val dispatcher = StandardTestDispatcher()
 

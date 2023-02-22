@@ -59,7 +59,9 @@ internal class SettingsViewModel @Inject constructor(
         when (type) {
             THEME_SWITCHER -> navigator.openThemeSwitcher()
             LICENSES -> navigator.openLicenses()
-            LOGOUT -> navigator.openLogin()
+            LOGOUT -> {
+                navigator.openLogin()
+            }
         }
     }
 }
