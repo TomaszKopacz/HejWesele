@@ -1,4 +1,4 @@
-package com.hejwesele.android
+package com.hejwesele.android.root
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues

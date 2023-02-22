@@ -14,7 +14,7 @@
         android:theme="@style/Theme.Splash"
         tools:ignore="DataExtractionRules,UnusedAttribute">
         <activity
-            android:name="com.hejwesele.android.MainActivity"
+            android:name="com.hejwesele.android.root.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,10 +38,6 @@
                 android:value="androidx.startup"
                 tools:node="remove" />
         </provider>
-
-        <activity
-            android:name="com.hejwesele.android.TestActivity"
-            android:exported="true" />
     </application>
 
 </manifest>

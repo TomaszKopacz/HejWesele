@@ -1,4 +1,4 @@
-package com.hejwesele.android
+package com.hejwesele.android.root
 
 import com.hejwesele.android.navigation.DirectionModuleDestination
 import com.hejwesele.android.navigation.ModuleDestinationSpec

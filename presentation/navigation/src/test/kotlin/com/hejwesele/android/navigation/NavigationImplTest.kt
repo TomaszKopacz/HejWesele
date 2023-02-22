@@ -12,7 +12,7 @@ class NavigationImplTest {
 
     @Test
     fun `emit events correctly`() = runBlocking {
-        navigation.actions.test {
+        navigation.navActions.test {
             navigation.navigate(Direction("dashboard"))
             navigation.navigate(Direction("settings"))
 

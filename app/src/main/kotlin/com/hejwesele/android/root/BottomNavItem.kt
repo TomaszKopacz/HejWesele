@@ -1,4 +1,4 @@
-package com.hejwesele.android
+package com.hejwesele.android.root
 
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector

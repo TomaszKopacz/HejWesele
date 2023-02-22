@@ -10,7 +10,9 @@ import com.hejwesele.android.navigation.FeatureModules.SCHEDULE
 import com.hejwesele.android.navigation.FeatureModules.SERVICES
 import com.hejwesele.android.navigation.FeatureModules.SETTINGS
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ModuleDestinations @Inject constructor(
     private val directions: Map<String, @JvmSuppressWildcards ModuleDestinationSpec<*>>
 ) {

@@ -10,11 +10,11 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface NavigationModule {
+abstract class NavigationModule {
 
     @Binds
-    fun bindNavigation(impl: NavigationImpl): Navigation
+    internal abstract fun bindNavigation(impl: NavigationImpl): Navigation
 
     @Binds
-    fun bindNavigator(impl: NavigationImpl): Navigator
+    internal abstract fun bindNavigator(impl: NavigationImpl): Navigator
 }
