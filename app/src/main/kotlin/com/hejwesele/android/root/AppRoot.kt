@@ -1,13 +1,13 @@
 package com.hejwesele.android.root
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -45,8 +45,6 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import com.ramcosta.composedestinations.spec.NavGraphSpec
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -58,7 +56,7 @@ internal fun AppRoot(
     themeManager: ThemeManager
 ) {
     ApplicationTheme(themeManager) {
-        SystemBars()
+        SystemBars(themeManager.getSelectedTheme())
         CompositionLocalProvider(LocalCustomTabs provides customTabs) {
             AppNavigation(
                 navController = navController,
@@ -83,15 +81,16 @@ private fun ApplicationTheme(themeManager: ThemeManager, content: @Composable ()
 }
 
 @Composable
-private fun SystemBars() {
+private fun SystemBars(theme: Theme) {
     val systemUiController = rememberSystemUiController()
-    val useDarkIcons = MaterialTheme.colors.isLight
+    val useDarkIcons = isAppIndDarkTheme(theme = theme)
     SideEffect {
-        systemUiController.setStatusBarColor(Color.Transparent, darkIcons = useDarkIcons)
+        systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = useDarkIcons)
+        systemUiController.setNavigationBarColor(color = Color.Transparent, darkIcons = useDarkIcons)
     }
 }
 
-@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun AppNavigation(
     navController: NavHostController,
@@ -106,21 +105,19 @@ private fun AppNavigation(
         navigation = navigation
     )
 
-    ModalBottomSheetLayout(
-        bottomSheetNavigator = bottomSheetNavigator,
-        sheetShape = MaterialTheme.shapes.large.copy(
-            bottomStart = CornerSize(0.dp),
-            bottomEnd = CornerSize(0.dp)
-        )
-    ) {
-        Scaffold(
-            bottomBar = {
-                AppBottomBar(
-                    items = bottomNavItems,
-                    navController = navController
-                )
-            }
-        ) { innerPadding ->
+    Scaffold(
+        modifier = Modifier.background(color = MaterialTheme.colorScheme.surface),
+        bottomBar = {
+            AppBottomBar(
+                items = bottomNavItems,
+                navController = navController
+            )
+        },
+        contentWindowInsets = WindowInsets(top = 0.dp)
+    ) { innerPadding ->
+        ModalBottomSheetLayout(
+            bottomSheetNavigator = bottomSheetNavigator
+        ) {
             DestinationsNavHost(
                 engine = rememberAnimatedNavHostEngine(
                     rootDefaultAnimations = RootNavGraphDefaultAnimations(
@@ -162,22 +159,22 @@ private fun isAppIndDarkTheme(theme: Theme): Boolean = when (theme) {
 private val bottomNavItems = setOf(
     BottomNavItem(
         route = HomeDestination.route,
-        label = R.string.home,
-        icon = Icons.Filled.Home
+        iconSelected = R.drawable.ic_home_filled,
+        iconUnselected = R.drawable.ic_home
     ),
     BottomNavItem(
         route = ScheduleDestination.route,
-        label = R.string.schedule,
-        icon = Icons.Filled.Home
+        iconSelected = com.hejwesele.event.R.drawable.ic_schedule_filled,
+        iconUnselected = com.hejwesele.event.R.drawable.ic_schedule
     ),
     BottomNavItem(
         route = ServicesDestination.route,
-        label = R.string.services,
-        icon = Icons.Filled.Home
+        iconSelected = com.hejwesele.event.R.drawable.ic_services_filled,
+        iconUnselected = com.hejwesele.event.R.drawable.ic_services
     ),
     BottomNavItem(
         route = GalleryDestination.route,
-        label = R.string.gallery,
-        icon = Icons.Filled.Home
+        iconSelected = com.hejwesele.event.R.drawable.ic_media_filled,
+        iconUnselected = com.hejwesele.event.R.drawable.ic_media
     )
 )
