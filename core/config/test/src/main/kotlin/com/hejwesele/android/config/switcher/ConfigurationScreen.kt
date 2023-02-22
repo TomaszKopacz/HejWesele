@@ -1,6 +1,5 @@
 package com.hejwesele.android.config.switcher
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,20 +30,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraphBuilder
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
-import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.config.switcher.ConfigurationItem.RadioGroup
 import com.hejwesele.android.config.switcher.ConfigurationUiState.Loading
 import com.hejwesele.android.mvvm.ActionsEffect
 import com.jakewharton.processphoenix.ProcessPhoenix
 import com.ramcosta.composedestinations.annotation.Destination
-
-@OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.configurationScreen(route: String) = composable(route) { ConfigurationScreen(viewModel = hiltViewModel()) }
 
 @Composable
 @Destination

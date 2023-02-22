@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.analytics.Analytics
 import com.hejwesele.android.coroutines.di.IoDispatcher
-import com.hejwesele.android.navigation.Destinations
 import com.hejwesele.android.navigation.Navigator
 import com.hejwesele.onboarding.OnboardingAnalyticsEvent.Displayed
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
     private val repository: OnboardingRepository,
-    private val navigator: Navigator,
+    // private val navigator: Navigator,
     private val analytics: Analytics,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
@@ -36,7 +35,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     private fun navigateToAuthenticationScreen() = viewModelScope.launch(ioDispatcher) {
-        navigator.navigate(Destinations.authentication)
+        // navigator.navigate(Destinations.authentication)
     }
 
     private fun logAnalyticsEvent() = viewModelScope.launch(ioDispatcher) {

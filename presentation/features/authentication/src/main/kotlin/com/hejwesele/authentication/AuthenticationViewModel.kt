@@ -2,8 +2,6 @@ package com.hejwesele.authentication
 
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateActionsViewModel
-import com.hejwesele.android.navigation.Destinations
-import com.hejwesele.android.navigation.Navigator
 import com.hejwesele.authentication.AuthenticationUiAction.ShowLoggingInMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay

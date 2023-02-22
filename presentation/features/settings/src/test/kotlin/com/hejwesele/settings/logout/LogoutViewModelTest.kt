@@ -1,6 +1,5 @@
 package com.hejwesele.settings.logout
 
-import com.hejwesele.android.navigation.Destinations
 import com.hejwesele.android.navigation.Navigator
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify

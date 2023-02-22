@@ -1,9 +1,9 @@
 package com.hejwesele.android.navigation
 
 import androidx.navigation.NavOptionsBuilder
+import com.ramcosta.composedestinations.spec.Direction
 
 interface Navigator {
-    suspend fun navigate(destination: Destination)
 
-    suspend fun navigate(direction: ComposeDirection, builder: NavOptionsBuilder.() -> Unit = {})
+    suspend fun navigate(direction: Direction, builder: NavOptionsBuilder.() -> Unit = {})
 }
