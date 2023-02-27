@@ -1,6 +1,7 @@
 plugins {
     id "com.android.library"
     id "org.jetbrains.kotlin.android"
+    alias libs.plugins.ksp
 }
 
 android {
@@ -10,6 +11,11 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
+    }
+
+    ksp {
+        arg("compose-destinations.moduleName", "mainFeature")
+        arg("compose-destinations.mode", "destinations")
     }
 }
 
@@ -29,4 +35,7 @@ dependencies {
     implementation libs.accompanist.navigation.animation
     implementation libs.accompanist.navigation.material
     implementation libs.accompanist.systemuicontroller
+
+    implementation libs.destinations.core
+    ksp libs.destinations.ksp
 }

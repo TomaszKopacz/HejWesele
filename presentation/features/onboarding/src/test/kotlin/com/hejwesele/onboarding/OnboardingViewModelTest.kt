@@ -1,8 +1,6 @@
 package com.hejwesele.onboarding
 
 import com.hejwesele.android.analytics.Analytics
-import com.hejwesele.android.navigation.Destinations
-import com.hejwesele.android.navigation.Navigator
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever

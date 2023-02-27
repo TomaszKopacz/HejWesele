@@ -1,4 +1,4 @@
-package com.hejwesele.event
+package com.hejwesele.event.navigation
 
 object EventRoutes {
     const val home = "home"

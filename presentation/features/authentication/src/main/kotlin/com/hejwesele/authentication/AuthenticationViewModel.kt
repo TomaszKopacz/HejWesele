@@ -2,8 +2,6 @@ package com.hejwesele.authentication
 
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateActionsViewModel
-import com.hejwesele.android.navigation.Destinations
-import com.hejwesele.android.navigation.Navigator
 import com.hejwesele.authentication.AuthenticationUiAction.ShowLoggingInMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -20,7 +18,7 @@ sealed class AuthenticationUiAction {
 
 @HiltViewModel
 class AuthenticationViewModel @Inject constructor(
-    private val navigator: Navigator
+    // private val navigator: Navigator
 ) : StateActionsViewModel<AuthenticationUiState, AuthenticationUiAction>(AuthenticationUiState()) {
 
     @Suppress("MagicNumber")
@@ -28,6 +26,6 @@ class AuthenticationViewModel @Inject constructor(
         updateState { copy(isAuthenticating = true) }
         emitAction(ShowLoggingInMessage)
         delay(5000L)
-        navigator.navigate(Destinations.main(userId = 44))
+        // navigator.navigate(Destinations.main(userId = 44))
     }
 }

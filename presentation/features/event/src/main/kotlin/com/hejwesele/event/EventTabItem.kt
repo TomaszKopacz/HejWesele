@@ -1,6 +1,7 @@
 package com.hejwesele.event
 
 import androidx.annotation.DrawableRes
+import com.hejwesele.event.navigation.EventRoutes
 
 internal sealed class EventTabItem(
     val route: String,

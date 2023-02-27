@@ -22,6 +22,14 @@ def setupModule(isAndroid, isAndroidComponent) {
 
             if (isAndroidComponent) {
                 buildTypes.release.minifyEnabled false
+
+                libraryVariants.all { variant ->
+                    kotlin.sourceSets {
+                        getByName(variant.name) {
+                            kotlin.srcDir("build/generated/ksp/${variant.name}/kotlin")
+                        }
+                    }
+                }
             }
 
             compileOptions {

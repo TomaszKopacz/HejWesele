@@ -2,8 +2,6 @@ package com.hejwesele.authentication
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.hejwesele.android.navigation.Destinations
-import com.hejwesele.android.navigation.Navigator
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.Dispatchers

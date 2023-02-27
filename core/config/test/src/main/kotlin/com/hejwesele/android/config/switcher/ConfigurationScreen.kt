@@ -85,11 +85,11 @@ internal fun ConfigurationScreen(viewModel: ConfigurationViewModel) {
             }
         }
 
-        ActionsEffect(viewModel, coroutineScope) { action ->
+/*        ActionsEffect(viewModel, coroutineScope) { action ->
             when (action) {
                 ConfigurationUiAction.Close -> ProcessPhoenix.triggerRebirth(context)
             }
-        }
+        }*/
     }
 }
 

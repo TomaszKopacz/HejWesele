@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.core.content.ContextCompat.startActivity
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -60,12 +61,16 @@ import com.hejwesele.home.model.InvitationTileUiModel
 import com.hejwesele.home.model.HomeUiAction.OpenActivity
 import com.hejwesele.home.model.HomeUiAction.ShowTileIntentOptions
 import com.hejwesele.home.model.IntentUiModel
+import com.hejwesele.home.navigation.HomeFeatureNavigation
 import kotlinx.coroutines.launch
+
+@Composable
+fun Home(navigation: HomeFeatureNavigation) = HomeScreen()
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-internal fun Home(
-    viewModel: HomeViewModel
+internal fun HomeScreen(
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val systemUiController = rememberSystemUiController()
     SideEffect {

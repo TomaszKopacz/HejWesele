@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -57,8 +58,13 @@ import kotlinx.coroutines.flow.onEach
 import kotlin.coroutines.CoroutineContext
 
 @Composable
-internal fun Gallery(
-    viewModel: GalleryViewModel
+fun Gallery() {
+    GalleryScreen()
+}
+
+@Composable
+private fun GalleryScreen(
+    viewModel: GalleryViewModel = hiltViewModel()
 ) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
@@ -136,11 +142,7 @@ internal fun ScrollableContent(
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         margin(topPadding + Dimension.marginSmall)
         if (galleryHintVisible) {
-            singleItem(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = Dimension.marginNormal)
-            ) {
+            singleItem {
                 GalleryHintTile(
                     onCloseClick = onHintDismissed
                 )
@@ -148,11 +150,7 @@ internal fun ScrollableContent(
             margin(Dimension.marginNormal)
         }
         if (galleryLinkVisible) {
-            singleItem(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = Dimension.marginNormal)
-            ) {
+            singleItem {
                 GalleryTile()
             }
             margin(Dimension.marginNormal)
@@ -182,7 +180,9 @@ internal fun ScrollableContent(
 @Composable
 private fun GalleryHintTile(onCloseClick: () -> Unit) {
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .padding(horizontal = Dimension.marginNormal)
+            .fillMaxWidth(),
         color = MaterialTheme.colorScheme.tertiaryContainer,
         shape = RoundedCornerShape(Dimension.radiusRoundedCornerNormal)
     ) {
@@ -219,6 +219,7 @@ private fun GalleryHintTile(onCloseClick: () -> Unit) {
 private fun GalleryTile() {
     Surface(
         modifier = Modifier
+            .padding(horizontal = Dimension.marginNormal)
             .fillMaxWidth()
             .shadow(
                 elevation = Dimension.elevationSmall,

@@ -18,8 +18,6 @@ dependencies {
     implementation projects.core.appinfo
     implementation projects.core.coroutines
 
-    implementation projects.presentation.navigation
-
     implementation projects.presentation.ui.components
     implementation projects.presentation.ui.theme
 

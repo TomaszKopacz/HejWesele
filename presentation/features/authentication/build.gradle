@@ -26,7 +26,6 @@ dependencies {
     releaseImplementation projects.core.config.release
     implementation projects.common.mvvm
 
-    implementation projects.presentation.navigation
     implementation projects.presentation.ui.theme
 
     api libs.androidx.compose.runtime

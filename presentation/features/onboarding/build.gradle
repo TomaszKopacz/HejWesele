@@ -19,8 +19,6 @@ dependencies {
     implementation projects.core.preferences
     implementation projects.core.coroutines
 
-    implementation projects.presentation.navigation
-
     implementation projects.common.customtabs
     implementation projects.common.analytics
 

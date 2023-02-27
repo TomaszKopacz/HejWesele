@@ -80,11 +80,11 @@ internal fun Authentication(viewModel: AuthenticationViewModel, navController: N
     }
 
     val loggingInMessage = stringResource(id = R.string.loggingInMessage)
-    ActionsEffect(viewModel, coroutineScope) { action ->
+/*    ActionsEffect(viewModel, coroutineScope) { action ->
         when (action) {
             is ShowLoggingInMessage -> scaffoldState.snackbarHostState.showSnackbar(message = loggingInMessage)
         }
-    }
+    }*/
 }
 
 @Composable

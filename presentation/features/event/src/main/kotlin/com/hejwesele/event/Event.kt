@@ -34,22 +34,41 @@ import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Transitions
-import com.hejwesele.gallery.navigation.galleryGraph
-import com.hejwesele.home.navigation.homeGraph
-import com.hejwesele.schedule.Schedule
-import com.hejwesele.services.Services
+import com.hejwesele.event.navigation.EventRoutes
+import com.hejwesele.event.navigation.MainFeatureProvider
+import com.ramcosta.composedestinations.annotation.Destination
 
-@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
+@Destination
 @Composable
-fun Event(eventId: Int) {
+fun Main(featureProvider: MainFeatureProvider) {
+    Event(
+        home = featureProvider.home(),
+        schedule = featureProvider.schedule(),
+        services = featureProvider.services(),
+        gallery = featureProvider.gallery()
+    )
+}
+
+@OptIn(
+    ExperimentalMaterialNavigationApi::class,
+    ExperimentalAnimationApi::class,
+    ExperimentalMaterial3Api::class
+)
+@Composable
+private fun Event(
+    home: @Composable () -> Unit = {},
+    schedule: @Composable () -> Unit = {},
+    services: @Composable () -> Unit = {},
+    gallery: @Composable () -> Unit = {},
+) {
     val systemUiController = rememberSystemUiController()
+    val bottomSheetNavigator = rememberBottomSheetNavigator()
+    val navController = rememberAnimatedNavController(bottomSheetNavigator)
+
     SideEffect {
         systemUiController.setStatusBarColor(Color.Transparent, darkIcons = false)
         systemUiController.setNavigationBarColor(Color.Transparent, darkIcons = false)
     }
-
-    val bottomSheetNavigator = rememberBottomSheetNavigator()
-    val navController = rememberAnimatedNavController(bottomSheetNavigator)
 
     Scaffold(
         modifier = Modifier.background(color = MaterialTheme.colorScheme.surface),
@@ -66,14 +85,10 @@ fun Event(eventId: Int) {
                 enterTransition = { Transitions.fadeIn },
                 exitTransition = { Transitions.fadeOut }
             ) {
-                homeGraph(
-                    route = EventRoutes.home
-                )
-                composable(EventRoutes.schedule) { Schedule() }
-                composable(EventRoutes.services) { Services() }
-                galleryGraph(
-                    route = EventRoutes.gallery
-                )
+                composable(EventRoutes.home) { home() }
+                composable(EventRoutes.schedule) { schedule() }
+                composable(EventRoutes.services) { services() }
+                composable(EventRoutes.gallery) { gallery() }
             }
         }
     }

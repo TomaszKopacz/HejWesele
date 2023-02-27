@@ -1,6 +1,5 @@
 package com.hejwesele.android.components.layouts
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -12,10 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -24,14 +21,9 @@ fun LazyListScope.margin(size: Dp) {
 }
 
 fun LazyListScope.singleItem(
-    modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-    item {
-        Surface(modifier = modifier) {
-            content()
-        }
-    }
+    item { content() }
 }
 
 fun <T> LazyListScope.gridItems(

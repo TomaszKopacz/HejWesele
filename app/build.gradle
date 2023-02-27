@@ -9,6 +9,7 @@ plugins {
     alias libs.plugins.firebase.perf
     alias libs.plugins.playPublisher
     alias libs.plugins.licensee
+    alias libs.plugins.ksp
 }
 
 apply from: "../gradle/licenses.gradle"
@@ -93,9 +94,22 @@ android {
         }
     }
 
+    applicationVariants.all { variant ->
+        kotlin.sourceSets {
+            getByName(variant.name) {
+                kotlin.srcDir("build/generated/ksp/${variant.name}/kotlin")
+            }
+        }
+    }
+
     testOptions {
         execution "ANDROIDX_TEST_ORCHESTRATOR"
         animationsDisabled = true
+    }
+
+    ksp {
+        arg("compose-destinations.moduleName", "app")
+        arg("compose-destinations.mode", "destinations")
     }
 
     packagingOptions {
@@ -127,12 +141,15 @@ dependencies {
     implementation projects.common.workmanager
 
     implementation projects.presentation.features.event
+    implementation projects.presentation.features.home
+    implementation projects.presentation.features.schedule
+    implementation projects.presentation.features.services
+    implementation projects.presentation.features.gallery
     implementation projects.presentation.features.authentication
     implementation projects.presentation.features.dashboard
     implementation projects.presentation.features.main
     implementation projects.presentation.features.settings
     implementation projects.presentation.features.onboarding
-    implementation projects.presentation.navigation
     implementation projects.presentation.ui.theme
 
     implementation projects.services.events
@@ -179,6 +196,9 @@ dependencies {
     androidTestImplementation libs.hilt.android.testing
     kapt libs.hilt.compiler
     kaptAndroidTest libs.hilt.compiler
+
+    implementation libs.destinations.core
+    ksp libs.destinations.ksp
 
     implementation libs.kotlinx.coroutines.core
     implementation libs.kotlinx.coroutines.android
