@@ -120,9 +120,6 @@ android {
 
 dependencies {
     implementation projects.core.appinfo
-    debugImplementation projects.core.config.test
-    qaImplementation projects.core.config.test
-    releaseImplementation projects.core.config.release
     implementation projects.core.coroutines
     implementation projects.core.database
     implementation projects.core.datetime
@@ -145,11 +142,6 @@ dependencies {
     implementation projects.presentation.features.schedule
     implementation projects.presentation.features.services
     implementation projects.presentation.features.gallery
-    implementation projects.presentation.features.authentication
-    implementation projects.presentation.features.dashboard
-    implementation projects.presentation.features.main
-    implementation projects.presentation.features.settings
-    implementation projects.presentation.features.onboarding
     implementation projects.presentation.ui.theme
 
     implementation projects.services.events

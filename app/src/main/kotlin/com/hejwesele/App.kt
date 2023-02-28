@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.hejwesele.android.analytics.Analytics
-import com.hejwesele.android.config.ConfigurationSwitcher
 import com.hejwesele.android.crashlytics.Crashlytics
 import com.hejwesele.android.remoteconfig.RemoteConfig
 import com.hejwesele.android.remoteconfig.RemoteConfigFetchingLifecycleObserver
@@ -41,7 +40,6 @@ class App : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        if (ConfigurationSwitcher.isSwitching(this)) return
 
         CustomInjection.inject(this)
 

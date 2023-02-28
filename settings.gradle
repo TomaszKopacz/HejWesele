@@ -44,13 +44,6 @@ include ":libraries:protodatastore"
 include ":libraries:realtimedatabase"
 include ":libraries:result"
 
-/* TODO - Features below are not mine, remove them */
-include ":presentation:features:authentication"
-include ":presentation:features:dashboard"
-include ":presentation:features:main"
-include ":presentation:features:settings"
-include ':presentation:features:onboarding'
-
 include ":common:analytics"
 include ":common:crashlytics"
 include ":common:customtabs"
@@ -64,9 +57,6 @@ include ":common:thememanager"
 include ":common:workmanager"
 
 include ":core:appinfo"
-include ":core:config:config"
-include ":core:config:test"
-include ":core:config:release"
 include ":core:coroutines"
 include ":core:database"
 include ":core:datetime"

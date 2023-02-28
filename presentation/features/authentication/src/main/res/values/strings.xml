@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="login">Login</string>
-    <string name="loggingInMessage">Logging in…</string>
-</resources>
