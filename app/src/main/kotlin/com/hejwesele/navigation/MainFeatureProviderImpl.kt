@@ -3,6 +3,7 @@ package com.hejwesele.navigation
 import androidx.compose.runtime.Composable
 import com.hejwesele.event.navigation.MainFeatureProvider
 import com.hejwesele.gallery.Gallery
+import com.hejwesele.gallery.navigation.GalleryFeatureNavigation
 import com.hejwesele.home.Home
 import com.hejwesele.home.navigation.HomeFeatureNavigation
 import com.hejwesele.schedule.Schedule
@@ -11,7 +12,8 @@ import com.hejwesele.services.Services
 
 class MainFeatureProviderImpl(
     private val homeFeatureNavigation: HomeFeatureNavigation,
-    private val scheduleFeatureNavigation: ScheduleFeatureNavigation
+    private val scheduleFeatureNavigation: ScheduleFeatureNavigation,
+    private val galleryFeatureNavigation: GalleryFeatureNavigation
 ) : MainFeatureProvider {
 
     override fun home(): @Composable () -> Unit = { Home(navigation = homeFeatureNavigation) }
@@ -20,5 +22,5 @@ class MainFeatureProviderImpl(
 
     override fun services(): @Composable () -> Unit = { Services() }
 
-    override fun gallery(): @Composable () -> Unit = { Gallery() }
+    override fun gallery(): @Composable () -> Unit = { Gallery(navigation = galleryFeatureNavigation) }
 }

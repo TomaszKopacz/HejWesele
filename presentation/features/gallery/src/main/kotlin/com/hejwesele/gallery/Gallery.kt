@@ -3,18 +3,7 @@ package com.hejwesele.gallery
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -24,11 +13,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -51,6 +36,7 @@ import com.hejwesele.gallery.constants.Numbers
 import com.hejwesele.gallery.constants.Strings
 import com.hejwesele.gallery.model.GalleryUiAction.OpenDeviceGallery
 import com.hejwesele.gallery.model.GalleryUiAction.OpenImageCropper
+import com.hejwesele.gallery.navigation.GalleryFeatureNavigation
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -58,12 +44,15 @@ import kotlinx.coroutines.flow.onEach
 import kotlin.coroutines.CoroutineContext
 
 @Composable
-fun Gallery() {
-    GalleryScreen()
+fun Gallery(
+    navigation: GalleryFeatureNavigation
+) {
+    GalleryScreen(navigation)
 }
 
 @Composable
 private fun GalleryScreen(
+    navigation: GalleryFeatureNavigation,
     viewModel: GalleryViewModel = hiltViewModel()
 ) {
     val systemUiController = rememberSystemUiController()
@@ -96,6 +85,7 @@ private fun GalleryScreen(
         galleryHintVisible = uiState.galleryHintVisible,
         galleryLinkVisible = uiState.galleryLinkVisible,
         onHintDismissed = { viewModel.onGalleryHintDismissed() },
+        onPhotoClicked = { photo -> navigation.openPreview(photo) },
         onAddClicked = { viewModel.onAddPhotoClicked() },
     )
 }
@@ -106,6 +96,7 @@ internal fun GalleryContent(
     galleryHintVisible: Boolean,
     galleryLinkVisible: Boolean,
     onHintDismissed: () -> Unit,
+    onPhotoClicked: (String) -> Unit,
     onAddClicked: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -113,7 +104,8 @@ internal fun GalleryContent(
             photos = photos,
             galleryHintVisible = galleryHintVisible,
             galleryLinkVisible = galleryLinkVisible,
-            onHintDismissed = onHintDismissed
+            onHintDismissed = onHintDismissed,
+            onPhotoClicked = onPhotoClicked
         )
         FloatingAddButton(
             modifier = Modifier
@@ -132,7 +124,8 @@ internal fun ScrollableContent(
     photos: List<String>,
     galleryHintVisible: Boolean,
     galleryLinkVisible: Boolean,
-    onHintDismissed: () -> Unit
+    onHintDismissed: () -> Unit,
+    onPhotoClicked: (String) -> Unit
 ) {
     val topPadding = WindowInsets.statusBars
         .only(WindowInsetsSides.Top)
@@ -168,9 +161,7 @@ internal fun ScrollableContent(
                         elevation = Dimension.elevationSmall,
                         shape = RoundedCornerShape(Dimension.radiusRoundedCornerSmall)
                     )
-                    .clickable {
-                        // no-op
-                    }
+                    .clickable { onPhotoClicked("PHOTO ID: 44") }
             )
         }
         margin(Dimension.marginLarge)

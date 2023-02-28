@@ -1,6 +1,7 @@
 package com.hejwesele.navigation
 
 import com.hejwesele.event.destinations.MainDestination
+import com.hejwesele.gallery.preview.destinations.PreviewDestination
 import com.ramcosta.composedestinations.dynamic.routedIn
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.NavGraphSpec
@@ -13,7 +14,10 @@ object MainNavGraph : NavGraphSpec {
 
     override val startRoute: Route = MainDestination routedIn this
 
-    override val destinationsByRoute = listOf<DestinationSpec<*>>(MainDestination)
+    override val destinationsByRoute = listOf<DestinationSpec<*>>(
+        MainDestination,
+        PreviewDestination
+    )
         .routedIn(this)
         .associateBy { it.route }
 }

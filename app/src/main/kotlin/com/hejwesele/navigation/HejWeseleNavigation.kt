@@ -7,6 +7,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.hejwesele.android.theme.Transitions
 import com.hejwesele.event.navigation.MainFeatureProvider
+import com.hejwesele.gallery.navigation.GalleryFeatureNavigation
 import com.hejwesele.home.navigation.HomeFeatureNavigation
 import com.hejwesele.schedule.navigation.ScheduleFeatureNavigation
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -40,11 +41,17 @@ private fun provideDependencies(
 
     val homeNavigation: HomeFeatureNavigation = HomeFeatureNavigationImpl(navController)
     val scheduleNavigation: ScheduleFeatureNavigation = ScheduleFeatureNavigationImpl(navController)
-    val mainFeatureProvider: MainFeatureProvider = MainFeatureProviderImpl(homeNavigation, scheduleNavigation)
+    val galleryNavigation: GalleryFeatureNavigation = GalleryFeatureNavigationImpl(navController)
+    val mainFeatureProvider: MainFeatureProvider = MainFeatureProviderImpl(
+        homeNavigation,
+        scheduleNavigation,
+        galleryNavigation
+    )
 
     dependency(mainFeatureProvider)
     dependency(homeNavigation)
     dependency(scheduleNavigation)
+    dependency(galleryNavigation)
 }
 
 private val root = object : NavGraphSpec {
