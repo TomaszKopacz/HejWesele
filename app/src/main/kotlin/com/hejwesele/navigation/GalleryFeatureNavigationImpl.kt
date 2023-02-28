@@ -13,4 +13,8 @@ class GalleryFeatureNavigationImpl(
     override fun openPreview(photo: String) {
         navController.navigate(PreviewDestination(photo = photo) within MainNavGraph)
     }
+
+    override fun openSettings() {
+        navController.navigate(SettingsNavGraph)
+    }
 }

@@ -138,10 +138,11 @@ dependencies {
     implementation projects.common.workmanager
 
     implementation projects.presentation.features.event
+    implementation projects.presentation.features.gallery
     implementation projects.presentation.features.home
     implementation projects.presentation.features.schedule
     implementation projects.presentation.features.services
-    implementation projects.presentation.features.gallery
+    implementation projects.presentation.features.settings
     implementation projects.presentation.ui.theme
 
     implementation projects.services.events

@@ -1,0 +1,31 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+    alias libs.plugins.ksp
+}
+
+android {
+    namespace "com.hejwesele.settings"
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
+    }
+
+    ksp {
+        arg("compose-destinations.moduleName", "settingsFeature")
+        arg("compose-destinations.mode", "destinations")
+    }
+}
+
+dependencies {
+    implementation libs.androidx.compose.ui
+    implementation libs.androidx.compose.foundation
+    implementation libs.androidx.compose.material3
+
+    implementation libs.androidx.lifecycle.viewmodel.ktx
+
+    implementation libs.destinations.core
+    ksp libs.destinations.ksp
+}
