@@ -21,7 +21,7 @@ dependencyResolutionManagement {
 
 include ":app"
 
-include ":presentation:features:event"
+include ":presentation:features:main"
 include ":presentation:features:gallery"
 include ":presentation:features:home"
 include ":presentation:features:schedule"

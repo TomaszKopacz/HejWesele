@@ -19,4 +19,3 @@ fun notFoundError(message: String? = null) = GeneralError.NotFoundError(message)
 fun networkError(message: String? = null) = GeneralError.NetworkError(message)
 
 fun unknownError(message: String? = null) = GeneralError.UnknownError(message)
-

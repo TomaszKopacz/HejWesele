@@ -11,7 +11,7 @@ internal fun GalleryDto.safeMapModel(): Result<Gallery> {
     return try {
         val gallery = Gallery(
             externalGallery = externalGallery,
-            photos = photos ?: throw IllegalArgumentException()
+            photos = photos ?: throw IllegalArgumentException("Required list of gallery photos is not present.")
         )
         success(gallery)
     } catch (exception: IllegalArgumentException) {

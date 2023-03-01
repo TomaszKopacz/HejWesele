@@ -1,14 +1,14 @@
 package com.hejwesele.invitations.mappers
 
 import com.hejwesele.invitations.dto.InvitationDto
-import com.hejwesele.invitations.model.InvitationTileType
+import com.hejwesele.invitations.dto.InvitationTileDto
 import com.hejwesele.invitations.model.IntentPackage
 import com.hejwesele.invitations.model.IntentType
 import com.hejwesele.invitations.model.IntentUrl
 import com.hejwesele.invitations.model.IntentUrlPrefix
-import com.hejwesele.invitations.dto.InvitationTileDto
 import com.hejwesele.invitations.model.Invitation
 import com.hejwesele.invitations.model.InvitationTile
+import com.hejwesele.invitations.model.InvitationTileType
 import com.hejwesele.result.Result
 import com.hejwesele.result.failure
 import com.hejwesele.result.serviceError
@@ -17,7 +17,7 @@ import com.hejwesele.result.success
 internal fun InvitationDto.safeMapModel(): Result<Invitation> {
     return try {
         val invitation = Invitation(
-            id = id ?: throw IllegalArgumentException(),
+            id = id ?: throw IllegalArgumentException("Invitation ID is not present"),
             tiles = tiles.map { it.mapModel() }
         )
         success(invitation)
@@ -47,7 +47,7 @@ internal fun InvitationTile.mapDto(): InvitationTileDto {
 private fun InvitationTileDto.mapModel(): InvitationTile {
     return InvitationTile(
         type = type.mapInvitationTileTypeModel(),
-        title = title ?: throw IllegalArgumentException(),
+        title = title ?: throw IllegalArgumentException("Required invitation title is not present"),
         subtitle = subtitle,
         description = description,
         avatars = avatars,

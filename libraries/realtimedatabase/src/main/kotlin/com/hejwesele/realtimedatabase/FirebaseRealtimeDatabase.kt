@@ -21,7 +21,6 @@ class FirebaseRealtimeDatabase @Inject constructor() {
     private val firestoreScope = CoroutineScope(Dispatchers.Default)
 
     fun <T : Any> observe(path: String, id: String, type: KClass<T>): Flow<FirebaseResult<T>> {
-
         val snapshots = MutableSharedFlow<FirebaseResult<T>>()
         val reference = root.child(path).child(id)
 

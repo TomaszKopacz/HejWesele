@@ -6,20 +6,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.hejwesele.settings.navigation.SettingsFeatureNavigation
+import com.hejwesele.settings.ISettingsFeatureNavigation
 import com.ramcosta.composedestinations.annotation.Destination
 
 @Composable
 @Destination
-fun TermsAndConditions(
-    navigation: SettingsFeatureNavigation
+fun SettingsTermsAndConditions(
+    navigation: ISettingsFeatureNavigation
 ) {
     TermsAndConditionsScreen(navigation)
 }
 
+@Suppress("UnusedPrivateMember")
 @Composable
 private fun TermsAndConditionsScreen(
-    navigation: SettingsFeatureNavigation,
+    navigation: ISettingsFeatureNavigation
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),

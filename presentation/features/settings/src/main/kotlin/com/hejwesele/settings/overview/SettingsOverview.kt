@@ -7,20 +7,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.hejwesele.settings.navigation.SettingsFeatureNavigation
+import com.hejwesele.settings.ISettingsFeatureNavigation
 import com.ramcosta.composedestinations.annotation.Destination
 
 @Composable
 @Destination
 fun SettingsOverview(
-    navigation: SettingsFeatureNavigation
+    navigation: ISettingsFeatureNavigation
 ) {
     SettingsOverviewScreen(navigation)
 }
 
 @Composable
 private fun SettingsOverviewScreen(
-    navigation: SettingsFeatureNavigation,
+    navigation: ISettingsFeatureNavigation
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),

@@ -16,6 +16,5 @@ class ProtoMessageSpecification<T>(
         override suspend fun readFrom(input: InputStream) = reader(input)
 
         override suspend fun writeTo(t: T, output: OutputStream) = writer(t, output)
-
     }
 }

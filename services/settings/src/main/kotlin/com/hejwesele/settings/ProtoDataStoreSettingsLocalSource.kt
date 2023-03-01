@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 class ProtoDataStoreSettingsLocalSource @Inject constructor(
     @SettingsProtoDataStore private val datastore: ProtoDataStore<EventSettingsDto>
-): SettingsLocalSource {
+) : SettingsLocalSource {
 
     override suspend fun getStoredSettings(): Result<EventSettings> {
         return datastore.readData()

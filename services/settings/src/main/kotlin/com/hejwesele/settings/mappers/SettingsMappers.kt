@@ -31,9 +31,9 @@ internal fun Event.mapDto() = EventDto(
 )
 
 private fun EventDto.mapModel() = Event(
-    eventId = eventId ?: throw IllegalArgumentException(),
-    eventName = eventName ?: throw IllegalArgumentException(),
-    date = date?.toLocalDateTime() ?: throw IllegalArgumentException(),
+    eventId = eventId ?: throw IllegalArgumentException("Required event ID is not present."),
+    eventName = eventName ?: throw IllegalArgumentException("Required event name is not present."),
+    date = date?.toLocalDateTime() ?: throw IllegalArgumentException("Required event date is not present."),
     invitationId = invitationId,
     galleryId = galleryId
 )

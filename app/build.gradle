@@ -138,7 +138,7 @@ dependencies {
     implementation projects.common.thememanager
     implementation projects.common.workmanager
 
-    implementation projects.presentation.features.event
+    implementation projects.presentation.features.main
     implementation projects.presentation.features.gallery
     implementation projects.presentation.features.home
     implementation projects.presentation.features.schedule

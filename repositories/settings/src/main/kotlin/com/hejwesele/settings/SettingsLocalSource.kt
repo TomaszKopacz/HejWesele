@@ -1,9 +1,9 @@
 package com.hejwesele.settings
 
 import com.hejwesele.result.CompletableResult
-import com.hejwesele.settings.model.EventSettings
 import com.hejwesele.result.Result
 import com.hejwesele.settings.model.Event
+import com.hejwesele.settings.model.EventSettings
 
 interface SettingsLocalSource {
 

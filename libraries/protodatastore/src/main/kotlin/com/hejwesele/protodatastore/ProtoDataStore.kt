@@ -16,7 +16,7 @@ import javax.inject.Inject
 class ProtoDataStore<T : Any> @Inject constructor(
     specification: ProtoMessageSpecification<T>,
     fileName: String,
-    private val context: Context,
+    private val context: Context
 ) {
     private val Context.dataStore by dataStore(
         serializer = specification.serializer,

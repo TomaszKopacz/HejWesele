@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class BitmapResolver @Inject constructor(@ApplicationContext private val context: Context) {
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION", "MagicNumber")
     fun getBitmap(uri: Uri): Bitmap {
         return if (Build.VERSION.SDK_INT < 28) {
             MediaStore.Images.Media.getBitmap(context.contentResolver, uri)

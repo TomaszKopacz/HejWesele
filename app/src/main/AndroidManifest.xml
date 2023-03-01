@@ -38,10 +38,6 @@
                 android:value="androidx.startup"
                 tools:node="remove" />
         </provider>
-
-        <activity
-            android:name="com.hejwesele.TestActivity"
-            android:exported="true" />
     </application>
 
 </manifest>
