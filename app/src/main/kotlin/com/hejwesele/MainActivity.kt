@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
@@ -17,8 +16,6 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.flowWithLifecycle
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.hejwesele.android.customtabs.CustomTabs
-import com.hejwesele.android.customtabs.LocalCustomTabs
 import com.hejwesele.android.splashscreen.Splash.initializeSplashScreen
 import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.thememanager.Theme
@@ -35,9 +32,6 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var themeManager: ThemeManager
-
-    @Inject
-    lateinit var customTabs: CustomTabs
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,9 +50,7 @@ class MainActivity : ComponentActivity() {
 
             AppTheme(darkTheme = isAppInDarkTheme(theme)) {
                 SystemBarsColor(useDarkIcons = !isAppInDarkTheme(theme))
-                CompositionLocalProvider(LocalCustomTabs provides customTabs) {
-                    HejWeseleNavigation()
-                }
+                HejWeseleNavigation()
             }
         }
     }
