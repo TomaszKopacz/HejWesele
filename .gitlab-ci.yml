@@ -1,41 +1,63 @@
-image: openjdk:11-jdk
-
-variables:
-  ANDROID_COMPILE_SDK: "31"
-  ANDROID_BUILD_TOOLS: "32.0.0"
-  ANDROID_COMMAND_LINE_TOOLS: "7583922"
-  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
-
-
-before_script:
-  - export GRADLE_USER_HOME=$(pwd)/.gradle
-  - chmod +x ./gradlew
-  - apt-get --quiet update --yes
-  - apt-get --quiet install --yes wget tar unzip lib32stdc++6 lib32z1
-  - mkdir -p android-sdk-linux/cmdline-tools
-  - export ANDROID_SDK_ROOT=$PWD/android-sdk-linux
-  - cd android-sdk-linux/cmdline-tools
-  - wget --quiet --output-document=android-sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_COMMAND_LINE_TOOLS}_latest.zip
-  - unzip android-sdk.zip
-  - rm android-sdk.zip
-  - mv cmdline-tools version
-  - echo y | version/bin/sdkmanager "platforms;android-${ANDROID_COMPILE_SDK}" >/dev/null
-  - echo y | version/bin/sdkmanager "platform-tools" >/dev/null
-  - echo y | version/bin/sdkmanager "build-tools;${ANDROID_BUILD_TOOLS}" >/dev/null
-  - export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools/
-  - set +o pipefail
-  - yes | version/bin/sdkmanager --licenses
-  - set -o pipefail
-  - cd ../../
-  - chmod +x ./gradlew
+include:
+  - local: ".gitlab-ci-variables.yml"
 
 stages:
   - test
   - build
 
+.gradle-cache:
+  cache:
+    key: $CI_COMMIT_REF_NAME
+    paths:
+      - .gradle/
+    policy:
+      - pull
+
+buildImage:
+  image: docker:20.10.12
+  services:
+    - docker:20.10.16-dind
+  tags:
+    - docker
+  before_script:
+    - export GRADLE_DISTRIBUTION_URL="$(cat gradle/wrapper/gradle-wrapper.properties | grep 'distributionUrl' | cut -f 2 -d '=' | tr -d '\')"
+    - echo "Using gradle distribution url $GRADLE_DISTRIBUTION_URL"
+    - export GRADLE_VERSION="$(echo $GRADLE_DISTRIBUTION_URL | cut -f 2 -d '-')"
+    - echo "Using gradle version $GRADLE_VERSION"
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    - >
+      docker build --cache-from $CI_REGISTRY_IMAGE:latest
+      --tag $CI_REGISTRY_IMAGE:latest
+      --build-arg ANDROID_SDK_VERSION=$ANDROID_SDK_VERSION
+      --build-arg BUILDTOOLS_VERSION=$BUILDTOOLS_VERSION
+      --build-arg GRADLE_VERSION=$GRADLE_VERSION
+      --build-arg GRADLE_DISTRIBUTION_URL=$GRADLE_DISTRIBUTION_URL
+      .
+    - docker push $CI_REGISTRY_IMAGE:latest
+  rules:
+    - changes:
+        - .gitlab-ci-variables.yml
+        - Dockerfile
+        - gradle/wrapper/gradle-wrapper.properties
+
+setupGradle:
+  image: registry.gitlab.com/kopacz/hejwesele:latest
+  tags:
+    - docker
+  extends: .gradle-cache
+  cache:
+    policy: pull-push
+  script:
+    - gradle -v
+
 # ---DEBUG---
 
 testDebug:
+  image: registry.gitlab.com/kopacz/hejwesele
+  tags:
+    - docker
   stage: test
   script:
     - ./gradlew -Pci --console=plain :app:testDebug
@@ -44,6 +66,9 @@ testDebug:
     - /^fix.*$/
 
 lintDebug:
+  image: registry.gitlab.com/kopacz/hejwesele
+  tags:
+    - docker
   stage: test
   script:
     - ./gradlew -Pci --console=plain ktlint -PbuildDir=lint
@@ -52,6 +77,9 @@ lintDebug:
     - /^fix.*$/
 
 assembleDebug:
+  image: registry.gitlab.com/kopacz/hejwesele
+  tags:
+    - docker
   stage: build
   script:
     - ./gradlew assembleDebug
@@ -62,6 +90,9 @@ assembleDebug:
 # ---QA---
 
 testQa:
+  image: registry.gitlab.com/kopacz/hejwesele
+  tags:
+    - docker
   stage: test
   script:
     - ./gradlew -Pci --console=plain :app:testQa
@@ -69,6 +100,9 @@ testQa:
     - dev
 
 lintQa:
+  image: registry.gitlab.com/kopacz/hejwesele
+  tags:
+    - docker
   stage: test
   script:
     - ./gradlew -Pci --console=plain ktlint -PbuildDir=lint
@@ -76,6 +110,9 @@ lintQa:
     - dev
 
 assembleQa:
+  image: registry.gitlab.com/kopacz/hejwesele
+  tags:
+    - docker
   stage: build
   script:
     - ./gradlew assembleQa
@@ -88,6 +125,9 @@ assembleQa:
 # ---RELEASE---
 
 testRelease:
+  image: registry.gitlab.com/kopacz/hejwesele
+  tags:
+    - docker
   stage: test
   script:
     - ./gradlew -Pci --console=plain :app:testRelease
@@ -95,6 +135,9 @@ testRelease:
     - main
 
 lintRelease:
+  image: registry.gitlab.com/kopacz/hejwesele
+  tags:
+    - docker
   stage: test
   script:
     - ./gradlew -Pci --console=plain ktlint -PbuildDir=lint
@@ -102,6 +145,9 @@ lintRelease:
     - main
 
 assembleRelease:
+  image: registry.gitlab.com/kopacz/hejwesele
+  tags:
+    - docker
   stage: build
   script:
     - ./gradlew bundleRelease assembleRelease
