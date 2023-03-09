@@ -3,8 +3,6 @@ package com.hejwesele.home.home
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
 import com.hejwesele.home.R
-import com.hejwesele.home.home.HomeUiAction.OpenActivity
-import com.hejwesele.home.home.HomeUiAction.ShowTileIntentOptions
 import com.hejwesele.home.home.model.IntentUiModel
 import com.hejwesele.home.home.model.InvitationTileUiModel
 import com.hejwesele.home.home.resources.Strings
@@ -19,6 +17,10 @@ import com.hejwesele.invitations.model.InvitationTile
 import com.hejwesele.invitations.model.InvitationTileType
 import com.hejwesele.settings.model.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
+import de.palm.composestateevents.StateEvent
+import de.palm.composestateevents.StateEventWithContent
+import de.palm.composestateevents.consumed
+import de.palm.composestateevents.triggered
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -57,12 +59,7 @@ internal class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val intents = tile.intents
             if (intents.isNotEmpty()) {
-                updateState {
-                    copy(
-                        action = ShowTileIntentOptions,
-                        intents = tile.intents
-                    )
-                }
+                updateState { copy(showTileOptions = triggered, intents = tile.intents) }
             } else {
                 updateState { copy(intents = emptyList()) }
             }
@@ -71,12 +68,20 @@ internal class HomeViewModel @Inject constructor(
 
     fun onTileIntentOptionSelected(intent: IntentUiModel) {
         viewModelScope.launch {
-            updateState { copy(action = OpenActivity(intent)) }
+            updateState { copy(hideTileOptions = triggered, openIntent = triggered(intent)) }
         }
     }
 
-    fun onActionConsumed() {
-        updateState { copy(action = null) }
+    fun onTileOptionsShown() {
+        updateState { copy(showTileOptions = consumed) }
+    }
+
+    fun onTileOptionsHidden() {
+        updateState { copy(hideTileOptions = consumed) }
+    }
+
+    fun onIntentOpened() {
+        updateState { copy(openIntent = consumed()) }
     }
 
     private fun handleInvitationResult(result: Result<Invitation>) {
@@ -131,7 +136,9 @@ internal class HomeViewModel @Inject constructor(
 }
 
 internal data class HomeUiState(
-    val action: HomeUiAction?,
+    val openIntent: StateEventWithContent<IntentUiModel>,
+    val showTileOptions: StateEvent,
+    val hideTileOptions: StateEvent,
     val isLoading: Boolean,
     val tiles: List<InvitationTileUiModel>,
     val intents: List<IntentUiModel>,
@@ -139,16 +146,13 @@ internal data class HomeUiState(
 ) {
     companion object {
         val DEFAULT = HomeUiState(
-            action = null,
+            showTileOptions = consumed,
+            hideTileOptions = consumed,
+            openIntent = consumed(),
             isLoading = true,
             tiles = emptyList(),
             intents = emptyList(),
             error = null
         )
     }
-}
-
-internal sealed class HomeUiAction {
-    object ShowTileIntentOptions : HomeUiAction()
-    class OpenActivity(val intent: IntentUiModel) : HomeUiAction()
 }

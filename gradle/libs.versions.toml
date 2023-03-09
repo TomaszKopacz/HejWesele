@@ -50,6 +50,7 @@ accompanist = "0.24.7-alpha"
 airbnb-compose-lottie = "5.2.0"
 glide-compose = "1.0.0-alpha.1"
 imagecropper-compose = "4.5.0"
+stateevents-compose = "1.1.0"
 # Navigation
 compose-destinations = "1.7.27-beta"
 # Firebase/Play Services/Google Services/Play Store
@@ -142,6 +143,7 @@ accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pa
 airbnb-compose-lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "airbnb-compose-lottie" }
 glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glide-compose" }
 imagecropper-compose = { module  = "com.vanniktech:android-image-cropper", version.ref = "imagecropper-compose"}
+stateevents-compose = { module  = "com.github.leonard-palm:compose-state-events", version.ref = "stateevents-compose"}
 # Navigation
 destinations-core = { module = "io.github.raamcosta.compose-destinations:animations-core", version.ref = "compose-destinations" }
 destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "compose-destinations" }
@@ -150,9 +152,10 @@ firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx"
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-config-ktx = { module = "com.google.firebase:firebase-config-ktx" }
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx" }
-firebase-database-ktx = { module = "com.google.firebase:firebase-realtimedatabase-ktx" }
+firebase-database-ktx = { module = "com.google.firebase:firebase-database-ktx" }
 firebase-messaging-ktx = { module = "com.google.firebase:firebase-messaging-ktx" }
 firebase-perf = { module = "com.google.firebase:firebase-perf" }
+firebase-storage-ktx = { module = "com.google.firebase:firebase-storage-ktx" }
 # Dependency injection
 hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "hilt" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }

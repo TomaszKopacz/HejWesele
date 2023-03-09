@@ -28,7 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -58,11 +57,10 @@ import com.hejwesele.android.theme.Dimension
 import com.hejwesele.extensions.addEmptyLines
 import com.hejwesele.home.IHomeNavigation
 import com.hejwesele.home.R
-import com.hejwesele.home.home.HomeUiAction.OpenActivity
-import com.hejwesele.home.home.HomeUiAction.ShowTileIntentOptions
 import com.hejwesele.home.home.model.IntentUiModel
 import com.hejwesele.home.home.model.InvitationTileUiModel
 import com.hejwesele.home.home.resources.Strings
+import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.launch
 
 @Suppress("UnusedPrivateMember")
@@ -91,23 +89,31 @@ private fun HomeScreen(
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
 
-    LaunchedEffect(uiState.action) {
-        when (val action = uiState.action) {
-            is ShowTileIntentOptions -> sheetState.show()
-            is OpenActivity -> openActivity(context, action.intent)
-            null -> { /*no-op*/ }
-        }
-        viewModel.onActionConsumed()
-    }
+    EventEffect(
+        event = uiState.showTileOptions,
+        onConsumed = { viewModel.onTileOptionsShown() },
+        action = { sheetState.show() }
+    )
+    EventEffect(
+        event = uiState.hideTileOptions,
+        onConsumed = { viewModel.onTileOptionsHidden() },
+        action = { sheetState.hide() }
+    )
+    EventEffect(
+        event = uiState.openIntent,
+        onConsumed = { viewModel.onIntentOpened() },
+        action = { intent -> openActivity(context, intent) }
+    )
 
     BottomSheetScaffold(
         state = sheetState,
         sheetContent = {
             InvitationBottomSheetContent(
                 intents = uiState.intents,
-                onIntentSelected = {
-                    coroutineScope.launch { sheetState.hide() }
-                    viewModel.onTileIntentOptionSelected(it)
+                onIntentSelected = { intent ->
+                    coroutineScope.launch {
+                        viewModel.onTileIntentOptionSelected(intent)
+                    }
                 }
             )
         }
@@ -117,7 +123,11 @@ private fun HomeScreen(
             uiState.error != null -> TextPlaceholder(text = Strings.errorMessage)
             else -> HomeContent(
                 tiles = uiState.tiles,
-                onTileClicked = { viewModel.onTileClicked(it) }
+                onTileClicked = { invitation ->
+                    coroutineScope.launch {
+                        viewModel.onTileClicked(invitation)
+                    }
+                }
             )
         }
     }

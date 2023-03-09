@@ -12,6 +12,7 @@ dependencyResolutionManagement {
     repositories {
         maven { url projectRepositories.mavenCentral }
         maven { url projectRepositories.google }
+        maven { url projectRepositories.jitpack }
         maven {
             url projectRepositories.kotlinxHtml
             content { includeModule "org.jetbrains.kotlinx", "kotlinx-html-jvm" }
