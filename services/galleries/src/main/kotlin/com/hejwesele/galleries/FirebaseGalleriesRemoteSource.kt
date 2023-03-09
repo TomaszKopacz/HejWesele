@@ -44,4 +44,12 @@ class FirebaseGalleriesRemoteSource @Inject constructor(
             item = gallery.mapDto()
         ).map { gallery }
     }
+
+    override suspend fun updateGallery(galleryId: String, gallery: Gallery): Result<Gallery> {
+        return database.update(
+            path = GALLERIES_PATH,
+            id = galleryId,
+            item = gallery.mapDto()
+        ).map { gallery }
+    }
 }

@@ -44,6 +44,7 @@ include ":repositories:settings"
 include ":libraries:protodatastore"
 include ":libraries:realtimedatabase"
 include ":libraries:result"
+include ":libraries:remotestorage"
 
 include ":common:analytics"
 include ":common:crashlytics"

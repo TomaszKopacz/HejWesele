@@ -4,7 +4,8 @@ import com.hejwesele.galleries.model.Gallery
 import javax.inject.Inject
 
 class GalleriesRepository @Inject constructor(
-    private val remoteSource: GalleriesRemoteSource
+    private val remoteSource: GalleriesRemoteSource,
+    private val remoteStorage: GalleriesRemoteStorage
 ) {
 
     fun observeGallery(galleryId: String) = remoteSource.observeGallery(galleryId)
@@ -12,4 +13,8 @@ class GalleriesRepository @Inject constructor(
     suspend fun getGallery(galleryId: String) = remoteSource.getGallery(galleryId)
 
     suspend fun addGallery(gallery: Gallery) = remoteSource.addGallery(gallery)
+
+    suspend fun updateGallery(galleryId: String, gallery: Gallery) = remoteSource.updateGallery(galleryId, gallery)
+
+    suspend fun uploadImage(path: String, bytes: ByteArray) = remoteStorage.uploadImage(path, bytes)
 }

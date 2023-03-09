@@ -156,6 +156,7 @@ dependencies {
     implementation projects.libraries.protodatastore
     implementation projects.libraries.realtimedatabase
     implementation projects.libraries.result
+    implementation projects.libraries.remotestorage
 
     androidTestImplementation libs.androidx.test.runner
     androidTestImplementation libs.androidx.test.rules

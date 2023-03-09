@@ -94,17 +94,19 @@ private fun GalleryBoardScreen(
     }
 
     GalleryContent(
+        galleryEnabled = uiState.enabled,
         photos = uiState.photos,
         galleryHintVisible = uiState.galleryHintVisible,
         galleryLinkVisible = uiState.galleryLinkVisible,
         onHintDismissed = { viewModel.onGalleryHintDismissed() },
         onPhotoClicked = { photo -> navigation.openPreview(photo) },
-        onAddClicked = { viewModel.onAddPhotoClicked() }
+        onAddClicked = { viewModel.onAddPhotoClicked() },
     )
 }
 
 @Composable
 private fun GalleryContent(
+    galleryEnabled: Boolean,
     photos: List<String>,
     galleryHintVisible: Boolean,
     galleryLinkVisible: Boolean,
@@ -113,22 +115,30 @@ private fun GalleryContent(
     onAddClicked: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        ScrollableContent(
-            photos = photos,
-            galleryHintVisible = galleryHintVisible,
-            galleryLinkVisible = galleryLinkVisible,
-            onHintDismissed = onHintDismissed,
-            onPhotoClicked = onPhotoClicked
-        )
-        FloatingAddButton(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(
-                    end = Dimension.marginSmall,
-                    bottom = Dimension.marginSmall
-                ),
-            action = { onAddClicked() }
-        )
+        if (galleryEnabled) {
+            ScrollableContent(
+                photos = photos,
+                galleryHintVisible = galleryHintVisible,
+                galleryLinkVisible = galleryLinkVisible,
+                onHintDismissed = onHintDismissed,
+                onPhotoClicked = onPhotoClicked
+            )
+            FloatingAddButton(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(
+                        end = Dimension.marginSmall,
+                        bottom = Dimension.marginSmall
+                    ),
+                action = { onAddClicked() }
+            )
+        } else {
+            GalleryDisabledMessage(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(Dimension.marginNormal)
+            )
+        }
     }
 }
 
@@ -289,4 +299,15 @@ private fun FloatingAddButton(
             modifier = Modifier.padding(Dimension.marginNormal)
         )
     }
+}
+
+@Composable
+private fun GalleryDisabledMessage(modifier: Modifier) {
+    Text(
+        text = Strings.galleryDisabledMessageText,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodyMedium,
+        textAlign = TextAlign.Center,
+        modifier = modifier
+    )
 }
