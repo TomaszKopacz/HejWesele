@@ -32,7 +32,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,12 +43,17 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.RoundedCornerImage
 import com.hejwesele.android.components.layouts.gridItems
 import com.hejwesele.android.components.layouts.margin
 import com.hejwesele.android.components.layouts.singleItem
 import com.hejwesele.android.theme.Dimension
+import com.hejwesele.android.theme.md_theme_dark_background
+import com.hejwesele.android.theme.md_theme_dark_onBackground
 import com.hejwesele.gallery.IGalleryNavigation
 import com.hejwesele.gallery.R
 import com.hejwesele.gallery.board.GalleryUiAction.OpenDeviceGallery
@@ -69,7 +75,7 @@ private fun GalleryBoardScreen(
     val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setStatusBarColor(
-            color = Color.Transparent,
+            color = Transparent,
             darkIcons = true
         )
     }
@@ -82,13 +88,36 @@ private fun GalleryBoardScreen(
         viewModel.onImageSelected(uri)
     }
 
+    val cropImageOptions = CropImageOptions(
+        cropShape = CropImageView.CropShape.RECTANGLE,
+        fixAspectRatio = true,
+        aspectRatioX = 1,
+        aspectRatioY = 1,
+        toolbarColor = md_theme_dark_background.toArgb(),
+        toolbarBackButtonColor = md_theme_dark_onBackground.toArgb(),
+        activityBackgroundColor = md_theme_dark_background.toArgb(),
+        activityMenuIconColor = md_theme_dark_onBackground.toArgb(),
+        activityMenuTextColor = md_theme_dark_onBackground.toArgb(),
+        guidelinesColor = Transparent.toArgb(),
+        borderLineColor = Transparent.toArgb(),
+        progressBarColor = MaterialTheme.colorScheme.secondaryContainer.toArgb(),
+        cropMenuCropButtonTitle = Strings.galleryCropButtonText,
+    )
+
     val uiState by viewModel.states.collectAsState()
 
     LaunchedEffect(uiState.action) {
         when (val action = uiState.action) {
             is OpenDeviceGallery -> imagePickerLauncher.launch(action.directory)
-            is OpenImageCropper -> imageCropperLauncher.launch(action.options)
-            null -> { /*no-op*/ }
+            is OpenImageCropper -> {
+                val contract = CropImageContractOptions(
+                    uri = action.imageUri,
+                    cropImageOptions = cropImageOptions
+                )
+                imageCropperLauncher.launch(contract)
+            }
+            null -> { /*no-op*/
+            }
         }
         viewModel.onActionConsumed()
     }

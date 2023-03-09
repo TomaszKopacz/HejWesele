@@ -3,10 +3,7 @@ package com.hejwesele.gallery.board
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
-import com.canhub.cropper.CropImageContractOptions
-import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView.CropResult
-import com.canhub.cropper.CropImageView.CropShape
 import com.hejwesele.android.mvvm.StateViewModel
 import com.hejwesele.extensions.BitmapResolver
 import com.hejwesele.galleries.model.Gallery
@@ -69,11 +66,9 @@ internal class GalleryViewModel @Inject constructor(
     fun onImageSelected(uri: Uri?) {
         viewModelScope.launch {
             if (uri != null) {
-                val options = CropImageContractOptions(
-                    uri = uri,
-                    cropImageOptions = cropOptions
-                )
-                updateState { copy(action = OpenImageCropper(options)) }
+                updateState { copy(action = OpenImageCropper(uri)) }
+            } else {
+                // TODO - show error
             }
         }
     }
@@ -183,12 +178,6 @@ internal class GalleryViewModel @Inject constructor(
 
     companion object {
         private const val IMAGE_DIRECTORY = "image/*"
-        private val cropOptions = CropImageOptions(
-            cropShape = CropShape.RECTANGLE,
-            fixAspectRatio = true,
-            aspectRatioX = 1,
-            aspectRatioY = 1
-        )
     }
 }
 
@@ -216,5 +205,5 @@ internal data class GalleryUiState(
 
 internal sealed class GalleryUiAction {
     class OpenDeviceGallery(val directory: String) : GalleryUiAction()
-    class OpenImageCropper(val options: CropImageContractOptions) : GalleryUiAction()
+    class OpenImageCropper(val imageUri: Uri) : GalleryUiAction()
 }
