@@ -17,11 +17,6 @@ import com.hejwesele.invitations.model.IntentUrlPrefix
 import com.hejwesele.invitations.model.Invitation
 import com.hejwesele.invitations.model.InvitationTile
 import com.hejwesele.invitations.model.InvitationTileType
-import com.hejwesele.result.GeneralError
-import com.hejwesele.result.Result
-import com.hejwesele.result.onError
-import com.hejwesele.result.onSuccess
-import com.hejwesele.result.thenCompletable
 import com.hejwesele.settings.model.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -39,7 +34,7 @@ internal class HomeViewModel @Inject constructor(
             updateState { copy(isLoading = true) }
 
             getEvent("")
-                .thenCompletable {
+                .onSuccess {
                     storeEvent(
                         Event(
                             eventId = it.id,
@@ -84,14 +79,14 @@ internal class HomeViewModel @Inject constructor(
         updateState { copy(action = null) }
     }
 
-    private suspend fun handleInvitationResult(result: Result<Invitation>) {
+    private fun handleInvitationResult(result: Result<Invitation>) {
         result
             .onSuccess { invitation ->
                 updateState {
                     copy(isLoading = false, tiles = invitation.tiles.map { it.toUiModel() })
                 }
             }
-            .onError { error ->
+            .onFailure { error ->
                 updateState { copy(isLoading = false, error = error) }
             }
     }
@@ -140,7 +135,7 @@ internal data class HomeUiState(
     val isLoading: Boolean,
     val tiles: List<InvitationTileUiModel>,
     val intents: List<IntentUiModel>,
-    val error: GeneralError?
+    val error: Throwable?
 ) {
     companion object {
         val DEFAULT = HomeUiState(

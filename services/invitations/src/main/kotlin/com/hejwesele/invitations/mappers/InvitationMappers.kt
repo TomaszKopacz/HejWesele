@@ -9,22 +9,11 @@ import com.hejwesele.invitations.model.IntentUrlPrefix
 import com.hejwesele.invitations.model.Invitation
 import com.hejwesele.invitations.model.InvitationTile
 import com.hejwesele.invitations.model.InvitationTileType
-import com.hejwesele.result.Result
-import com.hejwesele.result.failure
-import com.hejwesele.result.serviceError
-import com.hejwesele.result.success
 
-internal fun InvitationDto.safeMapModel(): Result<Invitation> {
-    return try {
-        val invitation = Invitation(
-            id = id ?: throw IllegalArgumentException("Invitation ID is not present"),
-            tiles = tiles.map { it.mapModel() }
-        )
-        success(invitation)
-    } catch (exception: IllegalArgumentException) {
-        failure(serviceError(exception))
-    }
-}
+internal fun InvitationDto.mapModel() = Invitation(
+    id = id ?: throw IllegalArgumentException("Invitation ID is not present"),
+    tiles = tiles.map { it.mapModel() }
+)
 
 internal fun Invitation.mapDto(): InvitationDto {
     return InvitationDto(

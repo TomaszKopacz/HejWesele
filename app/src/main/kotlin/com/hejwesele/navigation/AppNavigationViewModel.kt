@@ -3,8 +3,6 @@ package com.hejwesele.navigation
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
 import com.hejwesele.navigation.MainActivityUiState.Companion.DEFAULT
-import com.hejwesele.result.onError
-import com.hejwesele.result.onSuccess
 import com.hejwesele.settings.SettingsRepository
 import com.ramcosta.composedestinations.spec.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,7 +34,7 @@ internal class AppNavigationViewModel @Inject constructor(
                     }
                     updateState { copy(startRoute = startRoute) }
                 }
-                .onError {
+                .onFailure {
                     // TODO - return login route
                     updateState { copy(startRoute = MainNavGraph) }
                 }

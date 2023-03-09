@@ -15,9 +15,6 @@ import com.hejwesele.gallery.board.usecase.DismissGalleryHint
 import com.hejwesele.gallery.board.usecase.GetEventSettings
 import com.hejwesele.gallery.board.usecase.ObserveGallery
 import com.hejwesele.result.GeneralError
-import com.hejwesele.result.onCompleted
-import com.hejwesele.result.onError
-import com.hejwesele.result.onSuccess
 import com.hejwesele.settings.model.EventSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -44,7 +41,7 @@ internal class GalleryViewModel @Inject constructor(
                         else -> handleStoredEvent(settings)
                     }
                 }
-                .onError {
+                .onFailure {
                     /* show error and logout */
                 }
         }
@@ -67,7 +64,7 @@ internal class GalleryViewModel @Inject constructor(
             .collect { result ->
                 result
                     .onSuccess { gallery -> handleGalleryData(settings, gallery) }
-                    .onError { error -> handleGalleryError(error) }
+                    .onFailure { error -> handleGalleryError(error) }
             }
     }
 
@@ -90,14 +87,14 @@ internal class GalleryViewModel @Inject constructor(
         }
     }
 
-    private fun handleGalleryError(error: GeneralError) {
+    private fun handleGalleryError(error: Throwable) {
         updateState { copy(error = error) }
     }
 
     fun onGalleryHintDismissed() {
         viewModelScope.launch {
             dismissGalleryHint()
-                .onCompleted {
+                .onSuccess {
                     updateState { copy(galleryHintVisible = false) }
                 }
         }
@@ -128,7 +125,7 @@ internal class GalleryViewModel @Inject constructor(
             if (result.isSuccessful && uri != null) {
                 val bitmap = bitmapResolver.getBitmap(uri)
             } else {
-                updateState { copy(error = GeneralError(null, null)) }
+                updateState { copy(error = GeneralError(null)) }
             }
         }
     }
@@ -154,7 +151,7 @@ internal data class GalleryUiState(
     val galleryHintVisible: Boolean,
     val galleryLinkVisible: Boolean,
     val photos: List<String>,
-    val error: GeneralError?
+    val error: Throwable?
 ) {
     companion object {
         val DEFAULT = GalleryUiState(

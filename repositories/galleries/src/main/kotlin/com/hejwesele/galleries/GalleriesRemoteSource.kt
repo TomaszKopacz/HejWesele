@@ -1,8 +1,6 @@
 package com.hejwesele.galleries
 
 import com.hejwesele.galleries.model.Gallery
-import com.hejwesele.result.CompletableResult
-import com.hejwesele.result.Result
 import kotlinx.coroutines.flow.Flow
 
 interface GalleriesRemoteSource {
@@ -11,5 +9,5 @@ interface GalleriesRemoteSource {
 
     suspend fun getGallery(galleryId: String): Result<Gallery>
 
-    suspend fun addGallery(gallery: Gallery): CompletableResult
+    suspend fun addGallery(gallery: Gallery): Result<Gallery>
 }

@@ -1,7 +1,6 @@
 package com.hejwesele.events
 
 import com.hejwesele.events.model.Event
-import com.hejwesele.result.Result
 import javax.inject.Inject
 
 class EventsRepository @Inject constructor(

@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.Result.Companion.failure
+import kotlin.Result.Companion.success
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.reflect.KClass
@@ -20,74 +22,80 @@ class FirebaseRealtimeDatabase @Inject constructor() {
     private val root = Firebase.database.reference
     private val firestoreScope = CoroutineScope(Dispatchers.Default)
 
-    fun <T : Any> observe(path: String, id: String, type: KClass<T>): Flow<FirebaseResult<T>> {
-        val snapshots = MutableSharedFlow<FirebaseResult<T>>()
+    fun <T : Any> observe(path: String, id: String, type: KClass<T>): Flow<Result<T>> {
+        val snapshots = MutableSharedFlow<Result<T>>()
         val reference = root.child(path).child(id)
 
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val item = snapshot.getValue(type.java)
-                if (item != null) {
-                    firestoreScope.launch {
-                        snapshots.emit(success(item))
+                runCatching {
+                    snapshot.getValue(type.java)
+                }.onSuccess { item ->
+                    if (item != null) {
+                        firestoreScope.launch {
+                            snapshots.emit(success(item))
+                        }
                     }
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                firestoreScope.launch {
-                    snapshots.emit(error("Failed retrieving data of type $type from path $path"))
-                }
+                // no-op
             }
         })
 
         return snapshots.asSharedFlow()
     }
 
-    suspend fun <T : Any> read(path: String, id: String, type: KClass<T>): FirebaseResult<T> = suspendCoroutine { continuation ->
+    suspend fun <T : Any> read(path: String, id: String, type: KClass<T>): Result<T?> = suspendCoroutine { continuation ->
         val reference = root.child(path).child(id)
         reference.get()
-            .addOnSuccessListener {
-                val item = it.getValue(type.java)
-                val result = if (item != null) success(item) else noItem()
-                continuation.resume(result)
+            .addOnSuccessListener { snapshot ->
+                continuation.resume(runCatching { snapshot.getValue(type.java) })
             }
-            .addOnFailureListener { continuation.resume(error("Failed retrieving data of type $type from path $path")) }
+            .addOnFailureListener { error ->
+                continuation.resume(failure(error))
+            }
     }
 
-    suspend fun <T : Any> readAll(path: String, type: KClass<T>): FirebaseResult<List<T>> = suspendCoroutine { continuation ->
+    suspend fun <T : Any> readAll(path: String, type: KClass<T>): Result<List<T>> = suspendCoroutine { continuation ->
         val reference = root.child(path)
         reference.get()
             .addOnSuccessListener { snapshot ->
-                val items = snapshot.children.mapNotNull { it.getValue(type.java) }
-                continuation.resume(success(items))
+                continuation.resume(
+                    runCatching {
+                        snapshot.children.mapNotNull { it.getValue(type.java) }
+                    }
+                )
             }
-            .addOnFailureListener { continuation.resume(error("Failed retrieving data of type $type from path $path")) }
+            .addOnFailureListener { error ->
+                continuation.resume(failure(error))
+            }
     }
 
-    suspend fun <T : Any> write(path: String, item: T): Boolean = suspendCoroutine { continuation ->
+    suspend fun <T : Any> write(path: String, item: T): Result<T> = suspendCoroutine { continuation ->
         val key = createNewEntry(path)
         key?.let {
             val reference = root.child("$path$it")
             item.addId(it)
             reference.setValue(item)
-                .addOnSuccessListener { continuation.resume(true) }
-                .addOnFailureListener { continuation.resume(false) }
-        } ?: continuation.resume(false)
+                .addOnSuccessListener { continuation.resume(success(item)) }
+                .addOnFailureListener { error -> continuation.resume(failure(error)) }
+        } ?: continuation.resume(failure(UnknownError("Failed to create new entry for element $item")))
     }
 
-    suspend fun <T> update(path: String, id: String, item: T): Boolean = suspendCoroutine { continuation ->
+    suspend fun <T> update(path: String, id: String, item: T): Result<T> = suspendCoroutine { continuation ->
         val reference = root.child(path).child(id)
         reference.setValue(item)
-            .addOnSuccessListener { continuation.resume(true) }
-            .addOnFailureListener { continuation.resume(false) }
+            .addOnSuccessListener { continuation.resume(success(item)) }
+            .addOnFailureListener { error -> continuation.resume(failure(error)) }
     }
 
-    suspend fun delete(path: String, id: String): Boolean = suspendCoroutine { continuation ->
+    suspend fun delete(path: String, id: String): Result<String> = suspendCoroutine { continuation ->
         val reference = root.child(path).child(id)
         reference.removeValue()
-            .addOnSuccessListener { continuation.resume(true) }
-            .addOnFailureListener { continuation.resume(false) }
+            .addOnSuccessListener { continuation.resume(success(id)) }
+            .addOnFailureListener { error -> continuation.resume(failure(error)) }
     }
 
     private fun createNewEntry(path: String): String? {

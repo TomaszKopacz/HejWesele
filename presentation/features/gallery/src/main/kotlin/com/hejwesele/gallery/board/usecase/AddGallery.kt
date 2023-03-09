@@ -2,14 +2,13 @@ package com.hejwesele.gallery.board.usecase
 
 import com.hejwesele.galleries.GalleriesRepository
 import com.hejwesele.galleries.model.Gallery
-import com.hejwesele.result.CompletableResult
 import javax.inject.Inject
 
 class AddGallery @Inject constructor(
     private val repository: GalleriesRepository
 ) {
 
-    suspend operator fun invoke(): CompletableResult = repository.addGallery(
+    suspend operator fun invoke() = repository.addGallery(
         Gallery(
             externalGallery = "https://external.galery/2",
             photos = listOf(

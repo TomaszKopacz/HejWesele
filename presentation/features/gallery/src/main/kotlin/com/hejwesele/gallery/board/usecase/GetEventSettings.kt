@@ -1,6 +1,5 @@
 package com.hejwesele.gallery.board.usecase
 
-import com.hejwesele.result.Result
 import com.hejwesele.settings.SettingsRepository
 import com.hejwesele.settings.model.EventSettings
 import javax.inject.Inject
