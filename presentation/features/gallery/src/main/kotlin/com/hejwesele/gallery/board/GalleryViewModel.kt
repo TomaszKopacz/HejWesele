@@ -1,19 +1,12 @@
 package com.hejwesele.gallery.board
 
-import android.graphics.Bitmap
-import android.net.Uri
 import androidx.lifecycle.viewModelScope
-import com.canhub.cropper.CropImageView.CropResult
 import com.hejwesele.android.mvvm.StateViewModel
-import com.hejwesele.extensions.BitmapResolver
 import com.hejwesele.galleries.model.Gallery
-import com.hejwesele.gallery.board.GalleryUiAction.OpenDeviceGallery
-import com.hejwesele.gallery.board.GalleryUiAction.OpenImageCropper
-import com.hejwesele.gallery.board.usecase.AddPhotoToGallery
+import com.hejwesele.gallery.board.GalleryUiAction.OpenImageCropperWithConfirmation
 import com.hejwesele.gallery.board.usecase.DismissGalleryHint
 import com.hejwesele.gallery.board.usecase.GetEventSettings
 import com.hejwesele.gallery.board.usecase.ObserveGallery
-import com.hejwesele.result.GeneralError
 import com.hejwesele.settings.model.EventSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -27,9 +20,7 @@ import javax.inject.Inject
 internal class GalleryViewModel @Inject constructor(
     private val getEventSettings: GetEventSettings,
     private val observeGallery: ObserveGallery,
-    private val dismissGalleryHint: DismissGalleryHint,
-    private val uploadPhoto: AddPhotoToGallery,
-    private val bitmapResolver: BitmapResolver
+    private val dismissGalleryHint: DismissGalleryHint
 ) : StateViewModel<GalleryUiState>(GalleryUiState.DEFAULT) {
 
     private var state = ViewModelState()
@@ -39,7 +30,7 @@ internal class GalleryViewModel @Inject constructor(
             updateState { copy(loading = true) }
             getEventSettings()
                 .onSuccess { settings ->
-                    handleStoredEventSettings(settings)
+                    handleEventSettings(settings)
                 }
                 .onFailure {
                     /* show error and logout */
@@ -59,28 +50,8 @@ internal class GalleryViewModel @Inject constructor(
 
     fun onAddPhotoClicked() {
         viewModelScope.launch {
-            updateState { copy(action = OpenDeviceGallery(IMAGE_DIRECTORY)) }
-        }
-    }
-
-    fun onImageSelected(uri: Uri?) {
-        viewModelScope.launch {
-            if (uri != null) {
-                updateState { copy(action = OpenImageCropper(uri)) }
-            } else {
-                // TODO - show error
-            }
-        }
-    }
-
-    fun onImageCropped(result: CropResult) {
-        viewModelScope.launch {
-            val uri = result.uriContent
-            if (result.isSuccessful && uri != null) {
-                uploadCroppedImage(bitmapResolver.getBitmap(uri))
-            } else {
-                updateState { copy(error = GeneralError(null)) }
-            }
+            val galleryId = requireNotNull(state.galleryId)
+            updateState { copy(action = OpenImageCropperWithConfirmation(galleryId)) }
         }
     }
 
@@ -88,7 +59,7 @@ internal class GalleryViewModel @Inject constructor(
         updateState { copy(action = null) }
     }
 
-    private suspend fun handleStoredEventSettings(settings: EventSettings) {
+    private suspend fun handleEventSettings(settings: EventSettings) {
         val event = settings.event
 
         if (event == null) {
@@ -102,23 +73,19 @@ internal class GalleryViewModel @Inject constructor(
 
             val galleryId = event.galleryId
             if (galleryId != null) {
-                observeEventGallery(galleryId)
+                observeGallery(galleryId)
+                    .collect { result ->
+                        result
+                            .onSuccess { gallery -> showGalleryData(gallery) }
+                            .onFailure { error -> showGalleryError(error) }
+                    }
             } else {
-                handleGalleryDisabled()
+                showGalleryDisabled()
             }
         }
     }
 
-    private suspend fun observeEventGallery(galleryId: String) {
-        observeGallery(galleryId)
-            .collect { result ->
-                result
-                    .onSuccess { gallery -> handleObservedGallery(gallery) }
-                    .onFailure { error -> handleObservedGalleryError(error) }
-            }
-    }
-
-    private fun handleObservedGallery(gallery: Gallery) {
+    private fun showGalleryData(gallery: Gallery) {
         val weddingDate = requireNotNull(state.eventDate)
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         val weddingStarted = now >= weddingDate
@@ -137,11 +104,11 @@ internal class GalleryViewModel @Inject constructor(
         }
     }
 
-    private fun handleObservedGalleryError(error: Throwable) {
+    private fun showGalleryError(error: Throwable) {
         updateState { copy(error = error) }
     }
 
-    private fun handleGalleryDisabled() {
+    private fun showGalleryDisabled() {
         updateState {
             copy(
                 enabled = false,
@@ -153,32 +120,13 @@ internal class GalleryViewModel @Inject constructor(
         }
     }
 
-    private suspend fun uploadCroppedImage(bitmap: Bitmap) {
-        val galleryId = state.galleryId
 
-        if (galleryId != null) {
-            uploadPhoto(
-                galleryId = galleryId,
-                photo = bitmap
-            )
-                .onSuccess {
-                    // TODO - show success
-                }
-                .onFailure {
-                    // TODO - show error
-                }
-        }
-    }
 
     private data class ViewModelState(
         val eventDate: LocalDateTime? = null,
         val galleryId: String? = null,
         val hintDismissed: Boolean = false
     )
-
-    companion object {
-        private const val IMAGE_DIRECTORY = "image/*"
-    }
 }
 
 internal data class GalleryUiState(
@@ -204,6 +152,5 @@ internal data class GalleryUiState(
 }
 
 internal sealed class GalleryUiAction {
-    class OpenDeviceGallery(val directory: String) : GalleryUiAction()
-    class OpenImageCropper(val imageUri: Uri) : GalleryUiAction()
+    class OpenImageCropperWithConfirmation(val galleryId: String) : GalleryUiAction()
 }

@@ -3,7 +3,7 @@ package com.hejwesele.gallery.preview
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.hejwesele.gallery.preview.destinations.GalleryPreviewDestination
+import com.hejwesele.gallery.destinations.GalleryPreviewDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

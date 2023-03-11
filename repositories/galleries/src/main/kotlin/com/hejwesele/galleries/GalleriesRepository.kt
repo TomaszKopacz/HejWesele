@@ -2,7 +2,9 @@ package com.hejwesele.galleries
 
 import com.hejwesele.galleries.model.Gallery
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class GalleriesRepository @Inject constructor(
     private val remoteSource: GalleriesRemoteSource,
     private val remoteStorage: GalleriesRemoteStorage

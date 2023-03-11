@@ -44,7 +44,7 @@ dependencies {
     implementation libs.accompanist.navigation.animation
     implementation libs.accompanist.navigation.material
     implementation libs.accompanist.systemuicontroller
-    implementation libs.imagecropper.compose
+    implementation libs.stateevents.compose
 
     implementation libs.hilt.android
     kapt libs.hilt.compiler

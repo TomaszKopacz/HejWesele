@@ -1,4 +1,4 @@
-package com.hejwesele.gallery.board.usecase
+package com.hejwesele.gallery.confirmation.usecase
 
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.PNG

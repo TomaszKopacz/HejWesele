@@ -1,6 +1,7 @@
 package com.hejwesele.navigation
 
-import com.hejwesele.gallery.preview.destinations.GalleryPreviewDestination
+import com.hejwesele.gallery.destinations.GalleryPreviewDestination
+import com.hejwesele.gallery.destinations.PhotoConfirmationDestination
 import com.hejwesele.main.destinations.MainDestination
 import com.hejwesele.settings.destinations.SettingsOverviewDestination
 import com.hejwesele.settings.destinations.SettingsTermsAndConditionsDestination
@@ -24,6 +25,7 @@ internal object MainNavGraph : NavGraphSpec {
     override val startRoute: Route = MainDestination routedIn this
     override val destinationsByRoute = listOf<DestinationSpec<*>>(
         MainDestination,
+        PhotoConfirmationDestination,
         GalleryPreviewDestination
     ).routedIn(this).associateBy { it.route }
 }

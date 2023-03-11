@@ -1,7 +1,5 @@
 package com.hejwesele.gallery.board
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -33,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color.Companion.Transparent
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,22 +39,17 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.canhub.cropper.CropImageContract
-import com.canhub.cropper.CropImageContractOptions
-import com.canhub.cropper.CropImageOptions
-import com.canhub.cropper.CropImageView
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.RoundedCornerImage
+import com.hejwesele.android.components.TextPlaceholder
 import com.hejwesele.android.components.layouts.gridItems
 import com.hejwesele.android.components.layouts.margin
 import com.hejwesele.android.components.layouts.singleItem
 import com.hejwesele.android.theme.Dimension
-import com.hejwesele.android.theme.md_theme_dark_background
-import com.hejwesele.android.theme.md_theme_dark_onBackground
+import com.hejwesele.android.tools.ImageCropper
 import com.hejwesele.gallery.IGalleryNavigation
 import com.hejwesele.gallery.R
-import com.hejwesele.gallery.board.GalleryUiAction.OpenDeviceGallery
-import com.hejwesele.gallery.board.GalleryUiAction.OpenImageCropper
+import com.hejwesele.gallery.board.GalleryUiAction.OpenImageCropperWithConfirmation
 import com.hejwesele.gallery.board.resources.Strings
 
 @Composable
@@ -80,44 +72,22 @@ private fun GalleryBoardScreen(
         )
     }
 
-    val imageCropperLauncher = rememberLauncherForActivityResult(CropImageContract()) { cropResult ->
-        viewModel.onImageCropped(cropResult)
-    }
-
-    val imagePickerLauncher = rememberLauncherForActivityResult(GetContent()) { uri ->
-        viewModel.onImageSelected(uri)
-    }
-
-    val cropImageOptions = CropImageOptions(
-        cropShape = CropImageView.CropShape.RECTANGLE,
-        fixAspectRatio = true,
-        aspectRatioX = 1,
-        aspectRatioY = 1,
-        toolbarColor = md_theme_dark_background.toArgb(),
-        toolbarBackButtonColor = md_theme_dark_onBackground.toArgb(),
-        activityBackgroundColor = md_theme_dark_background.toArgb(),
-        activityMenuIconColor = md_theme_dark_onBackground.toArgb(),
-        activityMenuTextColor = md_theme_dark_onBackground.toArgb(),
-        guidelinesColor = Transparent.toArgb(),
-        borderLineColor = Transparent.toArgb(),
-        progressBarColor = MaterialTheme.colorScheme.secondaryContainer.toArgb(),
-        cropMenuCropButtonTitle = Strings.galleryCropButtonText,
-    )
-
     val uiState by viewModel.states.collectAsState()
+
+    ImageCropper.install()
 
     LaunchedEffect(uiState.action) {
         when (val action = uiState.action) {
-            is OpenDeviceGallery -> imagePickerLauncher.launch(action.directory)
-            is OpenImageCropper -> {
-                val contract = CropImageContractOptions(
-                    uri = action.imageUri,
-                    cropImageOptions = cropImageOptions
-                )
-                imageCropperLauncher.launch(contract)
-            }
-            null -> { /*no-op*/
-            }
+            is OpenImageCropperWithConfirmation -> ImageCropper.launch(
+                onImageCropped = { uri ->
+                    navigation.openPhotoConfirmation(
+                        photoUri = uri,
+                        galleryId = action.galleryId
+                    )
+                },
+                onImageCropError = { /* TODO - show error */ }
+            )
+            null -> {}
         }
         viewModel.onActionConsumed()
     }
@@ -162,11 +132,7 @@ private fun GalleryContent(
                 action = { onAddClicked() }
             )
         } else {
-            GalleryDisabledMessage(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(Dimension.marginNormal)
-            )
+            TextPlaceholder(text = Strings.galleryDisabledMessageText)
         }
     }
 }
@@ -328,15 +294,4 @@ private fun FloatingAddButton(
             modifier = Modifier.padding(Dimension.marginNormal)
         )
     }
-}
-
-@Composable
-private fun GalleryDisabledMessage(modifier: Modifier) {
-    Text(
-        text = Strings.galleryDisabledMessageText,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyMedium,
-        textAlign = TextAlign.Center,
-        modifier = modifier
-    )
 }
