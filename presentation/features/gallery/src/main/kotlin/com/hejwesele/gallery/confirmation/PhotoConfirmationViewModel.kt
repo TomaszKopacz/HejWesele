@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
+import com.hejwesele.android.theme.Label
 import com.hejwesele.extensions.BitmapResolver
 import com.hejwesele.gallery.confirmation.usecase.AddPhotoToGallery
 import com.hejwesele.gallery.destinations.PhotoConfirmationDestination
@@ -27,14 +28,14 @@ internal class PhotoConfirmationViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            updateState { copy(loading = true) }
+            updateState { copy(loadingData = true) }
 
             val uri = PhotoConfirmationDestination.argsFrom(savedStateHandle).photoUri
             val galleryId = PhotoConfirmationDestination.argsFrom(savedStateHandle).galleryId
             val photo = bitmapResolver.getBitmap(uri)
 
             state = state.copy(photo = photo, galleryId = galleryId)
-            updateState { copy(loading = false, photo = photo) }
+            updateState { copy(loadingData = false, photo = photo) }
         }
     }
 
@@ -59,13 +60,25 @@ internal class PhotoConfirmationViewModel @Inject constructor(
         val galleryId = requireNotNull(state.galleryId)
 
         viewModelScope.launch {
-            updateState { copy(loading = true, hidePhotoConfirmation = triggered) }
+            updateState {
+                copy(
+                    uploadingPhoto = true,
+                    uploadingMessage = Label.galleryPublishingPhotoInProgressText,
+                    hidePhotoConfirmation = triggered
+                )
+            }
             withContext(Dispatchers.IO) {
                 addPhotoToGallery(
                     galleryId = galleryId,
                     photo = photo
                 ).onSuccess {
-                    updateState { copy(loading = false, closeScreen = triggered) }
+                    updateState {
+                        copy(
+                            uploadingPhoto = false,
+                            uploadingMessage = null,
+                            closeScreen = triggered
+                        )
+                    }
                 }.onFailure {
                     // TODO - show error
                 }
@@ -97,8 +110,10 @@ internal data class PhotoConfirmationUiState(
     val showPhotoConfirmation: StateEvent,
     val hidePhotoConfirmation: StateEvent,
     val closeScreen: StateEvent,
-    val loading: Boolean,
+    val loadingData: Boolean,
     val photo: Bitmap?,
+    val uploadingPhoto: Boolean,
+    val uploadingMessage: String?,
     val error: Throwable?
 ) {
     companion object {
@@ -106,8 +121,10 @@ internal data class PhotoConfirmationUiState(
             showPhotoConfirmation = consumed,
             hidePhotoConfirmation = consumed,
             closeScreen = consumed,
-            loading = false,
+            loadingData = false,
             photo = null,
+            uploadingPhoto = false,
+            uploadingMessage = null,
             error = null
         )
     }

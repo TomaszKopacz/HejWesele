@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.Loader
+import com.hejwesele.android.components.LoaderDialog
 import com.hejwesele.android.components.PlainButton
 import com.hejwesele.android.components.TextPlaceholder
 import com.hejwesele.android.components.layouts.BottomSheetScaffold
@@ -113,8 +114,11 @@ private fun PhotoConfirmationScreen(
                         onCancel = { viewModel.onPhotoDeclined() }
                     )
                 }
-                if (loading) {
+                if (loadingData) {
                     Loader()
+                }
+                if (uploadingPhoto) {
+                    LoaderDialog(label = uploadingMessage)
                 }
                 if (error != null) {
                     TextPlaceholder(text = "Error")
