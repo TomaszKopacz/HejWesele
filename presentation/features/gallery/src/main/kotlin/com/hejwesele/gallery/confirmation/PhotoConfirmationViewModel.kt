@@ -79,19 +79,35 @@ internal class PhotoConfirmationViewModel @Inject constructor(
                             closeScreen = triggered
                         )
                     }
-                }.onFailure {
-                    // TODO - show error
+                }.onFailure { error ->
+                    updateState {
+                        copy(
+                            uploadingPhoto = false,
+                            uploadingMessage = null,
+                            error = error
+                        )
+                    }
                 }
             }
         }
     }
 
     fun onPhotoConfirmationShown() {
-        updateState { copy(showPhotoConfirmation = consumed) }
+        viewModelScope.launch {
+            updateState { copy(showPhotoConfirmation = consumed) }
+        }
     }
 
     fun onPhotoConfirmationHidden() {
-        updateState { copy(hidePhotoConfirmation = consumed) }
+        viewModelScope.launch {
+            updateState { copy(hidePhotoConfirmation = consumed) }
+        }
+    }
+
+    fun onErrorDismissed() {
+        viewModelScope.launch {
+            updateState { copy(error = null) }
+        }
     }
 
     fun onScreenClosed() {

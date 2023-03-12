@@ -16,6 +16,7 @@ android {
 dependencies {
     implementation projects.presentation.ui.theme
 
+    implementation libs.airbnb.compose.lottie
     implementation libs.androidx.activity.compose
     implementation libs.androidx.compose.ui
     implementation libs.androidx.compose.foundation

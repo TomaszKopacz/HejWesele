@@ -1,0 +1,80 @@
+package com.hejwesele.android.components
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.window.Dialog
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.hejwesele.android.theme.Dimension
+import com.hejwesele.android.theme.Label
+import com.hejwesele.components.R
+
+@Composable
+fun ErrorDialog(
+    title: String = Label.errorTitle,
+    description: String = Label.errorDescription,
+    onDismiss: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+    ) {
+        Surface(
+            elevation = Dimension.elevationSmall,
+            shape = RoundedCornerShape(Dimension.radiusRoundedCornerNormal),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            Column(
+                modifier = Modifier.padding(horizontal = Dimension.marginLarge),
+                verticalArrangement = Arrangement.Center
+            ) {
+                val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.lottie_error))
+                LottieAnimation(
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever,
+                    modifier = Modifier
+                        .padding(top = Dimension.marginLarge)
+                        .aspectRatio(1.0f)
+                )
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(Dimension.marginNormal))
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(Dimension.marginNormal))
+                PlainButton(
+                    text = Label.ok,
+                    color = MaterialTheme.colorScheme.error,
+                    onClick = onDismiss,
+                    modifier = Modifier.align(Alignment.End)
+                )
+                Spacer(modifier = Modifier.height(Dimension.marginNormal))
+            }
+        }
+    }
+}

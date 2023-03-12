@@ -33,10 +33,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hejwesele.android.components.ErrorDialog
 import com.hejwesele.android.components.Loader
 import com.hejwesele.android.components.LoaderDialog
 import com.hejwesele.android.components.PlainButton
-import com.hejwesele.android.components.TextPlaceholder
 import com.hejwesele.android.components.layouts.BottomSheetScaffold
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
@@ -121,11 +121,12 @@ private fun PhotoConfirmationScreen(
                     LoaderDialog(label = uploadingMessage)
                 }
                 if (error != null) {
-                    TextPlaceholder(text = "Error")
+                    ErrorDialog(
+                        onDismiss = { viewModel.onErrorDismissed() }
+                    )
                 }
             }
         }
-
     }
 
     BackHandler(sheetState.isVisible) {
