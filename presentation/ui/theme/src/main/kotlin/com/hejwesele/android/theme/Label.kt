@@ -13,4 +13,5 @@ object Label {
     const val galleryPublishConfirmationTitle = "Czy na pewno chcesz opublikować wybrane zdjęcie?"
     const val galleryPublishConfirmationDescription = "Zdjęcie będzie widoczne dla wszystkich uczestników wesela."
     const val galleryPublishingPhotoInProgressText = "Dodawanie zdjęcia..."
+    const val galleryPublishingPhotoSuccessText = "Zdjęcie zostało dodane!"
 }

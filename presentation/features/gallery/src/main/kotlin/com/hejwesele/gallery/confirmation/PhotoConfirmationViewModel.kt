@@ -76,7 +76,7 @@ internal class PhotoConfirmationViewModel @Inject constructor(
                         copy(
                             uploadingPhoto = false,
                             uploadingMessage = null,
-                            closeScreen = triggered
+                            closeScreenWithSuccess = triggered
                         )
                     }
                 }.onFailure { error ->
@@ -112,7 +112,12 @@ internal class PhotoConfirmationViewModel @Inject constructor(
 
     fun onScreenClosed() {
         viewModelScope.launch {
-            updateState { copy(closeScreen = consumed) }
+            updateState {
+                copy(
+                    closeScreen = consumed,
+                    closeScreenWithSuccess = consumed
+                )
+            }
         }
     }
 
@@ -126,6 +131,7 @@ internal data class PhotoConfirmationUiState(
     val showPhotoConfirmation: StateEvent,
     val hidePhotoConfirmation: StateEvent,
     val closeScreen: StateEvent,
+    val closeScreenWithSuccess: StateEvent,
     val loadingData: Boolean,
     val photo: Bitmap?,
     val uploadingPhoto: Boolean,
@@ -137,6 +143,7 @@ internal data class PhotoConfirmationUiState(
             showPhotoConfirmation = consumed,
             hidePhotoConfirmation = consumed,
             closeScreen = consumed,
+            closeScreenWithSuccess = consumed,
             loadingData = false,
             photo = null,
             uploadingPhoto = false,

@@ -5,7 +5,6 @@ import android.net.Uri
 interface IGalleryNavigation {
     fun openPhotoConfirmation(photoUri: Uri, galleryId: String)
     fun openPreview(photo: String)
-    fun navigateUp()
 
     fun openSettings()
 }

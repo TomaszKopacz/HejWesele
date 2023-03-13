@@ -3,12 +3,16 @@ package com.hejwesele.gallery.board
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
 import com.hejwesele.galleries.model.Gallery
-import com.hejwesele.gallery.board.GalleryUiAction.OpenImageCropperWithConfirmation
+import com.hejwesele.gallery.board.GalleryUiAction.*
 import com.hejwesele.gallery.board.usecase.DismissGalleryHint
 import com.hejwesele.gallery.board.usecase.GetEventSettings
 import com.hejwesele.gallery.board.usecase.ObserveGallery
 import com.hejwesele.settings.model.EventSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
+import de.palm.composestateevents.StateEvent
+import de.palm.composestateevents.StateEventWithContent
+import de.palm.composestateevents.consumed
+import de.palm.composestateevents.triggered
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -51,12 +55,22 @@ internal class GalleryViewModel @Inject constructor(
     fun onAddPhotoClicked() {
         viewModelScope.launch {
             val galleryId = requireNotNull(state.galleryId)
-            updateState { copy(action = OpenImageCropperWithConfirmation(galleryId)) }
+            updateState { copy(openImageCropper = triggered(galleryId)) }
         }
     }
 
-    fun onActionConsumed() {
-        updateState { copy(action = null) }
+    fun onPhotoUploadSuccess() {
+        viewModelScope.launch {
+            updateState { copy(showPhotoUploadSuccess = triggered) }
+        }
+    }
+
+    fun onImageCropperOpened() {
+        updateState { copy(openImageCropper = consumed()) }
+    }
+
+    fun onPhotoUploadSuccessShown() {
+        updateState { copy(showPhotoUploadSuccess = consumed) }
     }
 
     private suspend fun handleEventSettings(settings: EventSettings) {
@@ -130,7 +144,8 @@ internal class GalleryViewModel @Inject constructor(
 }
 
 internal data class GalleryUiState(
-    val action: GalleryUiAction?,
+    val openImageCropper: StateEventWithContent<String>,
+    val showPhotoUploadSuccess: StateEvent,
     val enabled: Boolean,
     val loading: Boolean,
     val galleryHintVisible: Boolean,
@@ -140,7 +155,8 @@ internal data class GalleryUiState(
 ) {
     companion object {
         val DEFAULT = GalleryUiState(
-            action = null,
+            openImageCropper = consumed(),
+            showPhotoUploadSuccess = consumed,
             enabled = true,
             loading = false,
             galleryHintVisible = true,
@@ -153,4 +169,5 @@ internal data class GalleryUiState(
 
 internal sealed class GalleryUiAction {
     class OpenImageCropperWithConfirmation(val galleryId: String) : GalleryUiAction()
+    object ShowPhotoUploadSuccess : GalleryUiAction()
 }

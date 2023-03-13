@@ -16,8 +16,9 @@ class AddPhotoToGallery @Inject constructor(
         photo: Bitmap
     ): Result<String> {
         return uploadImage(
-            galleryId = galleryId,
-            bitmap = photo,
+            location = GALLERY_LOCATION,
+            folder = galleryId,
+            image = photo,
             format = PNG
         ).flatMap { photoUrl ->
             addPhotoUrlToGallery(galleryId, photoUrl)
@@ -38,5 +39,9 @@ class AddPhotoToGallery @Inject constructor(
                     )
                 ).map { photoUrl }
             }
+    }
+
+    companion object {
+        private const val GALLERY_LOCATION = "gallery"
     }
 }

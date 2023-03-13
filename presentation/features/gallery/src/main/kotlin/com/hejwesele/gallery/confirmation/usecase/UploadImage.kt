@@ -14,16 +14,17 @@ class UploadImage @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        galleryId: String,
-        bitmap: Bitmap,
+        location: String,
+        folder: String,
+        image: Bitmap,
         format: CompressFormat
     ): Result<String> {
         val name = UUID.randomUUID().toString()
         val extension = getFileExtension(format)
-        val path = "$GALLERY_FOLDER_NAME/$galleryId/$name$extension"
+        val path = "$location/$folder/$name$extension"
         val stream = ByteArrayOutputStream()
 
-        bitmap.compress(format, COMPRESS_QUALITY_PERCENT, stream)
+        image.compress(format, COMPRESS_QUALITY_PERCENT, stream)
         val bytes = stream.toByteArray()
 
         return repository.uploadImage(path = path, bytes = bytes)
@@ -37,6 +38,5 @@ class UploadImage @Inject constructor(
 
     companion object {
         private const val COMPRESS_QUALITY_PERCENT = 100
-        private const val GALLERY_FOLDER_NAME = "gallery"
     }
 }

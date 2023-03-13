@@ -42,24 +42,24 @@ import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.android.theme.md_theme_dark_background
 import com.hejwesele.android.theme.md_theme_dark_onBackground
-import com.hejwesele.gallery.IGalleryNavigation
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.launch
 
 @Composable
 @Destination(navArgsDelegate = PhotoConfirmationNavArgs::class)
 fun PhotoConfirmation(
-    navigation: IGalleryNavigation
+    resultSender: ResultBackNavigator<Boolean>
 ) {
-    PhotoConfirmationScreen(navigation)
+    PhotoConfirmationScreen(resultSender)
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun PhotoConfirmationScreen(
-    navigation: IGalleryNavigation,
-    viewModel: PhotoConfirmationViewModel = hiltViewModel()
+    resultSender: ResultBackNavigator<Boolean>,
+    viewModel: PhotoConfirmationViewModel = hiltViewModel(),
 ) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
@@ -90,7 +90,12 @@ private fun PhotoConfirmationScreen(
     EventEffect(
         event = uiState.closeScreen,
         onConsumed = { viewModel.onScreenClosed() },
-        action = { navigation.navigateUp() }
+        action = { resultSender.navigateBack(result = false) }
+    )
+    EventEffect(
+        event = uiState.closeScreenWithSuccess,
+        onConsumed = { viewModel.onScreenClosed() },
+        action = { resultSender.navigateBack(result = true) }
     )
 
     BottomSheetScaffold(
