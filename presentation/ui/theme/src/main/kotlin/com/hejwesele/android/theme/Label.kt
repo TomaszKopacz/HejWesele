@@ -15,6 +15,9 @@ object Label {
     const val galleryPublishConfirmationDescription = "Zdjęcie będzie widoczne dla wszystkich uczestników wesela."
     const val galleryPublishingPhotoInProgressText = "Dodawanie zdjęcia..."
     const val galleryPublishingPhotoSuccessText = "Zdjęcie zostało dodane!"
+    const val gallerySavingPhotoSuccessText = "Zdjęcie zostało zapisane!"
+    const val gallerySavingPhotoFailureText = "Wystąpił błąd. Spróbuj ponownie."
+    const val gallerySavingPhotoInProgressText = "Zapisywanie..."
 
     const val galleryCropPhotoErrorDescription = "Podczas edycji zdjęcia wystąpił błąd. Spróbuj ponownie."
 }

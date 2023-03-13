@@ -1,7 +1,7 @@
 package com.hejwesele.gallery.preview
 
 data class GalleryPreviewNavArgs(
-    val photos: ArrayList<String>,
-    val selectedPhoto: Int
+    val photoUrls: ArrayList<String>,
+    val selectedPhotoIndex: Int
 )
 

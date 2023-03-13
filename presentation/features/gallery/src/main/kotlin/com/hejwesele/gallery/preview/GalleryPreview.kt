@@ -1,10 +1,7 @@
 package com.hejwesele.gallery.preview
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,37 +9,41 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.Loader
-import com.hejwesele.android.components.PlainButton
+import com.hejwesele.android.components.LoaderDialog
+import com.hejwesele.android.components.ScreenOrientationLocker
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.android.theme.md_theme_dark_background
 import com.hejwesele.android.theme.md_theme_dark_onBackground
 import com.hejwesele.gallery.IGalleryNavigation
+import com.hejwesele.gallery.R
 import com.ramcosta.composedestinations.annotation.Destination
+import de.palm.composestateevents.EventEffect
 
 @Composable
 @Destination(navArgsDelegate = GalleryPreviewNavArgs::class)
@@ -58,7 +59,7 @@ private fun GalleryPreviewScreen(
     navigation: IGalleryNavigation,
     viewModel: GalleryPreviewViewModel = hiltViewModel()
 ) {
-    LockScreenOrientation(SCREEN_ORIENTATION_PORTRAIT)
+    ScreenOrientationLocker(SCREEN_ORIENTATION_PORTRAIT)
     val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setStatusBarColor(
@@ -67,10 +68,34 @@ private fun GalleryPreviewScreen(
         )
     }
 
-    val coroutineScope = rememberCoroutineScope()
-
     val uiState by viewModel.states.collectAsState()
     val snackbarState = remember { SnackbarHostState() }
+
+    EventEffect(
+        event = uiState.closeScreen,
+        onConsumed = { viewModel.onScreenClosed() },
+        action = { navigation.navigateUp() }
+    )
+    EventEffect(
+        event = uiState.showSavePhotoSuccess,
+        onConsumed = { viewModel.onSavePhotoResultShown() },
+        action = {
+            snackbarState.showSnackbar(
+                message = Label.gallerySavingPhotoSuccessText,
+                withDismissAction = true
+            )
+        }
+    )
+    EventEffect(
+        event = uiState.showSavePhotoError,
+        onConsumed = { viewModel.onSavePhotoResultShown() },
+        action = {
+            snackbarState.showSnackbar(
+                message = Label.gallerySavingPhotoFailureText,
+                withDismissAction = true
+            )
+        }
+    )
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarState) }
@@ -82,8 +107,11 @@ private fun GalleryPreviewScreen(
                 } else {
                     PhotoPreviewContent(
                         padding = padding,
-                        photos = uiState.photos,
-                        selectedPhoto = uiState.selectedPhoto
+                        photoUrls = photoUrls,
+                        selectedPhotoIndex = selectedPhotoIndex,
+                        savingPhoto = savingPhoto,
+                        onBack = { viewModel.onBack() },
+                        onSave = { photoUrl -> viewModel.onSavePhotoClicked(photoUrl) }
                     )
                 }
             }
@@ -91,14 +119,17 @@ private fun GalleryPreviewScreen(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun PhotoPreviewContent(
     padding: PaddingValues,
-    photos: List<String>,
-    selectedPhoto: Int
+    photoUrls: List<String>,
+    selectedPhotoIndex: Int,
+    savingPhoto: Boolean,
+    onBack: () -> Unit,
+    onSave: (String) -> Unit
 ) {
-    val pagerState = rememberPagerState(initialPage = selectedPhoto)
+    val pagerState = rememberPagerState(initialPage = selectedPhotoIndex)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -108,25 +139,17 @@ private fun PhotoPreviewContent(
             ),
     ) {
         Actions(
-            onBack = { },
-            onSave = {
-                Log.d("TOMASZKOPACZ", "Save item nr: ${pagerState.currentPage}")
-            }
+            onBack = onBack,
+            onSave = { onSave(photoUrls[pagerState.currentPage]) }
         )
-        HorizontalPager(
+        PhotosCarousel(
             modifier = Modifier
                 .weight(1.0f)
                 .padding(bottom = padding.calculateBottomPadding()),
             state = pagerState,
-            count = photos.count(),
-        ) { page ->
-            GlideImage(
-                model = photos[page],
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+            photoUrls = photoUrls,
+            savingPhoto = savingPhoto
+        )
     }
 }
 
@@ -141,34 +164,46 @@ private fun Actions(
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        PlainButton(
-            text = Label.cancel,
-            color = md_theme_dark_onBackground,
-            onClick = onBack
+        Icon(
+            painter = painterResource(id = R.drawable.ic_arrow_left),
+            contentDescription = null,
+            tint = md_theme_dark_onBackground,
+            modifier = Modifier
+                .size(Dimension.iconSizeNormal)
+                .clickable { onBack() },
         )
-        PlainButton(
-            text = Label.galleryPublishPhoto,
-            color = md_theme_dark_onBackground,
-            onClick = onSave
+        Icon(
+            painter = painterResource(id = R.drawable.ic_download),
+            contentDescription = null,
+            tint = md_theme_dark_onBackground,
+            modifier = Modifier
+                .size(Dimension.iconSizeNormal)
+                .clickable { onSave() },
         )
     }
 }
 
+@OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class)
 @Composable
-fun LockScreenOrientation(orientation: Int) {
-    val context = LocalContext.current
-    DisposableEffect(orientation) {
-        val activity = context.findActivity() ?: return@DisposableEffect onDispose {}
-        val originalOrientation = activity.requestedOrientation
-        activity.requestedOrientation = orientation
-        onDispose {
-            activity.requestedOrientation = originalOrientation
+private fun PhotosCarousel(
+    modifier: Modifier,
+    state: PagerState,
+    photoUrls: List<String>,
+    savingPhoto: Boolean
+) {
+    HorizontalPager(
+        modifier = modifier,
+        state = state,
+        count = photoUrls.count(),
+    ) { page ->
+        GlideImage(
+            model = photoUrls[page],
+            contentDescription = null,
+            contentScale = ContentScale.FillWidth,
+            modifier = Modifier.fillMaxWidth()
+        )
+        if (savingPhoto) {
+            LoaderDialog(label = Label.gallerySavingPhotoInProgressText)
         }
     }
-}
-
-fun Context.findActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
 }

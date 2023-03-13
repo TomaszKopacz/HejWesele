@@ -6,13 +6,17 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import com.bumptech.glide.Glide
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class BitmapResolver @Inject constructor(@ApplicationContext private val context: Context) {
+class BitmapProvider @Inject constructor(@ApplicationContext private val context: Context) {
+
+    fun fromUrl(url: String): Bitmap =
+        Glide.with(context).asBitmap().load(url).submit().get()
 
     @Suppress("DEPRECATION", "MagicNumber")
-    fun getBitmap(uri: Uri): Bitmap {
+    fun fromUri(uri: Uri): Bitmap {
         return if (Build.VERSION.SDK_INT < 28) {
             MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
         } else {

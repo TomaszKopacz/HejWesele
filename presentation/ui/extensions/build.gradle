@@ -9,6 +9,8 @@ android {
 }
 
 dependencies {
+    implementation libs.glide.compose
+
     implementation libs.hilt.android
     kapt libs.hilt.compiler
 }

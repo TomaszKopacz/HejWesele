@@ -5,7 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
 import com.hejwesele.android.theme.Label
-import com.hejwesele.extensions.BitmapResolver
+import com.hejwesele.extensions.BitmapProvider
 import com.hejwesele.gallery.confirmation.usecase.AddPhotoToGallery
 import com.hejwesele.gallery.destinations.PhotoConfirmationDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class PhotoConfirmationViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val bitmapResolver: BitmapResolver,
+    private val bitmapProvider: BitmapProvider,
     private val addPhotoToGallery: AddPhotoToGallery
 ) : StateViewModel<PhotoConfirmationUiState>(PhotoConfirmationUiState.DEFAULT) {
 
@@ -32,7 +32,7 @@ internal class PhotoConfirmationViewModel @Inject constructor(
 
             val uri = PhotoConfirmationDestination.argsFrom(savedStateHandle).photoUri
             val galleryId = PhotoConfirmationDestination.argsFrom(savedStateHandle).galleryId
-            val photo = bitmapResolver.getBitmap(uri)
+            val photo = bitmapProvider.fromUri(uri)
 
             state = state.copy(photo = photo, galleryId = galleryId)
             updateState { copy(loadingData = false, photo = photo) }
