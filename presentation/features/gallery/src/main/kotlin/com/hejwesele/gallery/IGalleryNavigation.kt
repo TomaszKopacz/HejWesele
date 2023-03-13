@@ -4,7 +4,7 @@ import android.net.Uri
 
 interface IGalleryNavigation {
     fun openPhotoConfirmation(photoUri: Uri, galleryId: String)
-    fun openPreview(photo: String)
+    fun openPreview(photos: ArrayList<String>, selectedPhoto: Int)
 
     fun openSettings()
 }

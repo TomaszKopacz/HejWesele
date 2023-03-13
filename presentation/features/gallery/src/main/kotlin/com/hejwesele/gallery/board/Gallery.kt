@@ -144,7 +144,7 @@ private fun GalleryBoardScreen(
                     galleryLinkVisible = galleryLinkVisible,
                     imageCropFailure = imageCropFailure,
                     onHintDismissed = { viewModel.onGalleryHintDismissed() },
-                    onPhotoClicked = { photo -> navigation.openPreview(photo) },
+                    onPhotoClicked = { index -> navigation.openPreview(photos, index) },
                     onAddClicked = { viewModel.onAddPhotoClicked() },
                     onImageCropFailureDismissed = { viewModel.onImageCropErrorDismissed() }
                 )
@@ -162,7 +162,7 @@ private fun GalleryContent(
     galleryLinkVisible: Boolean,
     imageCropFailure: Boolean,
     onHintDismissed: () -> Unit,
-    onPhotoClicked: (String) -> Unit,
+    onPhotoClicked: (Int) -> Unit,
     onAddClicked: () -> Unit,
     onImageCropFailureDismissed: () -> Unit
 ) {
@@ -206,7 +206,7 @@ private fun ScrollableContent(
     galleryHintVisible: Boolean,
     galleryLinkVisible: Boolean,
     onHintDismissed: () -> Unit,
-    onPhotoClicked: (String) -> Unit
+    onPhotoClicked: (Int) -> Unit
 ) {
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         margin(padding.calculateTopPadding() + Dimension.marginSmall)
@@ -229,15 +229,15 @@ private fun ScrollableContent(
             columnCount = 3,
             padding = Dimension.gridPaddingThin,
             innerPadding = Dimension.gridPaddingThin
-        ) { url ->
+        ) { index ->
             RoundedCornerImage(
-                url = url,
+                url = photos[index],
                 modifier = Modifier
                     .shadow(
                         elevation = Dimension.elevationSmall,
                         shape = RoundedCornerShape(Dimension.radiusRoundedCornerSmall)
                     )
-                    .clickable { onPhotoClicked("PHOTO ID: 44") }
+                    .clickable { onPhotoClicked(index) }
             )
         }
         margin(Dimension.marginLarge)

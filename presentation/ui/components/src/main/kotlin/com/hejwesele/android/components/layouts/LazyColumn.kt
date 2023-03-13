@@ -31,7 +31,7 @@ fun <T> LazyListScope.gridItems(
     columnCount: Int,
     padding: Dp = 0.dp,
     innerPadding: Dp = 0.dp,
-    itemContent: @Composable BoxScope.(T) -> Unit
+    itemContent: @Composable BoxScope.(Int) -> Unit
 ) {
     val itemsCount = items.count()
     val rowsCount = if (itemsCount == 0) 0 else 1 + (itemsCount - 1) / columnCount
@@ -54,7 +54,7 @@ fun <T> LazyListScope.gridItems(
                                 .aspectRatio(1f),
                             propagateMinConstraints = true
                         ) {
-                            itemContent(items[itemIndex])
+                            itemContent(itemIndex)
                         }
                         if (columnIndex != columnCount - 1 && columnCount > 1) {
                             Spacer(Modifier.width(innerPadding))

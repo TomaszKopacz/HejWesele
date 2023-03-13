@@ -124,7 +124,7 @@ internal class GalleryViewModel @Inject constructor(
                 loading = false,
                 galleryHintVisible = galleryHintEnabled,
                 galleryLinkVisible = galleryLinkPresent,
-                photos = photos.reversed(),
+                photos = ArrayList(photos.reversed()),
                 imageCropFailure = false,
                 error = null
             )
@@ -147,7 +147,7 @@ internal class GalleryViewModel @Inject constructor(
                 loading = false,
                 galleryHintVisible = false,
                 galleryLinkVisible = false,
-                photos = emptyList(),
+                photos = arrayListOf(),
                 imageCropFailure = false,
                 error = null
             )
@@ -169,7 +169,7 @@ internal data class GalleryUiState(
     val loading: Boolean,
     val galleryHintVisible: Boolean,
     val galleryLinkVisible: Boolean,
-    val photos: List<String>,
+    val photos: ArrayList<String>,
     val imageCropFailure: Boolean,
     val error: Throwable?,
 ) {
@@ -181,7 +181,7 @@ internal data class GalleryUiState(
             loading = false,
             galleryHintVisible = true,
             galleryLinkVisible = false,
-            photos = emptyList(),
+            photos = arrayListOf(),
             imageCropFailure = false,
             error = null,
         )

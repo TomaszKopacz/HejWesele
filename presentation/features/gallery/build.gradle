@@ -43,7 +43,9 @@ dependencies {
     implementation libs.androidx.hilt.navigation.compose
     implementation libs.accompanist.navigation.animation
     implementation libs.accompanist.navigation.material
+    implementation libs.accompanist.pager
     implementation libs.accompanist.systemuicontroller
+    implementation libs.glide.compose
     implementation libs.stateevents.compose
 
     implementation libs.hilt.android
