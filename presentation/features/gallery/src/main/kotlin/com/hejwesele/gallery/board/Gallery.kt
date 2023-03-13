@@ -40,6 +40,9 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hejwesele.android.components.ErrorDialog
+import com.hejwesele.android.components.ErrorView
+import com.hejwesele.android.components.Loader
 import com.hejwesele.android.components.RoundedCornerImage
 import com.hejwesele.android.components.TextPlaceholder
 import com.hejwesele.android.components.layouts.gridItems
@@ -102,7 +105,7 @@ private fun GalleryBoardScreen(
                         galleryId = galleryId
                     )
                 },
-                onImageCropError = { /* TODO - show error */ }
+                onImageCropError = { viewModel.onImageCropError() }
             )
         }
     )
@@ -125,16 +128,28 @@ private fun GalleryBoardScreen(
             )
         },
     ) { padding ->
-        GalleryContent(
-            padding = padding,
-            galleryEnabled = uiState.enabled,
-            photos = uiState.photos,
-            galleryHintVisible = uiState.galleryHintVisible,
-            galleryLinkVisible = uiState.galleryLinkVisible,
-            onHintDismissed = { viewModel.onGalleryHintDismissed() },
-            onPhotoClicked = { photo -> navigation.openPreview(photo) },
-            onAddClicked = { viewModel.onAddPhotoClicked() },
-        )
+        with(uiState) {
+            if (loading) {
+                Loader()
+            } else if (error != null) {
+                ErrorView(
+                    onRetry = { viewModel.onErrorRetry() }
+                )
+            } else {
+                GalleryContent(
+                    padding = padding,
+                    galleryEnabled = enabled,
+                    photos = photos,
+                    galleryHintVisible = galleryHintVisible,
+                    galleryLinkVisible = galleryLinkVisible,
+                    imageCropFailure = imageCropFailure,
+                    onHintDismissed = { viewModel.onGalleryHintDismissed() },
+                    onPhotoClicked = { photo -> navigation.openPreview(photo) },
+                    onAddClicked = { viewModel.onAddPhotoClicked() },
+                    onImageCropFailureDismissed = { viewModel.onImageCropErrorDismissed() }
+                )
+            }
+        }
     }
 }
 
@@ -145,9 +160,11 @@ private fun GalleryContent(
     photos: List<String>,
     galleryHintVisible: Boolean,
     galleryLinkVisible: Boolean,
+    imageCropFailure: Boolean,
     onHintDismissed: () -> Unit,
     onPhotoClicked: (String) -> Unit,
-    onAddClicked: () -> Unit
+    onAddClicked: () -> Unit,
+    onImageCropFailureDismissed: () -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -170,6 +187,12 @@ private fun GalleryContent(
                     ),
                 action = { onAddClicked() }
             )
+            if (imageCropFailure) {
+                ErrorDialog(
+                    description = Label.galleryCropPhotoErrorDescription,
+                    onDismiss = onImageCropFailureDismissed
+                )
+            }
         } else {
             TextPlaceholder(text = Strings.galleryDisabledMessageText)
         }

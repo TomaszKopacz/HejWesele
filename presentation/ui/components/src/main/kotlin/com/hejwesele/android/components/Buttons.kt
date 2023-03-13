@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 
 @Composable
@@ -13,6 +14,7 @@ fun PlainButton(
     modifier: Modifier = Modifier,
     text: String,
     color: Color = MaterialTheme.colorScheme.onBackground,
+    style: TextStyle = MaterialTheme.typography.titleLarge,
     onClick: () -> Unit,
 ) {
     TextButton(
@@ -22,7 +24,7 @@ fun PlainButton(
         Text(
             text = text,
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.titleLarge,
+            style = style,
             color = color
         )
     }

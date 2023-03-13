@@ -3,7 +3,6 @@ package com.hejwesele.gallery.board
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
 import com.hejwesele.galleries.model.Gallery
-import com.hejwesele.gallery.board.GalleryUiAction.*
 import com.hejwesele.gallery.board.usecase.DismissGalleryHint
 import com.hejwesele.gallery.board.usecase.GetEventSettings
 import com.hejwesele.gallery.board.usecase.ObserveGallery
@@ -37,7 +36,7 @@ internal class GalleryViewModel @Inject constructor(
                     handleEventSettings(settings)
                 }
                 .onFailure {
-                    /* show error and logout */
+                    /* show error dialog and logout */
                 }
         }
     }
@@ -59,25 +58,37 @@ internal class GalleryViewModel @Inject constructor(
         }
     }
 
+    fun onImageCropperOpened() {
+        updateState { copy(openImageCropper = consumed()) }
+    }
+
+    fun onImageCropError() {
+        updateState { copy(imageCropFailure = true) }
+    }
+
+    fun onImageCropErrorDismissed() {
+        updateState { copy(imageCropFailure = false) }
+    }
+
     fun onPhotoUploadSuccess() {
         viewModelScope.launch {
             updateState { copy(showPhotoUploadSuccess = triggered) }
         }
     }
 
-    fun onImageCropperOpened() {
-        updateState { copy(openImageCropper = consumed()) }
-    }
-
     fun onPhotoUploadSuccessShown() {
         updateState { copy(showPhotoUploadSuccess = consumed) }
+    }
+
+    fun onErrorRetry() {
+        /* no-op */
     }
 
     private suspend fun handleEventSettings(settings: EventSettings) {
         val event = settings.event
 
         if (event == null) {
-            // TODO - logout
+            // TODO - show error dialog and logout
         } else {
             state = state.copy(
                 eventDate = event.date,
@@ -113,13 +124,20 @@ internal class GalleryViewModel @Inject constructor(
                 loading = false,
                 galleryHintVisible = galleryHintEnabled,
                 galleryLinkVisible = galleryLinkPresent,
-                photos = photos.reversed()
+                photos = photos.reversed(),
+                imageCropFailure = false,
+                error = null
             )
         }
     }
 
     private fun showGalleryError(error: Throwable) {
-        updateState { copy(error = error) }
+        updateState {
+            copy(
+                loading = false,
+                error = error
+            )
+        }
     }
 
     private fun showGalleryDisabled() {
@@ -130,10 +148,11 @@ internal class GalleryViewModel @Inject constructor(
                 galleryHintVisible = false,
                 galleryLinkVisible = false,
                 photos = emptyList(),
+                imageCropFailure = false,
+                error = null
             )
         }
     }
-
 
 
     private data class ViewModelState(
@@ -151,7 +170,8 @@ internal data class GalleryUiState(
     val galleryHintVisible: Boolean,
     val galleryLinkVisible: Boolean,
     val photos: List<String>,
-    val error: Throwable?
+    val imageCropFailure: Boolean,
+    val error: Throwable?,
 ) {
     companion object {
         val DEFAULT = GalleryUiState(
@@ -162,12 +182,8 @@ internal data class GalleryUiState(
             galleryHintVisible = true,
             galleryLinkVisible = false,
             photos = emptyList(),
-            error = null
+            imageCropFailure = false,
+            error = null,
         )
     }
-}
-
-internal sealed class GalleryUiAction {
-    class OpenImageCropperWithConfirmation(val galleryId: String) : GalleryUiAction()
-    object ShowPhotoUploadSuccess : GalleryUiAction()
 }
