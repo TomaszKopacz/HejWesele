@@ -4,4 +4,3 @@ data class GalleryPreviewNavArgs(
     val photoUrls: ArrayList<String>,
     val selectedPhotoIndex: Int
 )
-

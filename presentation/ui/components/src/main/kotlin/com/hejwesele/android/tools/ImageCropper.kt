@@ -41,7 +41,7 @@ object ImageCropper {
             guidelinesColor = Color.Transparent.toArgb(),
             borderLineColor = Color.Transparent.toArgb(),
             progressBarColor = MaterialTheme.colorScheme.secondaryContainer.toArgb(),
-            cropMenuCropButtonTitle = "OK",
+            cropMenuCropButtonTitle = "OK"
         )
 
         imageCropperLauncher = rememberLauncherForActivityResult(CropImageContract()) { cropResult ->
@@ -62,8 +62,8 @@ object ImageCropper {
     }
 
     fun launch(
-       onImageCropped: ((Uri) -> Unit)? = null,
-       onImageCropError: (() -> Unit)? = null
+        onImageCropped: ((Uri) -> Unit)? = null,
+        onImageCropError: (() -> Unit)? = null
     ) {
         ImageCropper.onImageCropped = onImageCropped
         ImageCropper.onImageCropError = onImageCropError

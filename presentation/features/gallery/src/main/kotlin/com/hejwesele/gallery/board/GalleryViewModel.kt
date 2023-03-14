@@ -205,7 +205,7 @@ internal data class GalleryUiState(
     val externalGalleryEnabled: Boolean,
     val photos: ArrayList<String>,
     val imageCropFailure: Boolean,
-    val error: Throwable?,
+    val error: Throwable?
 ) {
     companion object {
         val DEFAULT = GalleryUiState(
@@ -219,7 +219,7 @@ internal data class GalleryUiState(
             externalGalleryEnabled = false,
             photos = arrayListOf(),
             imageCropFailure = false,
-            error = null,
+            error = null
         )
     }
 }

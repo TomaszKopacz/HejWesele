@@ -59,7 +59,7 @@ fun PhotoConfirmation(
 @Composable
 private fun PhotoConfirmationScreen(
     resultSender: ResultBackNavigator<Boolean>,
-    viewModel: PhotoConfirmationViewModel = hiltViewModel(),
+    viewModel: PhotoConfirmationViewModel = hiltViewModel()
 ) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
@@ -103,7 +103,7 @@ private fun PhotoConfirmationScreen(
         sheetContent = {
             ConfirmationBottomSheetContent(
                 onDecline = { viewModel.onPhotoConfirmationDeclined() },
-                onAccept = { viewModel.onPhotoConfirmationAccepted() },
+                onAccept = { viewModel.onPhotoConfirmationAccepted() }
             )
         }
     ) {
@@ -161,7 +161,7 @@ private fun PhotoPreviewContent(
             .padding(
                 top = topPadding,
                 bottom = bottomPadding
-            ),
+            )
     ) {
         Actions(
             onAccept = onAccept,
@@ -178,7 +178,7 @@ private fun PhotoPreviewContent(
 @Composable
 private fun Actions(
     onAccept: () -> Unit,
-    onCancel: () -> Unit,
+    onCancel: () -> Unit
 ) {
     Row(
         modifier = Modifier

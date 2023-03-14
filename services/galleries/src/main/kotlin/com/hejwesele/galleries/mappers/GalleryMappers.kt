@@ -5,7 +5,7 @@ import com.hejwesele.galleries.model.Gallery
 
 internal fun GalleryDto.mapModel() = Gallery(
     externalGallery = externalGallery,
-    photos = photos ?: throw IllegalArgumentException("Required list of gallery photos is not present.")
+    photos = photos ?: emptyList()
 )
 
 internal fun Gallery.mapDto(): GalleryDto {

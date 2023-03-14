@@ -20,7 +20,6 @@ class FirebaseRemoteStorage @Inject constructor() {
             maxOperationRetryTimeMillis = OPERATION_TIMEOUT_MS
         }.reference
 
-
     suspend fun uploadImage(path: String, bytes: ByteArray): Result<String> = suspendCoroutine { continuation ->
         val reference = storage.child(IMAGES).child(path)
 
@@ -47,6 +46,5 @@ class FirebaseRemoteStorage @Inject constructor() {
     companion object {
         private const val IMAGES = "images/"
         private const val OPERATION_TIMEOUT_MS = 5000L
-
     }
 }

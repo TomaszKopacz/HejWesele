@@ -12,6 +12,8 @@ object Label {
     // Gallery
     const val galleryBeforeWeddingPlaceholderText =
         "Nic tu jeszcze nie ma. \nPodczas wesela dodawaj zdjęcia z imprezy klikając w plusik na dole."
+    const val galleryEmptyGalleryPlaceholderText =
+        "Nic tu jeszcze nie ma. \nKliknij plusik i dodaj pierwsze zdjęcie!"
     const val galleryPublishPhoto = "Opublikuj"
     const val galleryPublishConfirmationTitle = "Czy na pewno chcesz opublikować wybrane zdjęcie?"
     const val galleryPublishConfirmationDescription = "Zdjęcie będzie widoczne dla wszystkich uczestników wesela."

@@ -15,7 +15,7 @@ fun PlainButton(
     text: String,
     color: Color = MaterialTheme.colorScheme.onBackground,
     style: TextStyle = MaterialTheme.typography.titleLarge,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     TextButton(
         onClick = onClick,

@@ -4,9 +4,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -47,6 +49,7 @@ import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.Loader
 import com.hejwesele.android.components.RoundedCornerImage
 import com.hejwesele.android.components.TextPlaceholder
+import com.hejwesele.android.components.layouts.ScrollableColumn
 import com.hejwesele.android.components.layouts.gridItems
 import com.hejwesele.android.components.layouts.margin
 import com.hejwesele.android.components.layouts.singleItem
@@ -138,7 +141,7 @@ private fun GalleryBoardScreen(
                 hostState = snackbarState,
                 modifier = Modifier.offset(y = Dimension.marginLarge2X)
             )
-        },
+        }
     ) { padding ->
         with(uiState) {
             if (loading) {
@@ -148,7 +151,7 @@ private fun GalleryBoardScreen(
                     onRetry = { viewModel.onErrorRetry() }
                 )
             } else {
-                GalleryContent(
+                GalleryBody(
                     padding = padding,
                     galleryEnabled = enabled,
                     shouldShowContent = weddingStarted,
@@ -168,7 +171,7 @@ private fun GalleryBoardScreen(
 }
 
 @Composable
-private fun GalleryContent(
+private fun GalleryBody(
     padding: PaddingValues,
     galleryEnabled: Boolean,
     shouldShowContent: Boolean,
@@ -187,7 +190,7 @@ private fun GalleryContent(
     ) {
         if (galleryEnabled) {
             if (shouldShowContent) {
-                ScrollableContent(
+                GalleryContent(
                     padding = padding,
                     photos = photos,
                     galleryHintVisible = galleryHintVisible,
@@ -222,7 +225,38 @@ private fun GalleryContent(
 }
 
 @Composable
-private fun ScrollableContent(
+private fun GalleryContent(
+    padding: PaddingValues,
+    photos: List<String>,
+    galleryHintVisible: Boolean,
+    galleryLinkVisible: Boolean,
+    onHintDismissed: () -> Unit,
+    onGalleryLinkClicked: () -> Unit,
+    onPhotoClicked: (Int) -> Unit
+) {
+    if (photos.isNotEmpty()) {
+        PopulatedGalleryContent(
+            padding = padding,
+            photos = photos,
+            galleryHintVisible = galleryHintVisible,
+            galleryLinkVisible = galleryLinkVisible,
+            onHintDismissed = onHintDismissed,
+            onGalleryLinkClicked = onGalleryLinkClicked,
+            onPhotoClicked = onPhotoClicked
+        )
+    } else {
+        EmptyGalleryContent(
+            padding = padding,
+            galleryHintVisible = galleryHintVisible,
+            galleryLinkVisible = galleryLinkVisible,
+            onHintDismissed = onHintDismissed,
+            onGalleryLinkClicked = onGalleryLinkClicked
+        )
+    }
+}
+
+@Composable
+private fun PopulatedGalleryContent(
     padding: PaddingValues,
     photos: List<String>,
     galleryHintVisible: Boolean,
@@ -266,6 +300,34 @@ private fun ScrollableContent(
             )
         }
         margin(Dimension.marginLarge)
+    }
+}
+
+@Composable
+private fun EmptyGalleryContent(
+    padding: PaddingValues,
+    galleryHintVisible: Boolean,
+    galleryLinkVisible: Boolean,
+    onHintDismissed: () -> Unit,
+    onGalleryLinkClicked: () -> Unit
+) {
+    ScrollableColumn {
+        Spacer(modifier = Modifier.height(padding.calculateTopPadding() + Dimension.marginSmall))
+        if (galleryHintVisible) {
+            GalleryHintTile(
+                onCloseClick = onHintDismissed
+            )
+            Spacer(modifier = Modifier.height(Dimension.marginNormal))
+        }
+        if (galleryLinkVisible) {
+            GalleryTile(
+                onClick = onGalleryLinkClicked
+            )
+            Spacer(modifier = Modifier.height(Dimension.marginNormal))
+        }
+        Box(modifier = Modifier.weight(1.0f)) {
+            TextPlaceholder(text = Label.galleryEmptyGalleryPlaceholderText)
+        }
     }
 }
 

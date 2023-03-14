@@ -49,9 +49,7 @@ import de.palm.composestateevents.EventEffect
 
 @Composable
 @Destination(navArgsDelegate = GalleryPreviewNavArgs::class)
-fun GalleryPreview(
-    navigation: IGalleryNavigation,
-) {
+fun GalleryPreview(navigation: IGalleryNavigation) {
     GalleryPreviewScreen(navigation)
 }
 
@@ -147,7 +145,7 @@ private fun GalleryPreviewContent(
             .padding(
                 top = padding.calculateTopPadding(),
                 bottom = padding.calculateBottomPadding()
-            ),
+            )
     ) {
         Actions(
             onBack = onBack,
@@ -167,7 +165,7 @@ private fun GalleryPreviewContent(
 @Composable
 private fun Actions(
     onBack: () -> Unit,
-    onSave: () -> Unit,
+    onSave: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -181,7 +179,7 @@ private fun Actions(
             tint = md_theme_dark_onBackground,
             modifier = Modifier
                 .size(Dimension.iconSizeNormal)
-                .clickable { onBack() },
+                .clickable { onBack() }
         )
         Icon(
             painter = painterResource(id = R.drawable.ic_download),
@@ -189,7 +187,7 @@ private fun Actions(
             tint = md_theme_dark_onBackground,
             modifier = Modifier
                 .size(Dimension.iconSizeNormal)
-                .clickable { onSave() },
+                .clickable { onSave() }
         )
     }
 }
@@ -205,7 +203,7 @@ private fun PhotosCarousel(
     HorizontalPager(
         modifier = modifier,
         state = state,
-        count = photoUrls.count(),
+        count = photoUrls.count()
     ) { page ->
         GlideImage(
             model = photoUrls[page],

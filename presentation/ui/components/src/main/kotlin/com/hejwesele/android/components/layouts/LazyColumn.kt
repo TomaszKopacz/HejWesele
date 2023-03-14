@@ -23,7 +23,19 @@ fun LazyListScope.margin(size: Dp) {
 fun LazyListScope.singleItem(
     content: @Composable () -> Unit
 ) {
-    item { content() }
+    item {
+        content()
+    }
+}
+
+fun LazyListScope.expandedItem(
+    content: @Composable () -> Unit
+) {
+    item {
+        Box(modifier = Modifier.fillParentMaxHeight()) {
+            content()
+        }
+    }
 }
 
 fun <T> LazyListScope.gridItems(
