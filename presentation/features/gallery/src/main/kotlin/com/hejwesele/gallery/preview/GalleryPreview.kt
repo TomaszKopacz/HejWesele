@@ -1,6 +1,8 @@
 package com.hejwesele.gallery.preview
 
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -71,10 +73,19 @@ private fun GalleryPreviewScreen(
     val uiState by viewModel.states.collectAsState()
     val snackbarState = remember { SnackbarHostState() }
 
+    val permissionsLauncher = rememberLauncherForActivityResult(RequestMultiplePermissions()) { permissionsResult ->
+        viewModel.onStoragePermissionsResult(permissionsResult)
+    }
+
     EventEffect(
         event = uiState.closeScreen,
         onConsumed = { viewModel.onScreenClosed() },
         action = { navigation.navigateUp() }
+    )
+    EventEffect(
+        event = uiState.requestStoragePermissions,
+        onConsumed = { viewModel.onStoragePermissionsRequested() },
+        action = { permissions -> permissionsLauncher.launch(permissions) }
     )
     EventEffect(
         event = uiState.showSavePhotoSuccess,
@@ -105,7 +116,7 @@ private fun GalleryPreviewScreen(
                 if (loading) {
                     Loader()
                 } else {
-                    PhotoPreviewContent(
+                    GalleryPreviewContent(
                         padding = padding,
                         photoUrls = photoUrls,
                         selectedPhotoIndex = selectedPhotoIndex,
@@ -121,7 +132,7 @@ private fun GalleryPreviewScreen(
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-private fun PhotoPreviewContent(
+private fun GalleryPreviewContent(
     padding: PaddingValues,
     photoUrls: List<String>,
     selectedPhotoIndex: Int,
