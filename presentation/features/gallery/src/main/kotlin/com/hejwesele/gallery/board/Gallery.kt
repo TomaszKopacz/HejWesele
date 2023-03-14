@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -52,6 +53,7 @@ import com.hejwesele.android.components.layouts.singleItem
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.android.tools.ImageCropper
+import com.hejwesele.extensions.openActivity
 import com.hejwesele.gallery.IGalleryNavigation
 import com.hejwesele.gallery.R
 import com.hejwesele.gallery.board.resources.Strings
@@ -84,6 +86,7 @@ private fun GalleryBoardScreen(
         )
     }
 
+    val context = LocalContext.current
     val uiState by viewModel.states.collectAsState()
     val snackbarState = remember { SnackbarHostState() }
 
@@ -95,6 +98,13 @@ private fun GalleryBoardScreen(
         }
     }
 
+    EventEffect(
+        event = uiState.openExternalGallery,
+        onConsumed = { viewModel.onExternalGalleryOpened() },
+        action = { intent ->
+            openActivity(context, intent.intentPackage, intent.url)
+        }
+    )
     EventEffect(
         event = uiState.openImageCropper,
         onConsumed = { viewModel.onImageCropperOpened() },
@@ -145,6 +155,7 @@ private fun GalleryBoardScreen(
                     galleryLinkVisible = galleryLinkVisible,
                     imageCropFailure = imageCropFailure,
                     onHintDismissed = { viewModel.onGalleryHintDismissed() },
+                    onGalleryLinkClicked = { viewModel.onGalleryLinkClicked() },
                     onPhotoClicked = { index -> navigation.openPreview(photos, index) },
                     onAddClicked = { viewModel.onAddPhotoClicked() },
                     onImageCropFailureDismissed = { viewModel.onImageCropErrorDismissed() }
@@ -163,6 +174,7 @@ private fun GalleryContent(
     galleryLinkVisible: Boolean,
     imageCropFailure: Boolean,
     onHintDismissed: () -> Unit,
+    onGalleryLinkClicked: () -> Unit,
     onPhotoClicked: (Int) -> Unit,
     onAddClicked: () -> Unit,
     onImageCropFailureDismissed: () -> Unit
@@ -177,6 +189,7 @@ private fun GalleryContent(
                 galleryHintVisible = galleryHintVisible,
                 galleryLinkVisible = galleryLinkVisible,
                 onHintDismissed = onHintDismissed,
+                onGalleryLinkClicked = onGalleryLinkClicked,
                 onPhotoClicked = onPhotoClicked
             )
             FloatingAddButton(
@@ -207,6 +220,7 @@ private fun ScrollableContent(
     galleryHintVisible: Boolean,
     galleryLinkVisible: Boolean,
     onHintDismissed: () -> Unit,
+    onGalleryLinkClicked: () -> Unit,
     onPhotoClicked: (Int) -> Unit
 ) {
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
@@ -221,7 +235,9 @@ private fun ScrollableContent(
         }
         if (galleryLinkVisible) {
             singleItem {
-                GalleryTile()
+                GalleryTile(
+                    onClick = onGalleryLinkClicked
+                )
             }
             margin(Dimension.marginNormal)
         }
@@ -284,7 +300,7 @@ private fun GalleryHintTile(onCloseClick: () -> Unit) {
 }
 
 @Composable
-private fun GalleryTile() {
+private fun GalleryTile(onClick: () -> Unit) {
     Surface(
         modifier = Modifier
             .padding(horizontal = Dimension.marginNormal)
@@ -293,9 +309,7 @@ private fun GalleryTile() {
                 elevation = Dimension.elevationSmall,
                 shape = RoundedCornerShape(Dimension.radiusRoundedCornerNormal)
             )
-            .clickable {
-                // no-op
-            },
+            .clickable { onClick() },
         color = MaterialTheme.colorScheme.surfaceVariant,
         shape = RoundedCornerShape(Dimension.radiusRoundedCornerNormal)
     ) {

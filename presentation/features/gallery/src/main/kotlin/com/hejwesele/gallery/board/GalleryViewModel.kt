@@ -26,7 +26,12 @@ internal class GalleryViewModel @Inject constructor(
     private val dismissGalleryHint: DismissGalleryHint
 ) : StateViewModel<GalleryUiState>(GalleryUiState.DEFAULT) {
 
-    private var state = ViewModelState()
+    private var state = State()
+
+    companion object {
+        // TODO - move intent to a separate module
+        private const val GOOGLE_DRIVE_PACKAGE = "com.google.android.apps.docs"
+    }
 
     init {
         viewModelScope.launch {
@@ -48,6 +53,29 @@ internal class GalleryViewModel @Inject constructor(
                     state = state.copy(hintDismissed = true)
                     updateState { copy(galleryHintVisible = false) }
                 }
+        }
+    }
+
+    fun onGalleryLinkClicked() {
+        viewModelScope.launch {
+            val externalGalleryUrl = state.externalGalleryUrl
+            if (externalGalleryUrl != null) {
+                val intent = IntentUiModel(
+                    intentPackage = GOOGLE_DRIVE_PACKAGE,
+                    url = externalGalleryUrl
+                )
+                updateState {
+                    copy(openExternalGallery = triggered(intent))
+                }
+            }
+        }
+    }
+
+    fun onExternalGalleryOpened() {
+        viewModelScope.launch {
+            updateState {
+                copy(openExternalGallery = consumed())
+            }
         }
     }
 
@@ -101,7 +129,10 @@ internal class GalleryViewModel @Inject constructor(
                 observeGallery(galleryId)
                     .collect { result ->
                         result
-                            .onSuccess { gallery -> showGalleryData(gallery) }
+                            .onSuccess { gallery ->
+                                state = state.copy(externalGalleryUrl = gallery.externalGallery)
+                                showGalleryData(gallery)
+                            }
                             .onFailure { error -> showGalleryError(error) }
                     }
             } else {
@@ -154,15 +185,16 @@ internal class GalleryViewModel @Inject constructor(
         }
     }
 
-
-    private data class ViewModelState(
+    private data class State(
         val eventDate: LocalDateTime? = null,
         val galleryId: String? = null,
-        val hintDismissed: Boolean = false
+        val hintDismissed: Boolean = false,
+        val externalGalleryUrl: String? = null
     )
 }
 
 internal data class GalleryUiState(
+    val openExternalGallery: StateEventWithContent<IntentUiModel>,
     val openImageCropper: StateEventWithContent<String>,
     val showPhotoUploadSuccess: StateEvent,
     val enabled: Boolean,
@@ -175,6 +207,7 @@ internal data class GalleryUiState(
 ) {
     companion object {
         val DEFAULT = GalleryUiState(
+            openExternalGallery = consumed(),
             openImageCropper = consumed(),
             showPhotoUploadSuccess = consumed,
             enabled = true,
@@ -187,3 +220,8 @@ internal data class GalleryUiState(
         )
     }
 }
+
+internal data class IntentUiModel(
+    val intentPackage: String?,
+    val url: String
+)

@@ -55,6 +55,7 @@ import com.hejwesele.android.components.layouts.BottomSheetScaffold
 import com.hejwesele.android.components.layouts.ScrollableColumn
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.extensions.addEmptyLines
+import com.hejwesele.extensions.openActivity
 import com.hejwesele.home.IHomeNavigation
 import com.hejwesele.home.R
 import com.hejwesele.home.home.model.IntentUiModel
@@ -102,7 +103,7 @@ private fun HomeScreen(
     EventEffect(
         event = uiState.openIntent,
         onConsumed = { viewModel.onIntentOpened() },
-        action = { intent -> openActivity(context, intent) }
+        action = { intent -> openActivity(context, intent.intentPackage, intent.url) }
     )
 
     BottomSheetScaffold(
@@ -325,16 +326,5 @@ private fun IntentItem(
                 style = MaterialTheme.typography.bodyMedium
             )
         }
-    }
-}
-
-@Suppress("SwallowedException")
-private fun openActivity(context: Context, intentUrl: IntentUiModel) {
-    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(intentUrl.url))
-    try {
-        intent.setPackage(intentUrl.intentPackage)
-        startActivity(context, intent, null)
-    } catch (exception: ActivityNotFoundException) {
-        startActivity(context, intent, null)
     }
 }
