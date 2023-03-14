@@ -53,6 +53,7 @@ import com.hejwesele.android.components.layouts.singleItem
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.android.tools.ImageCropper
+import com.hejwesele.extensions.disabled
 import com.hejwesele.extensions.openActivity
 import com.hejwesele.gallery.IGalleryNavigation
 import com.hejwesele.gallery.R
@@ -150,9 +151,10 @@ private fun GalleryBoardScreen(
                 GalleryContent(
                     padding = padding,
                     galleryEnabled = enabled,
+                    shouldShowContent = weddingStarted,
+                    galleryHintVisible = galleryHintEnabled,
+                    galleryLinkVisible = externalGalleryEnabled,
                     photos = photos,
-                    galleryHintVisible = galleryHintVisible,
-                    galleryLinkVisible = galleryLinkVisible,
                     imageCropFailure = imageCropFailure,
                     onHintDismissed = { viewModel.onGalleryHintDismissed() },
                     onGalleryLinkClicked = { viewModel.onGalleryLinkClicked() },
@@ -169,9 +171,10 @@ private fun GalleryBoardScreen(
 private fun GalleryContent(
     padding: PaddingValues,
     galleryEnabled: Boolean,
-    photos: List<String>,
+    shouldShowContent: Boolean,
     galleryHintVisible: Boolean,
     galleryLinkVisible: Boolean,
+    photos: List<String>,
     imageCropFailure: Boolean,
     onHintDismissed: () -> Unit,
     onGalleryLinkClicked: () -> Unit,
@@ -183,15 +186,19 @@ private fun GalleryContent(
         modifier = Modifier.fillMaxSize()
     ) {
         if (galleryEnabled) {
-            ScrollableContent(
-                padding = padding,
-                photos = photos,
-                galleryHintVisible = galleryHintVisible,
-                galleryLinkVisible = galleryLinkVisible,
-                onHintDismissed = onHintDismissed,
-                onGalleryLinkClicked = onGalleryLinkClicked,
-                onPhotoClicked = onPhotoClicked
-            )
+            if (shouldShowContent) {
+                ScrollableContent(
+                    padding = padding,
+                    photos = photos,
+                    galleryHintVisible = galleryHintVisible,
+                    galleryLinkVisible = galleryLinkVisible,
+                    onHintDismissed = onHintDismissed,
+                    onGalleryLinkClicked = onGalleryLinkClicked,
+                    onPhotoClicked = onPhotoClicked
+                )
+            } else {
+                TextPlaceholder(text = Label.galleryBeforeWeddingPlaceholderText)
+            }
             FloatingAddButton(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
@@ -199,6 +206,7 @@ private fun GalleryContent(
                         end = Dimension.marginSmall,
                         bottom = Dimension.marginSmall
                     ),
+                enabled = shouldShowContent,
                 action = { onAddClicked() }
             )
             if (imageCropFailure) {
@@ -348,22 +356,25 @@ private fun GalleryLottieAnimation() {
 @Composable
 private fun FloatingAddButton(
     modifier: Modifier = Modifier,
+    enabled: Boolean,
     action: () -> Unit
 ) {
+    val iconColor = MaterialTheme.colorScheme.onTertiaryContainer
+
     Surface(
         modifier = modifier
             .shadow(
                 elevation = Dimension.elevationSmall,
                 shape = RoundedCornerShape(Dimension.radiusRoundedCornerSmall)
             )
-            .clickable { action() },
+            .clickable(enabled = enabled) { action() },
         color = MaterialTheme.colorScheme.tertiaryContainer,
         shape = RoundedCornerShape(Dimension.radiusRoundedCornerSmall)
     ) {
         Icon(
             imageVector = Icons.Default.Add,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onTertiaryContainer,
+            tint = if (enabled) iconColor else iconColor.disabled,
             modifier = Modifier.padding(Dimension.marginNormal)
         )
     }

@@ -51,7 +51,7 @@ internal class GalleryViewModel @Inject constructor(
             dismissGalleryHint()
                 .onSuccess {
                     state = state.copy(hintDismissed = true)
-                    updateState { copy(galleryHintVisible = false) }
+                    updateState { copy(galleryHintEnabled = false) }
                 }
         }
     }
@@ -153,8 +153,9 @@ internal class GalleryViewModel @Inject constructor(
             copy(
                 enabled = true,
                 loading = false,
-                galleryHintVisible = galleryHintEnabled,
-                galleryLinkVisible = galleryLinkPresent,
+                weddingStarted = weddingStarted,
+                galleryHintEnabled = galleryHintEnabled,
+                externalGalleryEnabled = galleryLinkPresent,
                 photos = ArrayList(photos.reversed()),
                 imageCropFailure = false,
                 error = null
@@ -176,8 +177,8 @@ internal class GalleryViewModel @Inject constructor(
             copy(
                 enabled = false,
                 loading = false,
-                galleryHintVisible = false,
-                galleryLinkVisible = false,
+                galleryHintEnabled = false,
+                externalGalleryEnabled = false,
                 photos = arrayListOf(),
                 imageCropFailure = false,
                 error = null
@@ -199,8 +200,9 @@ internal data class GalleryUiState(
     val showPhotoUploadSuccess: StateEvent,
     val enabled: Boolean,
     val loading: Boolean,
-    val galleryHintVisible: Boolean,
-    val galleryLinkVisible: Boolean,
+    val weddingStarted: Boolean,
+    val galleryHintEnabled: Boolean,
+    val externalGalleryEnabled: Boolean,
     val photos: ArrayList<String>,
     val imageCropFailure: Boolean,
     val error: Throwable?,
@@ -212,8 +214,9 @@ internal data class GalleryUiState(
             showPhotoUploadSuccess = consumed,
             enabled = true,
             loading = false,
-            galleryHintVisible = true,
-            galleryLinkVisible = false,
+            weddingStarted = false,
+            galleryHintEnabled = true,
+            externalGalleryEnabled = false,
             photos = arrayListOf(),
             imageCropFailure = false,
             error = null,
