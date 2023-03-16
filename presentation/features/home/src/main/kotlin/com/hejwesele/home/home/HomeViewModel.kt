@@ -2,15 +2,15 @@ package com.hejwesele.home.home
 
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
+import com.hejwesele.android.theme.Label
 import com.hejwesele.home.R
 import com.hejwesele.home.home.model.IntentUiModel
 import com.hejwesele.home.home.model.InvitationTileUiModel
-import com.hejwesele.home.home.resources.Strings
 import com.hejwesele.home.home.usecase.GetEvent
 import com.hejwesele.home.home.usecase.ObserveInvitation
 import com.hejwesele.home.home.usecase.StoreEvent
-import com.hejwesele.intent.IntentType
 import com.hejwesele.intent.IntentData
+import com.hejwesele.intent.IntentType
 import com.hejwesele.intent.IntentUrlPrefix
 import com.hejwesele.invitations.model.Invitation
 import com.hejwesele.invitations.model.InvitationTile
@@ -131,8 +131,8 @@ internal class HomeViewModel @Inject constructor(
 
     private fun String.getIntentTitle(type: IntentType) = when (type) {
         IntentType.INSTAGRAM -> removePrefix(IntentUrlPrefix.INSTAGRAM).split('/').first()
-        IntentType.GOOGLE_MAPS -> Strings.intentTitleGoogleMaps
-        else -> Strings.intentTitleWww
+        IntentType.GOOGLE_MAPS -> Label.homeIntentTitleMaps
+        else -> Label.homeIntentTitleWeb
     }
 }
 

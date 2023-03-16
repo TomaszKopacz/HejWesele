@@ -60,7 +60,6 @@ import com.hejwesele.extensions.disabled
 import com.hejwesele.extensions.openActivity
 import com.hejwesele.gallery.IGalleryNavigation
 import com.hejwesele.gallery.R
-import com.hejwesele.gallery.board.resources.Strings
 import com.hejwesele.gallery.destinations.PhotoConfirmationDestination
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.OpenResultRecipient
@@ -213,7 +212,7 @@ private fun GalleryBody(
                 )
             }
         } else {
-            TextPlaceholder(text = Strings.galleryDisabledMessageText)
+            TextPlaceholder(text = Label.galleryDisabledMessageText)
         }
     }
 }
@@ -346,7 +345,7 @@ private fun GalleryHintTile(onCloseClick: () -> Unit) {
                 tint = MaterialTheme.colorScheme.onTertiaryContainer
             )
             Text(
-                text = Strings.galleryHintText,
+                text = Label.galleryExternalGalleryHintText,
                 color = MaterialTheme.colorScheme.onTertiaryContainer,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Start,
@@ -385,7 +384,7 @@ private fun GalleryTile(onClick: () -> Unit) {
         ) {
             GalleryLottieAnimation()
             Text(
-                text = Strings.galleryTileText,
+                text = Label.galleryExternalGalleryTileText,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Start,

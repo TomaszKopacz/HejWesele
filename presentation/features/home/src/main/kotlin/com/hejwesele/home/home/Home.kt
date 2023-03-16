@@ -49,13 +49,13 @@ import com.hejwesele.android.components.TextPlaceholder
 import com.hejwesele.android.components.layouts.BottomSheetScaffold
 import com.hejwesele.android.components.layouts.ScrollableColumn
 import com.hejwesele.android.theme.Dimension
+import com.hejwesele.android.theme.Label
 import com.hejwesele.extensions.addEmptyLines
 import com.hejwesele.extensions.openActivity
 import com.hejwesele.home.IHomeNavigation
 import com.hejwesele.home.R
 import com.hejwesele.home.home.model.IntentUiModel
 import com.hejwesele.home.home.model.InvitationTileUiModel
-import com.hejwesele.home.home.resources.Strings
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.launch
 
@@ -116,7 +116,7 @@ private fun HomeScreen(
     ) {
         when {
             uiState.isLoading -> Loader()
-            uiState.error != null -> TextPlaceholder(text = Strings.errorMessage)
+            uiState.error != null -> TextPlaceholder(text = Label.errorMessage)
             else -> HomeContent(
                 tiles = uiState.tiles,
                 onTileClicked = { invitation ->
@@ -142,7 +142,7 @@ private fun HomeContent(
         CoupleLottieAnimation()
         when {
             tiles.isEmpty() -> TextPlaceholder(
-                text = Strings.noInvitationTilesMessage
+                text = Label.homeNoInvitationTilesMessage
             )
             else -> InvitationsTilesCarousel(
                 tiles = tiles,
