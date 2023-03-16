@@ -16,7 +16,6 @@ android {
 
 dependencies {
     implementation projects.libraries.intent
-    implementation projects.libraries.result
 
     implementation projects.presentation.ui.components
     implementation projects.presentation.ui.extensions
@@ -28,13 +27,11 @@ dependencies {
 
     implementation projects.common.mvvm
 
-    implementation libs.accompanist.insets.ui
-    implementation libs.accompanist.navigation.animation
-    implementation libs.accompanist.navigation.material
     implementation libs.accompanist.pager
     implementation libs.accompanist.systemuicontroller
     implementation libs.airbnb.compose.lottie
     implementation libs.androidx.compose.foundation
+    implementation libs.androidx.compose.material
     implementation libs.androidx.compose.material3
     implementation libs.androidx.compose.ui
     implementation libs.androidx.hilt.navigation.compose

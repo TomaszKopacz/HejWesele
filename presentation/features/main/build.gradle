@@ -20,13 +20,7 @@ android {
 }
 
 dependencies {
-    implementation projects.presentation.ui.components
     implementation projects.presentation.ui.theme
-
-    implementation projects.presentation.features.gallery
-    implementation projects.presentation.features.home
-    implementation projects.presentation.features.schedule
-    implementation projects.presentation.features.services
 
     implementation libs.androidx.compose.ui
     implementation libs.androidx.compose.foundation

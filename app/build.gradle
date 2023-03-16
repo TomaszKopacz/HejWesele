@@ -159,7 +159,7 @@ dependencies {
     implementation projects.libraries.remotestorage
 
     androidTestImplementation libs.androidx.test.runner
-    androidTestImplementation libs.androidx.test.rules
+    //androidTestImplementation libs.androidx.test.rules
     androidTestImplementation libs.androidx.test.ext.junit
     androidTestImplementation libs.androidx.test.ext.truth
     androidTestImplementation libs.androidx.compose.ui.test.junit4

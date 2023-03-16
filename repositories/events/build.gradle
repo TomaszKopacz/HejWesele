@@ -6,8 +6,6 @@ plugins {
 }
 
 dependencies {
-    implementation projects.libraries.result
-
     implementation libs.kotlinx.coroutines.core
     api libs.kotlinx.datetime
 

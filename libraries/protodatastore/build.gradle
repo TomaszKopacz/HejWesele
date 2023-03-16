@@ -9,8 +9,6 @@ android {
 }
 
 dependencies {
-    implementation projects.libraries.result
-
     implementation libs.androidx.datastore.proto
 
     implementation libs.hilt.core

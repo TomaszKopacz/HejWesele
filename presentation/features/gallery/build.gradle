@@ -37,13 +37,10 @@ dependencies {
     implementation libs.airbnb.compose.lottie
     implementation libs.androidx.compose.ui
     implementation libs.androidx.compose.foundation
+    implementation libs.androidx.compose.material
     implementation libs.androidx.compose.material3
     implementation libs.androidx.hilt.navigation.compose
     implementation libs.androidx.lifecycle.viewmodel.ktx
-    implementation libs.accompanist.insets.ui
-    implementation libs.androidx.hilt.navigation.compose
-    implementation libs.accompanist.navigation.animation
-    implementation libs.accompanist.navigation.material
     implementation libs.accompanist.pager
     implementation libs.accompanist.systemuicontroller
     implementation libs.glide.compose

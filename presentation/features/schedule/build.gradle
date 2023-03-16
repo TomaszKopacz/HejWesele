@@ -15,13 +15,8 @@ android {
 
 dependencies {
     implementation projects.presentation.ui.components
-    implementation projects.presentation.ui.theme
 
     implementation libs.androidx.compose.ui
     implementation libs.androidx.compose.foundation
     implementation libs.androidx.compose.material3
-    implementation libs.accompanist.insets.ui
-    implementation libs.accompanist.navigation.animation
-    implementation libs.accompanist.navigation.material
-    implementation libs.accompanist.systemuicontroller
 }

@@ -17,7 +17,6 @@ android {
 
 dependencies {
     implementation projects.libraries.protodatastore
-    implementation projects.libraries.result
 
     implementation projects.repositories.settings
 
