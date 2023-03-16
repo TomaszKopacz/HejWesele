@@ -9,9 +9,9 @@ import com.hejwesele.home.home.resources.Strings
 import com.hejwesele.home.home.usecase.GetEvent
 import com.hejwesele.home.home.usecase.ObserveInvitation
 import com.hejwesele.home.home.usecase.StoreEvent
-import com.hejwesele.invitations.model.IntentType
-import com.hejwesele.invitations.model.IntentUrl
-import com.hejwesele.invitations.model.IntentUrlPrefix
+import com.hejwesele.intent.IntentType
+import com.hejwesele.intent.IntentData
+import com.hejwesele.intent.IntentUrlPrefix
 import com.hejwesele.invitations.model.Invitation
 import com.hejwesele.invitations.model.InvitationTile
 import com.hejwesele.invitations.model.InvitationTileType
@@ -107,11 +107,11 @@ internal class HomeViewModel @Inject constructor(
         clickable = intents.isNotEmpty()
     )
 
-    private fun IntentUrl.toUiModel() = IntentUiModel(
-        title = url.getIntentTitle(type),
-        iconResId = getIntentIconResId(type),
+    private fun IntentData.toUiModel() = IntentUiModel(
+        title = intentUrl.getIntentTitle(intentType),
+        iconResId = getIntentIconResId(intentType),
         intentPackage = intentPackage,
-        url = url
+        url = intentUrl
     )
 
     private fun getAnimationResource(tileType: InvitationTileType) = when (tileType) {
@@ -126,6 +126,7 @@ internal class HomeViewModel @Inject constructor(
         IntentType.INSTAGRAM -> R.drawable.ic_instagram_primary
         IntentType.GOOGLE_MAPS -> R.drawable.ic_maps_primary
         IntentType.WWW -> R.drawable.ic_web_primary
+        else -> R.drawable.ic_web_primary
     }
 
     private fun String.getIntentTitle(type: IntentType) = when (type) {

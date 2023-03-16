@@ -1,9 +1,9 @@
 package com.hejwesele.home.home.usecase
 
+import com.hejwesele.intent.IntentPackage
+import com.hejwesele.intent.IntentType
+import com.hejwesele.intent.IntentData
 import com.hejwesele.invitations.InvitationsRepository
-import com.hejwesele.invitations.model.IntentPackage
-import com.hejwesele.invitations.model.IntentType
-import com.hejwesele.invitations.model.IntentUrl
 import com.hejwesele.invitations.model.Invitation
 import com.hejwesele.invitations.model.InvitationTile
 import com.hejwesele.invitations.model.InvitationTileType
@@ -30,15 +30,15 @@ internal class AddInvitation @Inject constructor(
                             "n=b8c18b70-0e86-450c-b785-97c18ddf28a7"
                     ),
                     intents = listOf(
-                        IntentUrl(
-                            type = IntentType.INSTAGRAM,
+                        IntentData(
+                            intentType = IntentType.INSTAGRAM,
                             intentPackage = IntentPackage.instagram,
-                            url = "https://www.instagram.com/tomek_kopacz/"
+                            intentUrl = "https://www.instagram.com/tomek_kopacz/"
                         ),
-                        IntentUrl(
-                            type = IntentType.INSTAGRAM,
+                        IntentData(
+                            intentType = IntentType.INSTAGRAM,
                             intentPackage = IntentPackage.instagram,
-                            url = "https://www.instagram.com/pati.sobus/"
+                            intentUrl = "https://www.instagram.com/pati.sobus/"
                         )
                     )
                 ),
@@ -60,10 +60,10 @@ internal class AddInvitation @Inject constructor(
                             "en=5c07f09c-76e4-4d3f-8178-f41674b97c36"
                     ),
                     intents = listOf(
-                        IntentUrl(
-                            type = IntentType.GOOGLE_MAPS,
+                        IntentData(
+                            intentType = IntentType.GOOGLE_MAPS,
                             intentPackage = IntentPackage.google_maps,
-                            url = "https://goo.gl/maps/xZHrPDVBJXXTQKMr6"
+                            intentUrl = "https://goo.gl/maps/xZHrPDVBJXXTQKMr6"
                         )
                     )
                 ),
@@ -77,20 +77,20 @@ internal class AddInvitation @Inject constructor(
                             "en=b312eae3-387f-4fd3-8985-531b98a71ee4"
                     ),
                     intents = listOf(
-                        IntentUrl(
-                            type = IntentType.INSTAGRAM,
+                        IntentData(
+                            intentType = IntentType.INSTAGRAM,
                             intentPackage = IntentPackage.instagram,
-                            url = "https://www.instagram.com/weranda_przyjecia/"
+                            intentUrl = "https://www.instagram.com/weranda_przyjecia/"
                         ),
-                        IntentUrl(
-                            type = IntentType.WWW,
+                        IntentData(
+                            intentType = IntentType.WWW,
                             intentPackage = null,
-                            url = "http://werandaprzyjecia.pl/"
+                            intentUrl = "http://werandaprzyjecia.pl/"
                         ),
-                        IntentUrl(
-                            type = IntentType.GOOGLE_MAPS,
+                        IntentData(
+                            intentType = IntentType.GOOGLE_MAPS,
                             intentPackage = IntentPackage.google_maps,
-                            url = "https://goo.gl/maps/LqduYenksrZgtdW38"
+                            intentUrl = "https://goo.gl/maps/LqduYenksrZgtdW38"
                         )
                     )
                 ),

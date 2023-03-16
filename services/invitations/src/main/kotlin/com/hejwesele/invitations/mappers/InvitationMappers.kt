@@ -1,11 +1,11 @@
 package com.hejwesele.invitations.mappers
 
+import com.hejwesele.intent.IntentPackage
+import com.hejwesele.intent.IntentType
+import com.hejwesele.intent.IntentData
+import com.hejwesele.intent.IntentUrlPrefix
 import com.hejwesele.invitations.dto.InvitationDto
 import com.hejwesele.invitations.dto.InvitationTileDto
-import com.hejwesele.invitations.model.IntentPackage
-import com.hejwesele.invitations.model.IntentType
-import com.hejwesele.invitations.model.IntentUrl
-import com.hejwesele.invitations.model.IntentUrlPrefix
 import com.hejwesele.invitations.model.Invitation
 import com.hejwesele.invitations.model.InvitationTile
 import com.hejwesele.invitations.model.InvitationTileType
@@ -29,7 +29,7 @@ internal fun InvitationTile.mapDto(): InvitationTileDto {
         subtitle = subtitle,
         description = description,
         avatars = avatars,
-        urls = intents.map { it.url }
+        urls = intents.map { it.intentUrl }
     )
 }
 
@@ -55,23 +55,23 @@ private fun String.mapInvitationTileTypeModel(): InvitationTileType {
     }
 }
 
-private fun String.mapIntentUrlModel(): IntentUrl {
+private fun String.mapIntentUrlModel(): IntentData {
     return when {
-        startsWith(IntentUrlPrefix.INSTAGRAM) -> IntentUrl(
-            type = IntentType.INSTAGRAM,
+        startsWith(IntentUrlPrefix.INSTAGRAM) -> IntentData(
+            intentType = IntentType.INSTAGRAM,
             intentPackage = IntentPackage.instagram,
-            url = this
+            intentUrl = this
         )
-        startsWith(IntentUrlPrefix.GOOGLE_MAPS) -> IntentUrl(
-            type = IntentType.GOOGLE_MAPS,
+        startsWith(IntentUrlPrefix.GOOGLE_MAPS) -> IntentData(
+            intentType = IntentType.GOOGLE_MAPS,
             intentPackage = IntentPackage.google_maps,
-            url = this
+            intentUrl = this
         )
         else -> {
-            IntentUrl(
-                type = IntentType.WWW,
+            IntentData(
+                intentType = IntentType.WWW,
                 intentPackage = null,
-                url = this
+                intentUrl = this
             )
         }
     }

@@ -106,7 +106,7 @@ private fun GalleryBoardScreen(
         event = uiState.openExternalGallery,
         onConsumed = { viewModel.onExternalGalleryOpened() },
         action = { intent ->
-            openActivity(context, intent.intentPackage, intent.url)
+            openActivity(context, intent.intentPackage, intent.intentUrl)
         }
     )
     EventEffect(
@@ -151,9 +151,7 @@ private fun GalleryBoardScreen(
                     onRetry = { viewModel.onErrorRetry() }
                 )
             } else {
-                GalleryBody(
-                    padding = padding,
-                    galleryEnabled = enabled,
+                val galleryData = GalleryData(
                     shouldShowContent = weddingStarted,
                     galleryHintVisible = galleryHintEnabled,
                     galleryLinkVisible = externalGalleryEnabled,
@@ -165,6 +163,11 @@ private fun GalleryBoardScreen(
                     onAddClicked = { viewModel.onAddPhotoClicked() },
                     onImageCropFailureDismissed = { viewModel.onImageCropErrorDismissed() }
                 )
+                GalleryBody(
+                    padding = padding,
+                    galleryEnabled = enabled,
+                    galleryData = galleryData
+                )
             }
         }
     }
@@ -174,17 +177,8 @@ private fun GalleryBoardScreen(
 private fun GalleryBody(
     padding: PaddingValues,
     galleryEnabled: Boolean,
-    shouldShowContent: Boolean,
-    galleryHintVisible: Boolean,
-    galleryLinkVisible: Boolean,
-    photos: List<String>,
-    imageCropFailure: Boolean,
-    onHintDismissed: () -> Unit,
-    onGalleryLinkClicked: () -> Unit,
-    onPhotoClicked: (Int) -> Unit,
-    onAddClicked: () -> Unit,
-    onImageCropFailureDismissed: () -> Unit
-) {
+    galleryData: GalleryData
+) = with (galleryData) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -441,3 +435,16 @@ private fun FloatingAddButton(
         )
     }
 }
+
+private data class GalleryData(
+    val shouldShowContent: Boolean,
+    val galleryHintVisible: Boolean,
+    val galleryLinkVisible: Boolean,
+    val photos: List<String>,
+    val imageCropFailure: Boolean,
+    val onHintDismissed: () -> Unit,
+    val onGalleryLinkClicked: () -> Unit,
+    val onPhotoClicked: (Int) -> Unit,
+    val onAddClicked: () -> Unit,
+    val onImageCropFailureDismissed: () -> Unit
+)

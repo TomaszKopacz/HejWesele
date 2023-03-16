@@ -6,6 +6,9 @@ import com.hejwesele.galleries.model.Gallery
 import com.hejwesele.gallery.board.usecase.DismissGalleryHint
 import com.hejwesele.gallery.board.usecase.GetEventSettings
 import com.hejwesele.gallery.board.usecase.ObserveGallery
+import com.hejwesele.intent.IntentData
+import com.hejwesele.intent.IntentPackage.GOOGLE_DRIVE_PACKAGE
+import com.hejwesele.intent.IntentType.GOOGLE_DRIVE
 import com.hejwesele.settings.model.EventSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent
@@ -27,11 +30,6 @@ internal class GalleryViewModel @Inject constructor(
 ) : StateViewModel<GalleryUiState>(GalleryUiState.DEFAULT) {
 
     private var state = State()
-
-    companion object {
-        // TODO - move intent to a separate module
-        private const val GOOGLE_DRIVE_PACKAGE = "com.google.android.apps.docs"
-    }
 
     init {
         viewModelScope.launch {
@@ -60,9 +58,10 @@ internal class GalleryViewModel @Inject constructor(
         viewModelScope.launch {
             val externalGalleryUrl = state.externalGalleryUrl
             if (externalGalleryUrl != null) {
-                val intent = IntentUiModel(
+                val intent = IntentData(
+                    intentType = GOOGLE_DRIVE,
                     intentPackage = GOOGLE_DRIVE_PACKAGE,
-                    url = externalGalleryUrl
+                    intentUrl = externalGalleryUrl
                 )
                 updateState {
                     copy(openExternalGallery = triggered(intent))
@@ -195,7 +194,7 @@ internal class GalleryViewModel @Inject constructor(
 }
 
 internal data class GalleryUiState(
-    val openExternalGallery: StateEventWithContent<IntentUiModel>,
+    val openExternalGallery: StateEventWithContent<IntentData>,
     val openImageCropper: StateEventWithContent<String>,
     val showPhotoUploadSuccess: StateEvent,
     val enabled: Boolean,
@@ -223,8 +222,3 @@ internal data class GalleryUiState(
         )
     }
 }
-
-internal data class IntentUiModel(
-    val intentPackage: String?,
-    val url: String
-)

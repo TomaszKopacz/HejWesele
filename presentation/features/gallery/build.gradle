@@ -28,6 +28,7 @@ dependencies {
     implementation projects.repositories.galleries
     implementation projects.repositories.settings
 
+    implementation projects.libraries.intent
     implementation projects.libraries.result
 
     implementation projects.common.mvvm

@@ -15,6 +15,7 @@ android {
 }
 
 dependencies {
+    implementation projects.libraries.intent
     implementation projects.libraries.result
 
     implementation projects.presentation.ui.components

@@ -42,6 +42,7 @@ include ":repositories:galleries"
 include ":repositories:invitations"
 include ":repositories:settings"
 
+include ":libraries:intent"
 include ":libraries:protodatastore"
 include ":libraries:realtimedatabase"
 include ":libraries:result"
