@@ -10,7 +10,9 @@ import com.hejwesele.settings.model.Event
 import com.hejwesele.settings.model.EventSettings
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ProtoDataStoreSettingsLocalSource @Inject constructor(
     @SettingsProtoDataStore private val datastore: ProtoDataStore<EventSettingsDto>
 ) : SettingsLocalSource {

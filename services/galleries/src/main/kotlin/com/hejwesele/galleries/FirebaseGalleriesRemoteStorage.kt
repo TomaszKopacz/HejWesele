@@ -2,7 +2,9 @@ package com.hejwesele.galleries
 
 import com.hejwesele.remotestorage.FirebaseRemoteStorage
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class FirebaseGalleriesRemoteStorage @Inject constructor(
     private val storage: FirebaseRemoteStorage
 ) : GalleriesRemoteStorage {

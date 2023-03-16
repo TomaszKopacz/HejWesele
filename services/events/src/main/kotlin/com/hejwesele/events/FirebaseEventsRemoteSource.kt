@@ -7,7 +7,9 @@ import com.hejwesele.events.model.Event
 import com.hejwesele.realtimedatabase.FirebaseRealtimeDatabase
 import com.hejwesele.result.notFound
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class FirebaseEventsRemoteSource @Inject constructor(
     private val database: FirebaseRealtimeDatabase
 ) : EventsRemoteSource {

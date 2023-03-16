@@ -9,7 +9,9 @@ import com.hejwesele.result.notFound
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class FirebaseGalleriesRemoteSource @Inject constructor(
     private val database: FirebaseRealtimeDatabase
 ) : GalleriesRemoteSource {

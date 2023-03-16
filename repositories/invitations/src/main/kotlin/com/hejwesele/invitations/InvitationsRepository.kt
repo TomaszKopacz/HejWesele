@@ -2,7 +2,9 @@ package com.hejwesele.invitations
 
 import com.hejwesele.invitations.model.Invitation
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class InvitationsRepository @Inject constructor(
     private val remoteSource: InvitationsRemoteSource
 ) {
