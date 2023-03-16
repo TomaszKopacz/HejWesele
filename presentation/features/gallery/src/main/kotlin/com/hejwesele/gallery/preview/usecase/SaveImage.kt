@@ -22,12 +22,14 @@ class SaveImage @Inject constructor(
     private val bitmapProvider: BitmapProvider
 ) {
 
-    suspend operator fun invoke(url: String): Result<Unit> = runCatching {
-        withContext(Dispatchers.IO) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                saveImageForAndroidQAndLater(url)
-            } else {
-                saveImageForAndroidLowerThanQ(url)
+    suspend operator fun invoke(url: String): Result<Unit> = withContext(Dispatchers.IO) {
+        runCatching {
+            withContext(Dispatchers.IO) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    saveImageForAndroidQAndLater(url)
+                } else {
+                    saveImageForAndroidLowerThanQ(url)
+                }
             }
         }
     }

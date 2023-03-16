@@ -2,7 +2,9 @@ package com.hejwesele.protodatastore
 
 import android.content.Context
 import androidx.datastore.dataStore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ProtoDataStore<T : Any> @Inject constructor(
@@ -16,10 +18,14 @@ class ProtoDataStore<T : Any> @Inject constructor(
     )
 
     suspend fun readData(): Result<T> = runCatching {
-        context.dataStore.data.first()
+        withContext(Dispatchers.IO) {
+            context.dataStore.data.first()
+        }
     }
 
     suspend fun writeData(transform: (T) -> T): Result<T> = runCatching {
-        context.dataStore.updateData(transform)
+        withContext(Dispatchers.IO) {
+            context.dataStore.updateData(transform)
+        }
     }
 }

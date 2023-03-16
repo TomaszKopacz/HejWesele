@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface GalleriesRemoteSource {
 
-    fun observeGallery(galleryId: String): Flow<Result<Gallery>>
+    suspend fun observeGallery(galleryId: String): Flow<Result<Gallery>>
 
     suspend fun getGallery(galleryId: String): Result<Gallery>
 

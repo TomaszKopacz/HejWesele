@@ -5,6 +5,8 @@ import android.graphics.Bitmap.CompressFormat
 import android.graphics.Bitmap.CompressFormat.JPEG
 import android.graphics.Bitmap.CompressFormat.PNG
 import com.hejwesele.galleries.GalleriesRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.util.UUID
 import javax.inject.Inject
@@ -18,7 +20,7 @@ class UploadImage @Inject constructor(
         folder: String,
         image: Bitmap,
         format: CompressFormat
-    ): Result<String> {
+    ): Result<String> = withContext(Dispatchers.IO) {
         val name = UUID.randomUUID().toString()
         val extension = getFileExtension(format)
         val path = "$location/$folder/$name$extension"
@@ -27,7 +29,7 @@ class UploadImage @Inject constructor(
         image.compress(format, COMPRESS_QUALITY_PERCENT, stream)
         val bytes = stream.toByteArray()
 
-        return repository.uploadImage(path = path, bytes = bytes)
+        repository.uploadImage(path = path, bytes = bytes)
     }
 
     private fun getFileExtension(format: CompressFormat): String = when (format) {

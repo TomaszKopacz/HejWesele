@@ -3,6 +3,8 @@ package com.hejwesele.remotestorage
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.Result.Companion.failure
@@ -20,28 +22,31 @@ class FirebaseRemoteStorage @Inject constructor() {
             maxOperationRetryTimeMillis = OPERATION_TIMEOUT_MS
         }.reference
 
-    suspend fun uploadImage(path: String, bytes: ByteArray): Result<String> = suspendCoroutine { continuation ->
-        val reference = storage.child(IMAGES).child(path)
+    suspend fun uploadImage(path: String, bytes: ByteArray): Result<String> = withContext(Dispatchers.IO) {
+        suspendCoroutine { continuation ->
+            val reference = storage.child(IMAGES).child(path)
 
-        try {
-            reference
-                .putBytes(bytes)
-                .addOnSuccessListener {
-                    reference.downloadUrl
-                        .addOnSuccessListener { url ->
-                            continuation.resume(success(url.toString()))
-                        }
-                        .addOnFailureListener { error ->
-                            continuation.resume(failure(error))
-                        }
-                }
-                .addOnFailureListener { error ->
-                    continuation.resume(failure(error))
-                }
-        } catch (exception: StorageException) {
-            continuation.resume(failure(exception))
+            try {
+                reference
+                    .putBytes(bytes)
+                    .addOnSuccessListener {
+                        reference.downloadUrl
+                            .addOnSuccessListener { url ->
+                                continuation.resume(success(url.toString()))
+                            }
+                            .addOnFailureListener { error ->
+                                continuation.resume(failure(error))
+                            }
+                    }
+                    .addOnFailureListener { error ->
+                        continuation.resume(failure(error))
+                    }
+            } catch (exception: StorageException) {
+                continuation.resume(failure(exception))
+            }
         }
     }
+
 
     companion object {
         private const val IMAGES = "images/"

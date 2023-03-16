@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface InvitationsRemoteSource {
 
-    fun observeInvitation(invitationId: String): Flow<Result<Invitation>>
+    suspend fun observeInvitation(invitationId: String): Flow<Result<Invitation>>
 
     suspend fun getInvitation(invitationId: String): Result<Invitation>
 

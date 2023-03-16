@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.Result.Companion.failure
 import kotlin.Result.Companion.success
@@ -22,7 +23,7 @@ class FirebaseRealtimeDatabase @Inject constructor() {
     private val root = Firebase.database.reference
     private val firestoreScope = CoroutineScope(Dispatchers.Default)
 
-    fun <T : Any> observe(path: String, id: String, type: KClass<T>): Flow<Result<T>> {
+    suspend fun <T : Any> observe(path: String, id: String, type: KClass<T>): Flow<Result<T>> = withContext(Dispatchers.IO) {
         val snapshots = MutableSharedFlow<Result<T>>()
         val reference = root.child(path).child(id)
 
@@ -44,59 +45,70 @@ class FirebaseRealtimeDatabase @Inject constructor() {
             }
         })
 
-        return snapshots.asSharedFlow()
+        snapshots.asSharedFlow()
     }
 
-    suspend fun <T : Any> read(path: String, id: String, type: KClass<T>): Result<T?> = suspendCoroutine { continuation ->
-        val reference = root.child(path).child(id)
-        reference.get()
-            .addOnSuccessListener { snapshot ->
-                continuation.resume(runCatching { snapshot.getValue(type.java) })
-            }
-            .addOnFailureListener { error ->
-                continuation.resume(failure(error))
-            }
+    suspend fun <T : Any> read(path: String, id: String, type: KClass<T>): Result<T?> = withContext(Dispatchers.IO) {
+        suspendCoroutine { continuation ->
+            val reference = root.child(path).child(id)
+            reference.get()
+                .addOnSuccessListener { snapshot ->
+                    continuation.resume(runCatching { snapshot.getValue(type.java) })
+                }
+                .addOnFailureListener { error ->
+                    continuation.resume(failure(error))
+                }
+        }
     }
 
-    suspend fun <T : Any> readAll(path: String, type: KClass<T>): Result<List<T>> = suspendCoroutine { continuation ->
-        val reference = root.child(path)
-        reference.get()
-            .addOnSuccessListener { snapshot ->
-                continuation.resume(
-                    runCatching {
-                        snapshot.children.mapNotNull { it.getValue(type.java) }
-                    }
-                )
-            }
-            .addOnFailureListener { error ->
-                continuation.resume(failure(error))
-            }
+    suspend fun <T : Any> readAll(path: String, type: KClass<T>): Result<List<T>> = withContext(Dispatchers.IO) {
+        suspendCoroutine { continuation ->
+            val reference = root.child(path)
+            reference.get()
+                .addOnSuccessListener { snapshot ->
+                    continuation.resume(
+                        runCatching {
+                            snapshot.children.mapNotNull { it.getValue(type.java) }
+                        }
+                    )
+                }
+                .addOnFailureListener { error ->
+                    continuation.resume(failure(error))
+                }
+        }
     }
 
-    suspend fun <T : Any> write(path: String, item: T): Result<T> = suspendCoroutine { continuation ->
-        val key = createNewEntry(path)
-        key?.let {
-            val reference = root.child("$path$it")
-            item.addId(it)
+    suspend fun <T : Any> write(path: String, item: T): Result<T> = withContext(Dispatchers.IO) {
+        suspendCoroutine { continuation ->
+            val key = createNewEntry(path)
+            key?.let {
+                val reference = root.child("$path$it")
+                item.addId(it)
+                reference.setValue(item)
+                    .addOnSuccessListener { continuation.resume(success(item)) }
+                    .addOnFailureListener { error -> continuation.resume(failure(error)) }
+            } ?: continuation.resume(failure(UnknownError("Failed to create new entry for element $item")))
+        }
+    }
+
+    suspend fun <T> update(path: String, id: String, item: T): Result<T> = withContext(Dispatchers.IO) {
+        suspendCoroutine { continuation ->
+            val reference = root.child(path).child(id)
             reference.setValue(item)
                 .addOnSuccessListener { continuation.resume(success(item)) }
                 .addOnFailureListener { error -> continuation.resume(failure(error)) }
-        } ?: continuation.resume(failure(UnknownError("Failed to create new entry for element $item")))
+        }
     }
 
-    suspend fun <T> update(path: String, id: String, item: T): Result<T> = suspendCoroutine { continuation ->
-        val reference = root.child(path).child(id)
-        reference.setValue(item)
-            .addOnSuccessListener { continuation.resume(success(item)) }
-            .addOnFailureListener { error -> continuation.resume(failure(error)) }
+    suspend fun delete(path: String, id: String): Result<String> = withContext(Dispatchers.IO) {
+        suspendCoroutine { continuation ->
+            val reference = root.child(path).child(id)
+            reference.removeValue()
+                .addOnSuccessListener { continuation.resume(success(id)) }
+                .addOnFailureListener { error -> continuation.resume(failure(error)) }
+        }
     }
 
-    suspend fun delete(path: String, id: String): Result<String> = suspendCoroutine { continuation ->
-        val reference = root.child(path).child(id)
-        reference.removeValue()
-            .addOnSuccessListener { continuation.resume(success(id)) }
-            .addOnFailureListener { error -> continuation.resume(failure(error)) }
-    }
 
     private fun createNewEntry(path: String): String? {
         return root.child(path).push().key

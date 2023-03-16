@@ -6,8 +6,10 @@ import com.hejwesele.invitations.mappers.mapModel
 import com.hejwesele.invitations.model.Invitation
 import com.hejwesele.realtimedatabase.FirebaseRealtimeDatabase
 import com.hejwesele.result.notFound
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,8 +22,8 @@ class FirebaseInvitationsRemoteSource @Inject constructor(
         private const val INVITATIONS_PATH = "invitations/"
     }
 
-    override fun observeInvitation(invitationId: String): Flow<Result<Invitation>> {
-        return database.observe(
+    override suspend fun observeInvitation(invitationId: String): Flow<Result<Invitation>> = withContext(Dispatchers.IO) {
+        database.observe(
             path = INVITATIONS_PATH,
             id = invitationId,
             type = InvitationDto::class
@@ -30,8 +32,8 @@ class FirebaseInvitationsRemoteSource @Inject constructor(
         }
     }
 
-    override suspend fun getInvitation(invitationId: String): Result<Invitation> {
-        return database.read(
+    override suspend fun getInvitation(invitationId: String): Result<Invitation> = withContext(Dispatchers.IO) {
+        database.read(
             path = INVITATIONS_PATH,
             id = invitationId,
             type = InvitationDto::class
@@ -40,8 +42,8 @@ class FirebaseInvitationsRemoteSource @Inject constructor(
         }
     }
 
-    override suspend fun addInvitation(invitation: Invitation): Result<Invitation> {
-        return database.write(
+    override suspend fun addInvitation(invitation: Invitation): Result<Invitation> = withContext(Dispatchers.IO) {
+        database.write(
             path = INVITATIONS_PATH,
             item = invitation.mapDto()
         ).map { invitation }

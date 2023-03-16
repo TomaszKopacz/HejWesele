@@ -6,6 +6,8 @@ import com.hejwesele.events.mappers.mapModel
 import com.hejwesele.events.model.Event
 import com.hejwesele.realtimedatabase.FirebaseRealtimeDatabase
 import com.hejwesele.result.notFound
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,8 +20,8 @@ class FirebaseEventsRemoteSource @Inject constructor(
         private const val EVENTS_PATH = "events/"
     }
 
-    override suspend fun getEvent(eventId: String): Result<Event> {
-        return database.read(
+    override suspend fun getEvent(eventId: String): Result<Event> = withContext(Dispatchers.IO){
+        database.read(
             path = EVENTS_PATH,
             id = eventId,
             type = EventDto::class
@@ -28,8 +30,8 @@ class FirebaseEventsRemoteSource @Inject constructor(
         }
     }
 
-    override suspend fun addEvent(event: Event): Result<Event> {
-        return database.write(
+    override suspend fun addEvent(event: Event): Result<Event> = withContext(Dispatchers.IO) {
+        database.write(
             path = EVENTS_PATH,
             item = event.mapDto()
         ).map { event }

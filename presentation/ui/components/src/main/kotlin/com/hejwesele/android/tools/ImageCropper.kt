@@ -9,10 +9,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import com.canhub.cropper.CropException
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
+import com.hejwesele.android.theme.Label
 import com.hejwesele.android.theme.md_theme_dark_background
 import com.hejwesele.android.theme.md_theme_dark_onBackground
 
@@ -41,15 +43,17 @@ object ImageCropper {
             guidelinesColor = Color.Transparent.toArgb(),
             borderLineColor = Color.Transparent.toArgb(),
             progressBarColor = MaterialTheme.colorScheme.secondaryContainer.toArgb(),
-            cropMenuCropButtonTitle = "OK"
+            cropMenuCropButtonTitle = Label.ok
         )
 
         imageCropperLauncher = rememberLauncherForActivityResult(CropImageContract()) { cropResult ->
             val uri = cropResult.uriContent
             if (cropResult.isSuccessful && uri != null) {
                 onImageCropped?.invoke(uri)
-            } else {
-                onImageCropError?.invoke()
+            } else if (cropResult.error != null) {
+                if (cropResult.error !is CropException.Cancellation) {
+                    onImageCropError?.invoke()
+                }
             }
         }
 

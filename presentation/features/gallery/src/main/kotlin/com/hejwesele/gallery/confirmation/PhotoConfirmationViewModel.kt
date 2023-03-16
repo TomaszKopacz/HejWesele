@@ -67,26 +67,24 @@ internal class PhotoConfirmationViewModel @Inject constructor(
                     hidePhotoConfirmation = triggered
                 )
             }
-            withContext(Dispatchers.IO) {
-                addPhotoToGallery(
-                    galleryId = galleryId,
-                    photo = photo
-                ).onSuccess {
-                    updateState {
-                        copy(
-                            uploadingPhoto = false,
-                            uploadingMessage = null,
-                            closeScreenWithSuccess = triggered
-                        )
-                    }
-                }.onFailure { error ->
-                    updateState {
-                        copy(
-                            uploadingPhoto = false,
-                            uploadingMessage = null,
-                            error = error
-                        )
-                    }
+            addPhotoToGallery(
+                galleryId = galleryId,
+                photo = photo
+            ).onSuccess {
+                updateState {
+                    copy(
+                        uploadingPhoto = false,
+                        uploadingMessage = null,
+                        closeScreenWithSuccess = triggered
+                    )
+                }
+            }.onFailure { error ->
+                updateState {
+                    copy(
+                        uploadingPhoto = false,
+                        uploadingMessage = null,
+                        error = error
+                    )
                 }
             }
         }

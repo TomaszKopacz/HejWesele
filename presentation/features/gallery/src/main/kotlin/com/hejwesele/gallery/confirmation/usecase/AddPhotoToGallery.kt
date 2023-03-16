@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.PNG
 import com.hejwesele.galleries.GalleriesRepository
 import com.hejwesele.result.extensions.flatMap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class AddPhotoToGallery @Inject constructor(
@@ -14,8 +16,8 @@ class AddPhotoToGallery @Inject constructor(
     suspend operator fun invoke(
         galleryId: String,
         photo: Bitmap
-    ): Result<String> {
-        return uploadImage(
+    ): Result<String> = withContext(Dispatchers.IO) {
+        uploadImage(
             location = GALLERY_LOCATION,
             folder = galleryId,
             image = photo,
