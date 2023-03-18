@@ -47,7 +47,6 @@ class FirebaseRemoteStorage @Inject constructor() {
         }
     }
 
-
     companion object {
         private const val IMAGES = "images/"
         private const val OPERATION_TIMEOUT_MS = 5000L

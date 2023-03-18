@@ -1,6 +1,7 @@
 package com.hejwesele.gallery.preview
 
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.compose.foundation.clickable
@@ -62,10 +63,7 @@ private fun GalleryPreviewScreen(
     ScreenOrientationLocker(SCREEN_ORIENTATION_PORTRAIT)
     val systemUiController = rememberSystemUiController()
     SideEffect {
-        systemUiController.setStatusBarColor(
-            color = Color.Transparent,
-            darkIcons = true
-        )
+        systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = true)
     }
 
     val uiState by viewModel.states.collectAsState()
@@ -75,6 +73,44 @@ private fun GalleryPreviewScreen(
         viewModel.onStoragePermissionsResult(permissionsResult)
     }
 
+    GalleryPreviewEventsHandler(
+        uiState = uiState,
+        snackbarState = snackbarState,
+        viewModel = viewModel,
+        navigation = navigation,
+        permissionsLauncher = permissionsLauncher
+    )
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarState) }
+    ) { padding ->
+        Surface(color = md_theme_dark_background) {
+            with(uiState) {
+                if (loading) {
+                    Loader()
+                } else {
+                    GalleryPreviewContent(
+                        padding = padding,
+                        photoUrls = photoUrls,
+                        selectedPhotoIndex = selectedPhotoIndex,
+                        savingPhoto = savingPhoto,
+                        onBack = { viewModel.onBack() },
+                        onSave = { photoUrl -> viewModel.onSavePhotoClicked(photoUrl) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun GalleryPreviewEventsHandler(
+    uiState: GalleryPreviewUiState,
+    viewModel: GalleryPreviewViewModel,
+    navigation: IGalleryNavigation,
+    permissionsLauncher: ManagedActivityResultLauncher<Array<String>, Map<String, @JvmSuppressWildcards Boolean>>,
+    snackbarState: SnackbarHostState
+) {
     EventEffect(
         event = uiState.closeScreen,
         onConsumed = { viewModel.onScreenClosed() },
@@ -105,27 +141,6 @@ private fun GalleryPreviewScreen(
             )
         }
     )
-
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarState) }
-    ) { padding ->
-        Surface(color = md_theme_dark_background) {
-            with(uiState) {
-                if (loading) {
-                    Loader()
-                } else {
-                    GalleryPreviewContent(
-                        padding = padding,
-                        photoUrls = photoUrls,
-                        selectedPhotoIndex = selectedPhotoIndex,
-                        savingPhoto = savingPhoto,
-                        onBack = { viewModel.onBack() },
-                        onSave = { photoUrl -> viewModel.onSavePhotoClicked(photoUrl) }
-                    )
-                }
-            }
-        }
-    }
 }
 
 @OptIn(ExperimentalPagerApi::class)

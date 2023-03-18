@@ -69,7 +69,7 @@ fun <T> LazyListScope.gridItems(
                             itemContent(itemIndex)
                         }
                         if (columnIndex != columnCount - 1 && columnCount > 1) {
-                           HorizontalMargin(innerPadding)
+                            HorizontalMargin(innerPadding)
                         }
                     } else {
                         Spacer(Modifier.weight(1f, true))

@@ -11,7 +11,8 @@ object Label {
 
     // Home
     const val errorMessage = "Upss.. Coś poszło nie tak.\nUpewnij się, że masz internet i załaduj stronę ponownie."
-    const val homeNoInvitationTilesMessage = "Aktualnie nie ma tutaj żadnych informacji do wyświetlenia, może pojawią się za chwilkę :)"
+    const val homeNoInvitationTilesMessage =
+        "Aktualnie nie ma tutaj żadnych informacji do wyświetlenia, może pojawią się za chwilkę :)"
     const val homeIntentTitleMaps = "Mapy Google"
     const val homeIntentTitleWeb = "Strona internetowa"
 
@@ -23,8 +24,9 @@ object Label {
         "Nic tu jeszcze nie ma. \nKliknij plusik i dodaj pierwsze zdjęcie!"
     const val galleryExternalGalleryHintText =
         "Oprócz Waszych zdjęć, pojawi się tutaj także odnośnik do galerii zdjęć wykonanych przez naszych w" +
-        "spaniałych fotografów. Czekajcie razem z nami!"
-    const val galleryExternalGalleryTileText = "Już są! Nasze i Wasze zdjęcia z dniu ślubu! Wyszły przepięknie, kliknijcie tutaj i sami zobaczcie!"
+            "spaniałych fotografów. Czekajcie razem z nami!"
+    const val galleryExternalGalleryTileText =
+        "Już są! Nasze i Wasze zdjęcia z dniu ślubu! Wyszły przepięknie, kliknijcie tutaj i sami zobaczcie!"
     const val galleryPublishPhoto = "Opublikuj"
     const val galleryPublishConfirmationTitle = "Czy na pewno chcesz opublikować wybrane zdjęcie?"
     const val galleryPublishConfirmationDescription = "Zdjęcie będzie widoczne dla wszystkich uczestników wesela."

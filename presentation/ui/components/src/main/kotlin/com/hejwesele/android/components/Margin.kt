@@ -13,6 +13,6 @@ fun VerticalMargin(height: Dp) {
 }
 
 @Composable
-fun HorizontalMargin(height: Dp) {
-    Spacer(modifier = Modifier.width(height))
+fun HorizontalMargin(width: Dp) {
+    Spacer(modifier = Modifier.width(width))
 }

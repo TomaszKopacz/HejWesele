@@ -20,7 +20,7 @@ android {
         applicationId "com.hejwesele"
         resValue "string", "app_name", "Hej Wesele"
         versionCode Integer.valueOf(System.getenv().get("GITLAB_BUILD_NUMBER") ?: projectVersionCode)
-        versionName projectVersionName
+        versionName projectVersionName + " (" + versionCode + ")"
 
         testInstrumentationRunner "com.hejwesele.android.HiltTestRunner"
         testInstrumentationRunnerArguments clearPackageData: "true"

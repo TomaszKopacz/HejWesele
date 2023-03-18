@@ -1,5 +1,6 @@
 package com.hejwesele.gallery.board
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -81,10 +82,7 @@ private fun GalleryBoardScreen(
 ) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
-        systemUiController.setStatusBarColor(
-            color = Transparent,
-            darkIcons = true
-        )
+        systemUiController.setStatusBarColor(color = Transparent, darkIcons = true)
     }
 
     val context = LocalContext.current
@@ -99,37 +97,12 @@ private fun GalleryBoardScreen(
         }
     }
 
-    EventEffect(
-        event = uiState.openExternalGallery,
-        onConsumed = { viewModel.onExternalGalleryOpened() },
-        action = { intent ->
-            openActivity(context, intent.intentPackage, intent.intentUrl)
-        }
-    )
-    EventEffect(
-        event = uiState.openImageCropper,
-        onConsumed = { viewModel.onImageCropperOpened() },
-        action = { galleryId ->
-            ImageCropper.launch(
-                onImageCropped = { uri ->
-                    navigation.openPhotoConfirmation(
-                        photoUri = uri,
-                        galleryId = galleryId
-                    )
-                },
-                onImageCropError = { viewModel.onImageCropError() }
-            )
-        }
-    )
-    EventEffect(
-        event = uiState.showPhotoUploadSuccess,
-        onConsumed = { viewModel.onPhotoUploadSuccessShown() },
-        action = {
-            snackbarState.showSnackbar(
-                message = Label.galleryPublishingPhotoSuccessText,
-                withDismissAction = true
-            )
-        }
+    GalleryEventHandler(
+        uiState = uiState,
+        snackbarState = snackbarState,
+        viewModel = viewModel,
+        navigation = navigation,
+        context = context
     )
 
     Scaffold(
@@ -171,11 +144,46 @@ private fun GalleryBoardScreen(
 }
 
 @Composable
+private fun GalleryEventHandler(
+    uiState: GalleryUiState,
+    viewModel: GalleryViewModel,
+    context: Context,
+    navigation: IGalleryNavigation,
+    snackbarState: SnackbarHostState
+) {
+    EventEffect(
+        event = uiState.openExternalGallery,
+        onConsumed = { viewModel.onExternalGalleryOpened() },
+        action = { intent -> openActivity(context, intent.intentPackage, intent.intentUrl) }
+    )
+    EventEffect(
+        event = uiState.openImageCropper,
+        onConsumed = { viewModel.onImageCropperOpened() },
+        action = { galleryId ->
+            ImageCropper.launch(
+                onImageCropped = { uri -> navigation.openPhotoConfirmation(uri, galleryId) },
+                onImageCropError = { viewModel.onImageCropError() }
+            )
+        }
+    )
+    EventEffect(
+        event = uiState.showPhotoUploadSuccess,
+        onConsumed = { viewModel.onPhotoUploadSuccessShown() },
+        action = {
+            snackbarState.showSnackbar(
+                message = Label.galleryPublishingPhotoSuccessText,
+                withDismissAction = true
+            )
+        }
+    )
+}
+
+@Composable
 private fun GalleryBody(
     padding: PaddingValues,
     galleryEnabled: Boolean,
     galleryData: GalleryData
-) = with (galleryData) {
+) = with(galleryData) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {

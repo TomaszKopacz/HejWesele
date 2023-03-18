@@ -1,8 +1,8 @@
 package com.hejwesele.home.home.usecase
 
+import com.hejwesele.intent.IntentData
 import com.hejwesele.intent.IntentPackage
 import com.hejwesele.intent.IntentType
-import com.hejwesele.intent.IntentData
 import com.hejwesele.invitations.InvitationsRepository
 import com.hejwesele.invitations.model.Invitation
 import com.hejwesele.invitations.model.InvitationTile
@@ -27,10 +27,10 @@ internal class AddInvitation @Inject constructor(
                         description = "To my! Dziś bierzemy ślub! Cieszymy się, że jesteście razem z nami i życzymy Wam wyśmienitej " +
                             "zabawy do białego rana!",
                         avatars = listOf(
-                            "https://firebasestorage.googleapis.com/v0/b/hejwesele-test.appspot.com/o/image_tomek.jpg?alt=media&token=" +
-                                "158d4ecb-df1b-490a-8fec-b7896d54ad5d",
-                            "https://firebasestorage.googleapis.com/v0/b/hejwesele-test.appspot.com/o/image_patrycja.jpg?alt=media&toke" +
-                                "n=b8c18b70-0e86-450c-b785-97c18ddf28a7"
+                            "https://firebasestorage.googleapis.com/v0/b/hejwesele-test" +
+                                ".appspot.com/o/image_tomek.jpg?alt=media&token=158d4ecb-df1b-490a-8fec-b7896d54ad5d",
+                            "https://firebasestorage.googleapis.com/v0/b/hejwesele-test" +
+                                ".appspot.com/o/image_patrycja.jpg?alt=media&token=b8c18b70-0e86-450c-b785-97c18ddf28a7"
                         ),
                         intents = listOf(
                             IntentData(
@@ -56,11 +56,11 @@ internal class AddInvitation @Inject constructor(
                     InvitationTile(
                         type = InvitationTileType.CHURCH,
                         title = "Parafia WNMP w Przecławiu",
-                        description = "Ceremonia ślubna odbędzie się w uroczym kościele w Przecławiu. Kliknij, aby dowiedzieć się jak" +
-                            " tam dojechać.",
+                        description = "Ceremonia ślubna odbędzie się w uroczym kościele w Przecławiu. " +
+                            "Kliknij, aby dowiedzieć się jak tam dojechać.",
                         avatars = listOf(
-                            "https://firebasestorage.googleapis.com/v0/b/hejwesele-test.appspot.com/o/image_church.png?alt=media&tok" +
-                                "en=5c07f09c-76e4-4d3f-8178-f41674b97c36"
+                            "https://firebasestorage.googleapis.com/v0/b/hejwesele-test.appspot.com/o/" +
+                                "image_church.png?alt=media&token=5c07f09c-76e4-4d3f-8178-f41674b97c36"
                         ),
                         intents = listOf(
                             IntentData(
@@ -100,8 +100,8 @@ internal class AddInvitation @Inject constructor(
                     InvitationTile(
                         type = InvitationTileType.WISHES,
                         title = "Parę słów od nas",
-                        description = "Kochani! Niezmiernie się cieszymy, że jesteście razem z nami w najpiękniejszym dla Nas dniu. Tańc" +
-                            "zcie, śpiewajcie i opróżniajcie kieliszki!",
+                        description = "Kochani! Niezmiernie się cieszymy, że jesteście razem z nami w najpiękniejszym dla Nas dniu." +
+                            " Tańczcie, śpiewajcie i opróżniajcie kieliszki!",
                         avatars = emptyList(),
                         intents = emptyList()
                     )

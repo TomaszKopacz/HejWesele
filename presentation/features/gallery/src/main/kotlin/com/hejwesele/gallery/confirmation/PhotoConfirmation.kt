@@ -6,18 +6,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.MaterialTheme
@@ -64,10 +63,7 @@ private fun PhotoConfirmationScreen(
 ) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
-        systemUiController.setStatusBarColor(
-            color = Color.Transparent,
-            darkIcons = true
-        )
+        systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = true)
     }
 
     val coroutineScope = rememberCoroutineScope()
@@ -78,25 +74,11 @@ private fun PhotoConfirmationScreen(
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
 
-    EventEffect(
-        event = uiState.showPhotoConfirmation,
-        onConsumed = { viewModel.onPhotoConfirmationShown() },
-        action = { sheetState.show() }
-    )
-    EventEffect(
-        event = uiState.hidePhotoConfirmation,
-        onConsumed = { viewModel.onPhotoConfirmationHidden() },
-        action = { sheetState.hide() }
-    )
-    EventEffect(
-        event = uiState.closeScreen,
-        onConsumed = { viewModel.onScreenClosed() },
-        action = { resultSender.navigateBack(result = false) }
-    )
-    EventEffect(
-        event = uiState.closeScreenWithSuccess,
-        onConsumed = { viewModel.onScreenClosed() },
-        action = { resultSender.navigateBack(result = true) }
+    PhotoConfirmationEventHandler(
+        uiState = uiState,
+        sheetState = sheetState,
+        viewModel = viewModel,
+        resultSender = resultSender
     )
 
     BottomSheetScaffold(
@@ -138,6 +120,36 @@ private fun PhotoConfirmationScreen(
     BackHandler(sheetState.isVisible) {
         coroutineScope.launch { sheetState.hide() }
     }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun PhotoConfirmationEventHandler(
+    uiState: PhotoConfirmationUiState,
+    viewModel: PhotoConfirmationViewModel,
+    sheetState: ModalBottomSheetState,
+    resultSender: ResultBackNavigator<Boolean>
+) {
+    EventEffect(
+        event = uiState.showPhotoConfirmation,
+        onConsumed = { viewModel.onPhotoConfirmationShown() },
+        action = { sheetState.show() }
+    )
+    EventEffect(
+        event = uiState.hidePhotoConfirmation,
+        onConsumed = { viewModel.onPhotoConfirmationHidden() },
+        action = { sheetState.hide() }
+    )
+    EventEffect(
+        event = uiState.closeScreen,
+        onConsumed = { viewModel.onScreenClosed() },
+        action = { resultSender.navigateBack(result = false) }
+    )
+    EventEffect(
+        event = uiState.closeScreenWithSuccess,
+        onConsumed = { viewModel.onScreenClosed() },
+        action = { resultSender.navigateBack(result = true) }
+    )
 }
 
 @Composable

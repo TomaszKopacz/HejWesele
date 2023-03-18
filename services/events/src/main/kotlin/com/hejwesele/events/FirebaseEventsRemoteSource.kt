@@ -20,7 +20,7 @@ class FirebaseEventsRemoteSource @Inject constructor(
         private const val EVENTS_PATH = "events/"
     }
 
-    override suspend fun getEvent(eventId: String): Result<Event> = withContext(Dispatchers.IO){
+    override suspend fun getEvent(eventId: String): Result<Event> = withContext(Dispatchers.IO) {
         database.read(
             path = EVENTS_PATH,
             id = eventId,

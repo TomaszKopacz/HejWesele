@@ -12,9 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel

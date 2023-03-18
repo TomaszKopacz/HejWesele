@@ -68,10 +68,7 @@ private fun HomeScreen(
 ) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
-        systemUiController.setStatusBarColor(
-            color = Color.Transparent,
-            darkIcons = true
-        )
+        systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = true)
     }
 
     val context = LocalContext.current

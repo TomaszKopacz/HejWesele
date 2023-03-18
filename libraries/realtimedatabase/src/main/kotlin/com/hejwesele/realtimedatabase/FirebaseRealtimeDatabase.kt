@@ -109,7 +109,6 @@ class FirebaseRealtimeDatabase @Inject constructor() {
         }
     }
 
-
     private fun createNewEntry(path: String): String? {
         return root.child(path).push().key
     }

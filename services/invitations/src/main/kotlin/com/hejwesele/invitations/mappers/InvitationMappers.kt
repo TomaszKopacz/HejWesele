@@ -1,8 +1,8 @@
 package com.hejwesele.invitations.mappers
 
+import com.hejwesele.intent.IntentData
 import com.hejwesele.intent.IntentPackage
 import com.hejwesele.intent.IntentType
-import com.hejwesele.intent.IntentData
 import com.hejwesele.intent.IntentUrlPrefix
 import com.hejwesele.invitations.dto.InvitationDto
 import com.hejwesele.invitations.dto.InvitationTileDto
