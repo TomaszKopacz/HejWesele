@@ -56,7 +56,7 @@ fun LoaderDialog(label: String?) {
                     modifier = Modifier.size(Dimension.progressIndicatorSize)
                 )
                 if (label != null) {
-                    Spacer(modifier = Modifier.width(Dimension.marginNormal))
+                    HorizontalMargin(Dimension.marginNormal)
                     Text(
                         text = label,
                         style = MaterialTheme.typography.bodyLarge,

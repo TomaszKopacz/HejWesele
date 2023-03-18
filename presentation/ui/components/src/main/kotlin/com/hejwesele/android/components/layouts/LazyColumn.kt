@@ -7,17 +7,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.hejwesele.android.components.HorizontalMargin
+import com.hejwesele.android.components.VerticalMargin
 
 fun LazyListScope.margin(size: Dp) {
-    item { Spacer(Modifier.height(size)) }
+    item { VerticalMargin(size) }
 }
 
 fun LazyListScope.singleItem(
@@ -69,7 +69,7 @@ fun <T> LazyListScope.gridItems(
                             itemContent(itemIndex)
                         }
                         if (columnIndex != columnCount - 1 && columnCount > 1) {
-                            Spacer(Modifier.width(innerPadding))
+                           HorizontalMargin(innerPadding)
                         }
                     } else {
                         Spacer(Modifier.weight(1f, true))
@@ -77,7 +77,7 @@ fun <T> LazyListScope.gridItems(
                 }
             }
             if (rowIndex < rowsCount - 1) {
-                Spacer(Modifier.height(innerPadding))
+                VerticalMargin(innerPadding)
             }
         }
     }

@@ -37,6 +37,7 @@ import com.hejwesele.android.components.ErrorDialog
 import com.hejwesele.android.components.Loader
 import com.hejwesele.android.components.LoaderDialog
 import com.hejwesele.android.components.PlainButton
+import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.components.layouts.BottomSheetScaffold
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
@@ -214,13 +215,13 @@ private fun ConfirmationBottomSheetContent(
         style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.onSurface
     )
-    Spacer(modifier = Modifier.height(Dimension.marginNormal))
+    VerticalMargin(Dimension.marginNormal)
     Text(
         text = Label.galleryPublishConfirmationDescription,
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurface
     )
-    Spacer(modifier = Modifier.height(Dimension.marginLarge))
+    VerticalMargin(Dimension.marginLarge)
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceAround
@@ -236,5 +237,5 @@ private fun ConfirmationBottomSheetContent(
             onClick = onAccept
         )
     }
-    Spacer(modifier = Modifier.height(bottomPadding))
+    VerticalMargin(bottomPadding)
 }

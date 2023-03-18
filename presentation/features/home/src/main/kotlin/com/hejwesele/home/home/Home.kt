@@ -44,8 +44,10 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.CircleImage
+import com.hejwesele.android.components.HorizontalMargin
 import com.hejwesele.android.components.Loader
 import com.hejwesele.android.components.TextPlaceholder
+import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.components.layouts.BottomSheetScaffold
 import com.hejwesele.android.components.layouts.ScrollableColumn
 import com.hejwesele.android.theme.Dimension
@@ -287,7 +289,7 @@ private fun InvitationBottomSheetContent(intents: List<IntentUiModel>, onIntentS
             intent = intent,
             onClick = onIntentSelected
         )
-        Spacer(Modifier.height(Dimension.marginNormal))
+        VerticalMargin(Dimension.marginNormal)
     }
 }
 
@@ -315,7 +317,7 @@ private fun IntentItem(
                 modifier = Modifier.size(Dimension.iconSizeNormal),
                 tint = MaterialTheme.colorScheme.primary
             )
-            Spacer(Modifier.width(Dimension.marginNormal))
+            HorizontalMargin(Dimension.marginNormal)
             Text(
                 text = intent.title,
                 style = MaterialTheme.typography.bodyMedium

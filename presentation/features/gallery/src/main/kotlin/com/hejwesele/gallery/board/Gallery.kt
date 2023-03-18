@@ -49,6 +49,7 @@ import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.Loader
 import com.hejwesele.android.components.RoundedCornerImage
 import com.hejwesele.android.components.TextPlaceholder
+import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.components.layouts.ScrollableColumn
 import com.hejwesele.android.components.layouts.gridItems
 import com.hejwesele.android.components.layouts.margin
@@ -305,18 +306,18 @@ private fun EmptyGalleryContent(
     onGalleryLinkClicked: () -> Unit
 ) {
     ScrollableColumn {
-        Spacer(modifier = Modifier.height(padding.calculateTopPadding() + Dimension.marginSmall))
+        VerticalMargin(padding.calculateTopPadding() + Dimension.marginSmall)
         if (galleryHintVisible) {
             GalleryHintTile(
                 onCloseClick = onHintDismissed
             )
-            Spacer(modifier = Modifier.height(Dimension.marginNormal))
+            VerticalMargin(Dimension.marginNormal)
         }
         if (galleryLinkVisible) {
             GalleryTile(
                 onClick = onGalleryLinkClicked
             )
-            Spacer(modifier = Modifier.height(Dimension.marginNormal))
+            VerticalMargin(Dimension.marginNormal)
         }
         Box(modifier = Modifier.weight(1.0f)) {
             TextPlaceholder(text = Label.galleryEmptyGalleryPlaceholderText)

@@ -3,11 +3,9 @@ package com.hejwesele.android.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
@@ -61,7 +59,7 @@ fun ErrorView(
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Spacer(modifier = Modifier.height(Dimension.marginNormal))
+                    VerticalMargin(Dimension.marginNormal)
                     Text(
                         text = description,
                         style = MaterialTheme.typography.bodyMedium,
@@ -69,7 +67,7 @@ fun ErrorView(
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Spacer(modifier = Modifier.height(Dimension.marginNormal))
+                    VerticalMargin(Dimension.marginNormal)
                     PlainButton(
                         text = Label.retry,
                         color = MaterialTheme.colorScheme.error,
@@ -116,7 +114,7 @@ fun ErrorDialog(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(modifier = Modifier.height(Dimension.marginNormal))
+                VerticalMargin(Dimension.marginNormal)
                 Text(
                     text = description,
                     style = MaterialTheme.typography.bodyMedium,
@@ -124,14 +122,14 @@ fun ErrorDialog(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(modifier = Modifier.height(Dimension.marginNormal))
+                VerticalMargin(Dimension.marginNormal)
                 PlainButton(
                     text = Label.ok,
                     color = MaterialTheme.colorScheme.error,
                     onClick = onDismiss,
                     modifier = Modifier.align(Alignment.End)
                 )
-                Spacer(modifier = Modifier.height(Dimension.marginNormal))
+                VerticalMargin(Dimension.marginNormal)
             }
         }
     }
