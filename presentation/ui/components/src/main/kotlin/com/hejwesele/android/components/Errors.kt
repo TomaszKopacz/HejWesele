@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
@@ -92,7 +91,7 @@ fun ErrorDialog(
     ) {
         Surface(
             elevation = Dimension.elevationSmall,
-            shape = RoundedCornerShape(Dimension.radiusRoundedCornerNormal),
+            shape = MaterialTheme.shapes.small,
             color = MaterialTheme.colorScheme.background
         ) {
             Column(

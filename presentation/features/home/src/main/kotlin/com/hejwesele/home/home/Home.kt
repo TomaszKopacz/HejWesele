@@ -7,15 +7,11 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
@@ -175,14 +171,14 @@ private fun InvitationTile(tile: InvitationTileUiModel, onTileClicked: (Invitati
             .padding(horizontal = Dimension.marginLarge_1_4)
             .shadow(
                 elevation = Dimension.elevationSmall,
-                shape = RoundedCornerShape(Dimension.radiusRoundedCornerNormal)
+                shape = MaterialTheme.shapes.small
             )
             .fillMaxWidth()
             .clickable(enabled = tile.clickable) {
                 onTileClicked(tile)
             },
         color = MaterialTheme.colorScheme.surfaceVariant,
-        shape = RoundedCornerShape(Dimension.radiusRoundedCornerNormal)
+        shape = MaterialTheme.shapes.small
     ) {
         Column(
             Modifier

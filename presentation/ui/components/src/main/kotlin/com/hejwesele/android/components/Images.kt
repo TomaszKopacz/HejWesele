@@ -51,7 +51,7 @@ fun RoundedCornerImage(
     modifier: Modifier
 ) {
     Surface(
-        shape = RoundedCornerShape(Dimension.radiusRoundedCornerSmall),
+        shape = MaterialTheme.shapes.large,
         modifier = modifier
     ) {
         GlideImage(
@@ -70,7 +70,7 @@ fun RoundedCornerBitmap(
     modifier: Modifier
 ) {
     Surface(
-        shape = RoundedCornerShape(Dimension.radiusRoundedCornerSmall),
+        shape = MaterialTheme.shapes.large,
         modifier = modifier
     ) {
         Image(

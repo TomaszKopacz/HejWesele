@@ -13,8 +13,11 @@ object Dimension {
     val marginLarge_1_4 = 6.dp
     val marginLarge_3_4 = 18.dp
 
+    val radiusRoundedCornerExtraSmall = 12.dp
     val radiusRoundedCornerSmall = 16.dp
-    val radiusRoundedCornerNormal = 24.dp
+    val radiusRoundedCornerMedium = 20.dp
+    val radiusRoundedCornerLarge = 24.dp
+    val radiusRoundedCornerExtraLarge = 28.dp
 
     val borderWidthNormal = 2.dp
 

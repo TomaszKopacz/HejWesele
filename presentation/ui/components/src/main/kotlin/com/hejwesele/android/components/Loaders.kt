@@ -43,7 +43,7 @@ fun LoaderDialog(label: String?) {
     ) {
         Surface(
             elevation = Dimension.elevationSmall,
-            shape = RoundedCornerShape(Dimension.radiusRoundedCornerSmall),
+            shape = MaterialTheme.shapes.large,
             color = MaterialTheme.colorScheme.surface
         ) {
             Row(

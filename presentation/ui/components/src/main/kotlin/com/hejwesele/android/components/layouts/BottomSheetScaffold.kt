@@ -3,7 +3,6 @@ package com.hejwesele.android.components.layouts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,8 +28,8 @@ fun BottomSheetScaffold(
     ModalBottomSheetLayout(
         sheetState = state,
         sheetShape = RoundedCornerShape(
-            topStart = Dimension.radiusRoundedCornerNormal,
-            topEnd = Dimension.radiusRoundedCornerNormal
+            topStart = Dimension.radiusRoundedCornerLarge,
+            topEnd = Dimension.radiusRoundedCornerLarge
         ),
         sheetBackgroundColor = MaterialTheme.colorScheme.background,
         sheetContent = {
