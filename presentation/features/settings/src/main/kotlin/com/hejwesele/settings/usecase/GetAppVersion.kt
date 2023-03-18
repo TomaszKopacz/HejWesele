@@ -5,5 +5,5 @@ import javax.inject.Inject
 
 class GetAppVersion @Inject constructor(private val appInfo: AppInfo) {
 
-    operator fun invoke() = appInfo.versionName
+    operator fun invoke() = "${appInfo.versionName} (${appInfo.versionCode})"
 }

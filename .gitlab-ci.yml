@@ -115,12 +115,21 @@ assembleQa:
     - docker
   stage: build
   script:
-    - ./gradlew assembleQa
+    - export FIREBASE_DIR="$HOME/.config/firebase"
+    - echo $HOME
+    - install -d $FIREBASE_DIR
+    - echo ${FIREBASE_SERVICE_KEY} > "$FIREBASE_DIR/service_key.json"
+    - >
+      ./gradlew -PserviceKey="$FIREBASE_DIR/service_key.json" assembleQa appDistributionUploadQa
   only:
     - dev
+  environment:
+    name: qa
+    deployment_tier: staging
+    url: https://console.firebase.google.com/project/hejwesele-test/appdistribution/app/android:com.hejwesele.qa/releases
   artifacts:
     paths:
-      - app/build/outputs/
+      - app/build/outputs/apk/**/*.apk
 
 # ---RELEASE---
 
