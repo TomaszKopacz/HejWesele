@@ -63,7 +63,6 @@ include ":core:appinfo"
 include ":core:coroutines"
 include ":core:database"
 include ":core:datetime"
-include ":core:networking"
 include ":core:osinfo"
 include ":core:preferences"
 
