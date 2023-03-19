@@ -130,7 +130,6 @@ dependencies {
     implementation projects.common.crashlytics
     implementation projects.common.customtabs
     implementation projects.common.datetimeformatter
-    implementation projects.common.licenses
     implementation projects.common.messaging
     implementation projects.common.mvvm
     implementation projects.common.remoteconfig
