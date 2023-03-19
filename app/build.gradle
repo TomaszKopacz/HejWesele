@@ -123,7 +123,6 @@ dependencies {
     implementation projects.core.coroutines
     implementation projects.core.database
     implementation projects.core.datetime
-    implementation projects.core.preferences
 
     implementation projects.common.analytics
     implementation projects.common.crashlytics
@@ -133,7 +132,6 @@ dependencies {
     implementation projects.common.mvvm
     implementation projects.common.remoteconfig
     implementation projects.common.splash
-    implementation projects.common.thememanager
     implementation projects.common.workmanager
 
     implementation projects.presentation.features.main
@@ -142,6 +140,7 @@ dependencies {
     implementation projects.presentation.features.schedule
     implementation projects.presentation.features.services
     implementation projects.presentation.features.settings
+    implementation projects.presentation.tools.thememanager
     implementation projects.presentation.ui.theme
 
     implementation projects.services.events
@@ -149,6 +148,7 @@ dependencies {
     implementation projects.services.invitations
     implementation projects.services.settings
 
+    implementation projects.repositories.events
     implementation projects.repositories.settings
 
     implementation projects.libraries.protodatastore

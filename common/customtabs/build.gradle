@@ -9,7 +9,7 @@ android {
 }
 
 dependencies {
-    implementation projects.common.thememanager
+    implementation projects.presentation.tools.thememanager
 
     implementation libs.androidx.browser
 

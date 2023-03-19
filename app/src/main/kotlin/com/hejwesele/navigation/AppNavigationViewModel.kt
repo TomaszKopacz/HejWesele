@@ -2,8 +2,8 @@ package com.hejwesele.navigation
 
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
+import com.hejwesele.events.EventsRepository
 import com.hejwesele.navigation.MainActivityUiState.Companion.DEFAULT
-import com.hejwesele.settings.SettingsRepository
 import com.ramcosta.composedestinations.spec.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -19,12 +19,12 @@ internal data class MainActivityUiState(
 
 @HiltViewModel
 internal class AppNavigationViewModel @Inject constructor(
-    private val repository: SettingsRepository // TODO - create use case
+    private val repository: EventsRepository // TODO - create use case
 ) : StateViewModel<MainActivityUiState>(DEFAULT) {
 
     init {
         viewModelScope.launch {
-            repository.getStoredSettings()
+            repository.getStoredEvent()
                 .onSuccess { settings ->
                     val startRoute = if (settings.event != null) {
                         MainNavGraph

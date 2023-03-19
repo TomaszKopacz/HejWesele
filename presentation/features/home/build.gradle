@@ -23,7 +23,6 @@ dependencies {
 
     implementation projects.repositories.events
     implementation projects.repositories.invitations
-    implementation projects.repositories.settings
 
     implementation projects.common.mvvm
 

@@ -3,6 +3,7 @@ package com.hejwesele.home.home
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
 import com.hejwesele.android.theme.Label
+import com.hejwesele.events.model.Event
 import com.hejwesele.home.R
 import com.hejwesele.home.home.model.IntentUiModel
 import com.hejwesele.home.home.model.InvitationTileUiModel
@@ -15,7 +16,6 @@ import com.hejwesele.intent.IntentUrlPrefix
 import com.hejwesele.invitations.model.Invitation
 import com.hejwesele.invitations.model.InvitationTile
 import com.hejwesele.invitations.model.InvitationTileType
-import com.hejwesele.settings.model.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent
 import de.palm.composestateevents.StateEventWithContent
@@ -39,8 +39,8 @@ internal class HomeViewModel @Inject constructor(
                 .onSuccess {
                     storeEvent(
                         Event(
-                            eventId = it.id,
-                            eventName = it.name,
+                            id = it.id,
+                            name = it.name,
                             date = it.date,
                             invitationId = it.invitationId,
                             galleryId = it.galleryId

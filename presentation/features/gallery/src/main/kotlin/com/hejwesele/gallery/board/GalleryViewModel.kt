@@ -2,6 +2,7 @@ package com.hejwesele.gallery.board
 
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
+import com.hejwesele.events.model.EventSettings
 import com.hejwesele.galleries.model.Gallery
 import com.hejwesele.gallery.board.usecase.DismissGalleryHint
 import com.hejwesele.gallery.board.usecase.GetEventSettings
@@ -9,7 +10,6 @@ import com.hejwesele.gallery.board.usecase.ObserveGallery
 import com.hejwesele.intent.IntentData
 import com.hejwesele.intent.IntentPackage.GOOGLE_DRIVE_PACKAGE
 import com.hejwesele.intent.IntentType.GOOGLE_DRIVE
-import com.hejwesele.settings.model.EventSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent
 import de.palm.composestateevents.StateEventWithContent

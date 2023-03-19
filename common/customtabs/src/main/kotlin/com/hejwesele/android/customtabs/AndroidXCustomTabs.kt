@@ -9,23 +9,17 @@ import android.content.pm.PackageManager.ResolveInfoFlags
 import android.net.Uri
 import android.os.Build
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.browser.customtabs.CustomTabsIntent.COLOR_SCHEME_DARK
-import androidx.browser.customtabs.CustomTabsIntent.COLOR_SCHEME_LIGHT
 import androidx.browser.customtabs.CustomTabsIntent.COLOR_SCHEME_SYSTEM
 import androidx.browser.customtabs.CustomTabsIntent.ColorScheme
 import androidx.browser.customtabs.CustomTabsIntent.SHARE_STATE_OFF
 import androidx.browser.customtabs.CustomTabsService.ACTION_CUSTOM_TABS_CONNECTION
-import com.hejwesele.android.thememanager.Theme.DARK
-import com.hejwesele.android.thememanager.Theme.LIGHT
-import com.hejwesele.android.thememanager.Theme.SYSTEM_DEFAULT
-import com.hejwesele.android.thememanager.ThemeManager
 import com.hejwesele.customtabs.R
 import dagger.hilt.android.qualifiers.ActivityContext
 import javax.inject.Inject
 
 internal class AndroidXCustomTabs @Inject constructor(
-    @ActivityContext private val context: Context,
-    private val themeManager: ThemeManager
+    @ActivityContext private val context: Context
+    // private val themeManager: ThemeManager
 ) : CustomTabs {
 
     companion object {
@@ -126,12 +120,17 @@ internal class AndroidXCustomTabs @Inject constructor(
             .apply { intent.`package` = packageName }
     }
 
-    @ColorScheme
+    /*@ColorScheme
     private fun getColorScheme(): Int {
         return when (themeManager.getSelectedTheme()) {
             SYSTEM_DEFAULT -> COLOR_SCHEME_SYSTEM
             LIGHT -> COLOR_SCHEME_LIGHT
             DARK -> COLOR_SCHEME_DARK
         }
+    }*/
+
+    @ColorScheme
+    private fun getColorScheme(): Int {
+        return COLOR_SCHEME_SYSTEM
     }
 }

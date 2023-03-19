@@ -25,8 +25,8 @@ dependencies {
     implementation projects.presentation.ui.extensions
     implementation projects.presentation.ui.theme
 
+    implementation projects.repositories.events
     implementation projects.repositories.galleries
-    implementation projects.repositories.settings
 
     implementation projects.libraries.intent
     implementation projects.libraries.result

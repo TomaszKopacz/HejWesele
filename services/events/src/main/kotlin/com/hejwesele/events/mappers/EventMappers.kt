@@ -1,7 +1,9 @@
 package com.hejwesele.events.mappers
 
 import com.hejwesele.events.dto.EventDto
+import com.hejwesele.events.dto.EventSettingsDto
 import com.hejwesele.events.model.Event
+import com.hejwesele.events.model.EventSettings
 import kotlinx.datetime.toLocalDateTime
 
 internal fun EventDto.mapModel() = Event(
@@ -20,4 +22,9 @@ internal fun Event.mapDto() = EventDto(
     date = date.toString(),
     invitationId = invitationId,
     galleryId = galleryId
+)
+
+internal fun EventSettingsDto.mapModel() = EventSettings(
+    event = event?.mapModel(),
+    galleryHintDismissed = galleryHintDismissed
 )

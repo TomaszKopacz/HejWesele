@@ -3,7 +3,9 @@ package com.hejwesele.protodatastore
 import android.content.Context
 import androidx.datastore.dataStore
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -22,6 +24,8 @@ class ProtoDataStore<T : Any> @Inject constructor(
             context.dataStore.data.first()
         }
     }
+
+    fun observeData(): Flow<T> = context.dataStore.data.flowOn(Dispatchers.IO)
 
     suspend fun writeData(transform: (T) -> T): Result<T> = runCatching {
         withContext(Dispatchers.IO) {
