@@ -126,7 +126,6 @@ dependencies {
 
     implementation projects.common.analytics
     implementation projects.common.crashlytics
-    implementation projects.common.customtabs
     implementation projects.common.datetimeformatter
     implementation projects.common.messaging
     implementation projects.common.mvvm

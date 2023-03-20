@@ -51,7 +51,6 @@ include ":libraries:remotestorage"
 
 include ":common:analytics"
 include ":common:crashlytics"
-include ":common:customtabs"
 include ":common:datetimeformatter"
 include ":common:messaging"
 include ":common:mvvm"
