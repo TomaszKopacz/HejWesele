@@ -2,7 +2,6 @@ package com.hejwesele
 
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
-import androidx.work.Configuration
 import com.hejwesele.android.analytics.Analytics
 import com.hejwesele.android.crashlytics.Crashlytics
 import com.hejwesele.android.thememanager.ThemeManager
@@ -15,7 +14,7 @@ import javax.inject.Inject
 
 @CustomInject
 @HiltAndroidApp
-class App : Application(), Configuration.Provider {
+class App : Application() {
 
     @Inject
     internal lateinit var crashlytics: Crashlytics
@@ -41,9 +40,4 @@ class App : Application(), Configuration.Provider {
 
         themeManager.applyTheme()
     }
-
-    override fun getWorkManagerConfiguration() =
-        Configuration.Builder()
-            .setWorkerFactory(workerFactory)
-            .build()
 }

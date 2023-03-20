@@ -126,7 +126,6 @@ dependencies {
 
     implementation projects.common.mvvm
     implementation projects.common.splash
-    implementation projects.common.workmanager
 
     implementation projects.presentation.features.main
     implementation projects.presentation.features.gallery

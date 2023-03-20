@@ -54,7 +54,6 @@ include ":libraries:remotestorage"
 
 include ":common:mvvm"
 include ":common:splash"
-include ":common:workmanager"
 
 include ":core:appinfo"
 include ":core:coroutines"

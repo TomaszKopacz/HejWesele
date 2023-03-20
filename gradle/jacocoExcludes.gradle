@@ -44,7 +44,6 @@ ext.jacocoExcludes = [
     '**/com/miquido/android/theme/**/*.*',
     '**/com/miquido/android/thememanager/AppCompatDelegateWrapperImpl.class',
     '**/com/miquido/android/ui/**/*.*',
-    '**/com/miquido/android/workmanager/**/*.*',
 
     // Application class
     '**/com/hejwesele/App.*'
