@@ -9,8 +9,8 @@ android {
 }
 
 dependencies {
-    implementation projects.core.coroutines
-    implementation projects.core.osinfo
+    implementation projects.libraries.coroutines
+    implementation projects.libraries.osinfo
 
     implementation projects.repositories.settings
 

@@ -119,12 +119,9 @@ android {
 }
 
 dependencies {
-    implementation projects.core.appinfo
-    implementation projects.core.coroutines
     implementation projects.core.database
     implementation projects.core.datetime
 
-    implementation projects.common.mvvm
     implementation projects.common.splash
 
     implementation projects.presentation.features.main
@@ -145,8 +142,11 @@ dependencies {
     implementation projects.repositories.settings
 
     implementation projects.libraries.analytics
+    implementation projects.libraries.appinfo
+    implementation projects.libraries.coroutines
     implementation projects.libraries.crashlytics
     implementation projects.libraries.messaging
+    implementation projects.libraries.mvvm
     implementation projects.libraries.protodatastore
     implementation projects.libraries.realtimedatabase
     implementation projects.libraries.result

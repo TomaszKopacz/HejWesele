@@ -29,9 +29,8 @@ dependencies {
     implementation projects.repositories.galleries
 
     implementation projects.libraries.intent
+    implementation projects.libraries.mvvm
     implementation projects.libraries.result
-
-    implementation projects.common.mvvm
 
     api libs.kotlinx.datetime
     implementation libs.airbnb.compose.lottie
