@@ -119,8 +119,6 @@ android {
 }
 
 dependencies {
-    implementation projects.core.datetime
-
     implementation projects.common.splash
 
     implementation projects.presentation.features.main

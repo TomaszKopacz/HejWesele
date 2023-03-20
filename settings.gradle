@@ -58,8 +58,6 @@ include ":libraries:remotestorage"
 
 include ":common:splash"
 
-include ":core:datetime"
-
 apply from: new File(settingsDir, "gradle/buildCache.gradle")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
