@@ -119,7 +119,6 @@ android {
 }
 
 dependencies {
-    implementation projects.core.database
     implementation projects.core.datetime
 
     implementation projects.common.splash
