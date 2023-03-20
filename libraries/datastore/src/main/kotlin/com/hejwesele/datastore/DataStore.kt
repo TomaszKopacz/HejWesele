@@ -1,4 +1,4 @@
-package com.hejwesele.protodatastore
+package com.hejwesele.datastore
 
 import android.content.Context
 import androidx.datastore.dataStore
@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class ProtoDataStore<T : Any> @Inject constructor(
-    specification: ProtoMessageSpecification<T>,
+class DataStore<T : Any> @Inject constructor(
+    specification: MessageSpecification<T>,
     fileName: String,
     private val context: Context
 ) {

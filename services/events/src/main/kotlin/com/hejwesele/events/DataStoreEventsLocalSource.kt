@@ -1,13 +1,13 @@
 package com.hejwesele.events
 
-import com.hejwesele.events.di.EventsProtoDataStore
+import com.hejwesele.events.di.EventsDataStore
 import com.hejwesele.events.dto.EventSettingsDto
 import com.hejwesele.events.mappers.mapDto
 import com.hejwesele.events.mappers.mapModel
 import com.hejwesele.events.model.Event
 import com.hejwesele.events.model.EventSettings
-import com.hejwesele.protodatastore.ProtoDataStore
-import com.hejwesele.protodatastore.ProtoMessageSpecification
+import com.hejwesele.datastore.DataStore
+import com.hejwesele.datastore.MessageSpecification
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -15,8 +15,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ProtoEventsLocalSource @Inject constructor(
-    @EventsProtoDataStore private val eventsStore: ProtoDataStore<EventSettingsDto>
+class DataStoreEventsLocalSource @Inject constructor(
+    @EventsDataStore private val eventsStore: DataStore<EventSettingsDto>
 ) : EventsLocalSource {
 
     override suspend fun getEventSettings(): Result<EventSettings> = withContext(Dispatchers.IO) {
@@ -34,7 +34,7 @@ class ProtoEventsLocalSource @Inject constructor(
     companion object {
         const val EVENTS_DATASTORE_FILE = "events"
 
-        val eventSettingsSpecification = ProtoMessageSpecification(
+        val eventSettingsSpecification = MessageSpecification(
             initialValue = EventSettingsDto(),
             reader = { input ->
                 Json.decodeFromString(

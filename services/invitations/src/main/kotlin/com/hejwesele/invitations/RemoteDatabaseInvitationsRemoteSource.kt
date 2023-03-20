@@ -4,7 +4,7 @@ import com.hejwesele.invitations.dto.InvitationDto
 import com.hejwesele.invitations.mappers.mapDto
 import com.hejwesele.invitations.mappers.mapModel
 import com.hejwesele.invitations.model.Invitation
-import com.hejwesele.realtimedatabase.FirebaseRealtimeDatabase
+import com.hejwesele.remotedatabase.RemoteDatabase
 import com.hejwesele.result.notFound
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -14,8 +14,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FirebaseInvitationsRemoteSource @Inject constructor(
-    private val database: FirebaseRealtimeDatabase
+class RemoteDatabaseInvitationsRemoteSource @Inject constructor(
+    private val database: RemoteDatabase
 ) : InvitationsRemoteSource {
 
     companion object {

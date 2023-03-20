@@ -15,7 +15,7 @@ android {
 }
 
 dependencies {
-    implementation projects.libraries.realtimedatabase
+    implementation projects.libraries.remotedatabase
     implementation projects.libraries.remotestorage
     implementation projects.libraries.result
 

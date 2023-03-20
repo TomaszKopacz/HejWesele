@@ -141,12 +141,12 @@ dependencies {
     implementation projects.libraries.appinfo
     implementation projects.libraries.coroutines
     implementation projects.libraries.crashlytics
+    implementation projects.libraries.datastore
     implementation projects.libraries.messaging
     implementation projects.libraries.mvvm
-    implementation projects.libraries.protodatastore
-    implementation projects.libraries.realtimedatabase
-    implementation projects.libraries.result
+    implementation projects.libraries.remotedatabase
     implementation projects.libraries.remotestorage
+    implementation projects.libraries.result
 
     androidTestImplementation libs.androidx.test.runner
     //androidTestImplementation libs.androidx.test.rules

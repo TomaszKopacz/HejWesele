@@ -1,4 +1,4 @@
-package com.hejwesele.realtimedatabase
+package com.hejwesele.remotedatabase
 
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.FIELD

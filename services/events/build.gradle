@@ -16,8 +16,8 @@ android {
 }
 
 dependencies {
-    implementation projects.libraries.protodatastore
-    implementation projects.libraries.realtimedatabase
+    implementation projects.libraries.datastore
+    implementation projects.libraries.remotedatabase
     implementation projects.libraries.result
 
     implementation projects.repositories.events

@@ -1,7 +1,7 @@
-package com.hejwesele.events.di
+package com.hejwesele.settings.di
 
 import javax.inject.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
-annotation class EventsProtoDataStore
+annotation class ConfigurationDataStore

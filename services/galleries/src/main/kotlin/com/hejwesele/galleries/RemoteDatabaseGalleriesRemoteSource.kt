@@ -4,7 +4,7 @@ import com.hejwesele.galleries.dto.GalleryDto
 import com.hejwesele.galleries.mappers.mapDto
 import com.hejwesele.galleries.mappers.mapModel
 import com.hejwesele.galleries.model.Gallery
-import com.hejwesele.realtimedatabase.FirebaseRealtimeDatabase
+import com.hejwesele.remotedatabase.RemoteDatabase
 import com.hejwesele.result.notFound
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -14,8 +14,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FirebaseGalleriesRemoteSource @Inject constructor(
-    private val database: FirebaseRealtimeDatabase
+class RemoteDatabaseGalleriesRemoteSource @Inject constructor(
+    private val database: RemoteDatabase
 ) : GalleriesRemoteSource {
 
     companion object {

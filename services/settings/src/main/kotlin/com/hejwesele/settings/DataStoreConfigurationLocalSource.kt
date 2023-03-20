@@ -1,8 +1,8 @@
 package com.hejwesele.settings
 
-import com.hejwesele.protodatastore.ProtoDataStore
-import com.hejwesele.protodatastore.ProtoMessageSpecification
-import com.hejwesele.settings.di.ConfigurationProtoDataStore
+import com.hejwesele.datastore.DataStore
+import com.hejwesele.datastore.MessageSpecification
+import com.hejwesele.settings.di.ConfigurationDataStore
 import com.hejwesele.settings.dto.ConfigurationDto
 import com.hejwesele.settings.mappers.mapDto
 import com.hejwesele.settings.mappers.mapModel
@@ -18,8 +18,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ProtoConfigurationLocalSource @Inject constructor(
-    @ConfigurationProtoDataStore private val configurationStore: ProtoDataStore<ConfigurationDto>
+class DataStoreConfigurationLocalSource @Inject constructor(
+    @ConfigurationDataStore private val configurationStore: DataStore<ConfigurationDto>
 ) : ConfigurationLocalSource {
 
     override suspend fun getConfiguration(): Result<Configuration> = withContext(Dispatchers.IO) {
@@ -40,7 +40,7 @@ class ProtoConfigurationLocalSource @Inject constructor(
     companion object {
         const val CONFIGURATION_DATASTORE_FILE = "configuration"
 
-        val configurationSpecification = ProtoMessageSpecification(
+        val configurationSpecification = MessageSpecification(
             initialValue = ConfigurationDto(),
             reader = { input ->
                 Json.decodeFromString(

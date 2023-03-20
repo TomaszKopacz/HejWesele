@@ -17,7 +17,7 @@ android {
 
 dependencies {
     implementation projects.libraries.intent
-    implementation projects.libraries.realtimedatabase
+    implementation projects.libraries.remotedatabase
     implementation projects.libraries.result
 
     implementation projects.repositories.invitations

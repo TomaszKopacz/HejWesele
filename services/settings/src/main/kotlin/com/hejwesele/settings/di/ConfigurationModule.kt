@@ -1,8 +1,8 @@
 package com.hejwesele.settings.di
 
 import android.content.Context
-import com.hejwesele.protodatastore.ProtoDataStore
-import com.hejwesele.settings.ProtoConfigurationLocalSource
+import com.hejwesele.datastore.DataStore
+import com.hejwesele.settings.DataStoreConfigurationLocalSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,12 +16,12 @@ internal class SettingsModule {
 
     @Provides
     @Singleton
-    @ConfigurationProtoDataStore
+    @ConfigurationDataStore
     fun provideConfigurationDataStore(
         @ApplicationContext context: Context
-    ) = ProtoDataStore(
-        fileName = ProtoConfigurationLocalSource.CONFIGURATION_DATASTORE_FILE,
-        specification = ProtoConfigurationLocalSource.configurationSpecification,
+    ) = DataStore(
+        fileName = DataStoreConfigurationLocalSource.CONFIGURATION_DATASTORE_FILE,
+        specification = DataStoreConfigurationLocalSource.configurationSpecification,
         context = context
     )
 }

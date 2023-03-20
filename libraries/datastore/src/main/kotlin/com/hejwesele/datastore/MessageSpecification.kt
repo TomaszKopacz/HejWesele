@@ -1,10 +1,10 @@
-package com.hejwesele.protodatastore
+package com.hejwesele.datastore
 
 import androidx.datastore.core.Serializer
 import java.io.InputStream
 import java.io.OutputStream
 
-class ProtoMessageSpecification<T>(
+class MessageSpecification<T>(
     private val initialValue: T,
     private val reader: (InputStream) -> T,
     private val writer: (T, OutputStream) -> Unit

@@ -1,8 +1,8 @@
 package com.hejwesele.events.di
 
 import android.content.Context
-import com.hejwesele.protodatastore.ProtoDataStore
-import com.hejwesele.events.ProtoEventsLocalSource
+import com.hejwesele.datastore.DataStore
+import com.hejwesele.events.DataStoreEventsLocalSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,16 +12,16 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal class SettingsModule {
+internal class EventsModule {
 
     @Provides
     @Singleton
-    @EventsProtoDataStore
-    fun provideSettingsDataStore(
+    @EventsDataStore
+    fun provideEventsDataStore(
         @ApplicationContext context: Context
-    ) = ProtoDataStore(
-        fileName = ProtoEventsLocalSource.EVENTS_DATASTORE_FILE,
-        specification = ProtoEventsLocalSource.eventSettingsSpecification,
+    ) = DataStore(
+        fileName = DataStoreEventsLocalSource.EVENTS_DATASTORE_FILE,
+        specification = DataStoreEventsLocalSource.eventSettingsSpecification,
         context = context
     )
 }

@@ -1,6 +1,6 @@
 package com.hejwesele.invitations.di
 
-import com.hejwesele.invitations.FirebaseInvitationsRemoteSource
+import com.hejwesele.invitations.RemoteDatabaseInvitationsRemoteSource
 import com.hejwesele.invitations.InvitationsRemoteSource
 import dagger.Binds
 import dagger.Module
@@ -12,5 +12,5 @@ import dagger.hilt.components.SingletonComponent
 internal interface InvitationsBinderModule {
 
     @Binds
-    fun bindInvitationsRemoteSource(impl: FirebaseInvitationsRemoteSource): InvitationsRemoteSource
+    fun bindInvitationsRemoteSource(impl: RemoteDatabaseInvitationsRemoteSource): InvitationsRemoteSource
 }

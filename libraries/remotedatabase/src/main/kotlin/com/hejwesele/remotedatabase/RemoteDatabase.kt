@@ -1,4 +1,4 @@
-package com.hejwesele.realtimedatabase
+package com.hejwesele.remotedatabase
 
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -19,7 +19,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.reflect.KClass
 
-class FirebaseRealtimeDatabase @Inject constructor() {
+class RemoteDatabase @Inject constructor() {
     private val root = Firebase.database.reference
     private val firestoreScope = CoroutineScope(Dispatchers.Default)
 

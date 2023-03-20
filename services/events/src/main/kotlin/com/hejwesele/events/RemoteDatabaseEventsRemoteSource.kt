@@ -4,7 +4,7 @@ import com.hejwesele.events.dto.EventDto
 import com.hejwesele.events.mappers.mapDto
 import com.hejwesele.events.mappers.mapModel
 import com.hejwesele.events.model.Event
-import com.hejwesele.realtimedatabase.FirebaseRealtimeDatabase
+import com.hejwesele.remotedatabase.RemoteDatabase
 import com.hejwesele.result.notFound
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -12,8 +12,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FirebaseEventsRemoteSource @Inject constructor(
-    private val database: FirebaseRealtimeDatabase
+class RemoteDatabaseEventsRemoteSource @Inject constructor(
+    private val database: RemoteDatabase
 ) : EventsRemoteSource {
 
     companion object {
