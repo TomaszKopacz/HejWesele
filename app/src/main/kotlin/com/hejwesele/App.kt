@@ -5,9 +5,6 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.hejwesele.android.analytics.Analytics
 import com.hejwesele.android.crashlytics.Crashlytics
-import com.hejwesele.android.remoteconfig.RemoteConfig
-import com.hejwesele.android.remoteconfig.RemoteConfigFetchingLifecycleObserver
-import com.hejwesele.android.remoteconfig.attachItself
 import com.hejwesele.android.thememanager.ThemeManager
 import dagger.hilt.android.HiltAndroidApp
 import dagger.hilt.android.migration.CustomInject
@@ -24,13 +21,7 @@ class App : Application(), Configuration.Provider {
     internal lateinit var crashlytics: Crashlytics
 
     @Inject
-    internal lateinit var remoteConfig: RemoteConfig
-
-    @Inject
     internal lateinit var analytics: Analytics
-
-    @Inject
-    internal lateinit var remoteConfigObserver: RemoteConfigFetchingLifecycleObserver
 
     @Inject
     internal lateinit var themeManager: ThemeManager
@@ -47,8 +38,6 @@ class App : Application(), Configuration.Provider {
 
         analytics.enable()
         crashlytics.enable()
-        remoteConfig.init()
-        remoteConfigObserver.attachItself()
 
         themeManager.applyTheme()
     }

@@ -53,7 +53,6 @@ include ":libraries:result"
 include ":libraries:remotestorage"
 
 include ":common:mvvm"
-include ":common:remoteconfig"
 include ":common:splash"
 include ":common:workmanager"
 
