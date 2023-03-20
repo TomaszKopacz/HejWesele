@@ -124,7 +124,6 @@ dependencies {
     implementation projects.core.database
     implementation projects.core.datetime
 
-    implementation projects.common.datetimeformatter
     implementation projects.common.mvvm
     implementation projects.common.remoteconfig
     implementation projects.common.splash

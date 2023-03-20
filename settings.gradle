@@ -52,7 +52,6 @@ include ":libraries:realtimedatabase"
 include ":libraries:result"
 include ":libraries:remotestorage"
 
-include ":common:datetimeformatter"
 include ":common:mvvm"
 include ":common:remoteconfig"
 include ":common:splash"
