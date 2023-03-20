@@ -124,10 +124,7 @@ dependencies {
     implementation projects.core.database
     implementation projects.core.datetime
 
-    implementation projects.common.analytics
-    implementation projects.common.crashlytics
     implementation projects.common.datetimeformatter
-    implementation projects.common.messaging
     implementation projects.common.mvvm
     implementation projects.common.remoteconfig
     implementation projects.common.splash
@@ -150,6 +147,9 @@ dependencies {
     implementation projects.repositories.events
     implementation projects.repositories.settings
 
+    implementation projects.libraries.analytics
+    implementation projects.libraries.crashlytics
+    implementation projects.libraries.messaging
     implementation projects.libraries.protodatastore
     implementation projects.libraries.realtimedatabase
     implementation projects.libraries.result
