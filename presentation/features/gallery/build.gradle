@@ -30,6 +30,7 @@ dependencies {
 
     implementation projects.libraries.intent
     implementation projects.libraries.mvvm
+    implementation projects.libraries.osinfo
     implementation projects.libraries.result
 
     api libs.kotlinx.datetime

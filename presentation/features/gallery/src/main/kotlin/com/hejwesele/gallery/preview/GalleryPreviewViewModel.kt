@@ -2,11 +2,10 @@ package com.hejwesele.gallery.preview
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-import android.os.Build
-import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
+import com.hejwesele.android.osinfo.OsInfo
 import com.hejwesele.gallery.destinations.GalleryPreviewDestination
 import com.hejwesele.gallery.preview.usecase.PermissionHandler
 import com.hejwesele.gallery.preview.usecase.SaveImage
@@ -23,6 +22,7 @@ import javax.inject.Inject
 internal class GalleryPreviewViewModel @Inject constructor(
     state: SavedStateHandle,
     private val permissionHandler: PermissionHandler,
+    private val osInfo: OsInfo,
     private val savePhoto: SaveImage
 ) : StateViewModel<GalleryPreviewUiState>(GalleryPreviewUiState.DEFAULT) {
 
@@ -53,7 +53,7 @@ internal class GalleryPreviewViewModel @Inject constructor(
 
     fun onSavePhotoClicked(photoUrl: String) {
         viewModelScope.launch {
-            if (isAndroidQOrNewer) {
+            if (osInfo.isQOrHigher) {
                 savePhotoToStorage(photoUrl)
             } else {
                 val permissions = arrayOf(WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE)
@@ -126,9 +126,6 @@ internal class GalleryPreviewViewModel @Inject constructor(
                 }
         }
     }
-
-    @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.Q)
-    private val isAndroidQOrNewer: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
     private data class State(
         val pendingPhotoUrl: String? = null

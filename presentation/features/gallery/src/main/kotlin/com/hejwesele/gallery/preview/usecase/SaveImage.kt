@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.annotation.RequiresApi
+import com.hejwesele.android.osinfo.OsInfo
 import com.hejwesele.extensions.BitmapProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -19,23 +20,22 @@ import javax.inject.Inject
 
 class SaveImage @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val osInfo: OsInfo,
     private val bitmapProvider: BitmapProvider
 ) {
 
     suspend operator fun invoke(url: String): Result<Unit> = withContext(Dispatchers.IO) {
         runCatching {
-            withContext(Dispatchers.IO) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    saveImageForAndroidQAndLater(url)
-                } else {
-                    saveImageForAndroidLowerThanQ(url)
-                }
+            if (osInfo.isQOrHigher) {
+                saveImageForAndroidQOrHigher(url)
+            } else {
+                saveImageForAndroidLowerThanQ(url)
             }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    private fun saveImageForAndroidQAndLater(url: String) {
+    private fun saveImageForAndroidQOrHigher(url: String) {
         val contentResolver = context.contentResolver
 
         val collection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
