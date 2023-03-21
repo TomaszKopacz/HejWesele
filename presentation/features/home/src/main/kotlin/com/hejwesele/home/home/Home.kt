@@ -2,6 +2,7 @@ package com.hejwesele.home.home
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RawRes
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
@@ -40,8 +41,10 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.CircleImage
+import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.HorizontalMargin
 import com.hejwesele.android.components.Loader
+import com.hejwesele.internet.InternetConnectionPopup
 import com.hejwesele.android.components.TextPlaceholder
 import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.components.layouts.BottomSheetScaffold
@@ -55,13 +58,18 @@ import com.hejwesele.home.R
 import com.hejwesele.home.home.model.IntentUiModel
 import com.hejwesele.home.home.model.InvitationTileUiModel
 import de.palm.composestateevents.EventEffect
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
 @Suppress("UnusedPrivateMember")
 @Composable
 fun Home(navigation: IHomeNavigation) = HomeScreen()
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(
+    ExperimentalMaterialApi::class,
+    ExperimentalAnimationApi::class,
+    ExperimentalCoroutinesApi::class
+ )
 @Composable
 private fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
@@ -111,7 +119,9 @@ private fun HomeScreen(
     ) {
         when {
             uiState.isLoading -> Loader()
-            uiState.error != null -> TextPlaceholder(text = Label.errorMessage)
+            uiState.error != null -> ErrorView(
+                onRetry = { viewModel.onErrorRetry() }
+            )
             else -> HomeContent(
                 tiles = uiState.tiles,
                 onTileClicked = { invitation ->
@@ -121,6 +131,7 @@ private fun HomeScreen(
                 }
             )
         }
+        InternetConnectionPopup()
     }
 
     BackHandler(sheetState.isVisible) {
@@ -318,3 +329,4 @@ private fun IntentItem(
         }
     }
 }
+

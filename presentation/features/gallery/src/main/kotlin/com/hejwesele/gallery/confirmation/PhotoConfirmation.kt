@@ -2,6 +2,7 @@ package com.hejwesele.gallery.confirmation
 
 import android.graphics.Bitmap
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -42,9 +42,11 @@ import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.android.theme.md_theme_dark_background
 import com.hejwesele.android.theme.md_theme_dark_onBackground
+import com.hejwesele.internet.InternetConnectionPopup
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.result.ResultBackNavigator
 import de.palm.composestateevents.EventEffect
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
 @Composable
@@ -55,7 +57,11 @@ fun PhotoConfirmation(
     PhotoConfirmationScreen(resultSender)
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(
+    ExperimentalMaterialApi::class,
+    ExperimentalAnimationApi::class,
+    ExperimentalCoroutinesApi::class
+)
 @Composable
 private fun PhotoConfirmationScreen(
     resultSender: ResultBackNavigator<Boolean>,
@@ -94,24 +100,21 @@ private fun PhotoConfirmationScreen(
             color = md_theme_dark_background,
             modifier = Modifier.fillMaxSize()
         ) {
-            with(uiState) {
-                if (photo != null) {
-                    PhotoPreviewContent(
-                        photo = photo,
-                        onAccept = { viewModel.onPhotoAccepted() },
-                        onCancel = { viewModel.onPhotoDeclined() }
-                    )
-                }
-                if (loadingData) {
-                    Loader()
-                }
-                if (uploadingPhoto) {
-                    LoaderDialog(label = uploadingMessage)
-                }
-                if (error != null) {
-                    ErrorDialog(
-                        onDismiss = { viewModel.onErrorDismissed() }
-                    )
+            Column(modifier = Modifier.fillMaxWidth()) {
+                InternetConnectionPopup()
+                with(uiState) {
+                    if (photo != null) {
+                        PhotoPreviewContent(
+                            photo = photo,
+                            onAccept = { viewModel.onPhotoAccepted() },
+                            onCancel = { viewModel.onPhotoDeclined() }
+                        )
+                    }
+                    when {
+                        loadingData -> Loader()
+                        uploadingPhoto -> LoaderDialog(label = uploadingMessage)
+                        error != null -> ErrorDialog { viewModel.onErrorDismissed() }
+                    }
                 }
             }
         }
@@ -158,11 +161,6 @@ private fun PhotoPreviewContent(
     onAccept: () -> Unit,
     onCancel: () -> Unit
 ) {
-    val topPadding = WindowInsets.statusBars
-        .only(WindowInsetsSides.Top)
-        .asPaddingValues()
-        .calculateTopPadding()
-
     val bottomPadding = WindowInsets.navigationBars
         .only(WindowInsetsSides.Bottom)
         .asPaddingValues()
@@ -171,10 +169,7 @@ private fun PhotoPreviewContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(
-                top = topPadding,
-                bottom = bottomPadding
-            )
+            .padding(bottom = bottomPadding)
     ) {
         Actions(
             onAccept = onAccept,

@@ -18,6 +18,7 @@ dependencies {
     implementation projects.libraries.intent
     implementation projects.libraries.mvvm
 
+    implementation projects.presentation.tools.internet
     implementation projects.presentation.ui.components
     implementation projects.presentation.ui.extensions
     implementation projects.presentation.ui.theme

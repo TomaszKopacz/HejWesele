@@ -9,6 +9,10 @@ object Label {
     const val errorTitle = "Upss, coś poszło nie tak"
     const val errorDescription = "Sprawdź połączenie z internetem i spróbuj jeszcze raz."
 
+    // Network
+    const val networkReconnectedMessage = "Przywrócono połączenie"
+    const val networkDisconnectedMessage = "Brak dostępu do internetu"
+
     // Home
     const val errorMessage = "Upss.. Coś poszło nie tak.\nUpewnij się, że masz internet i załaduj stronę ponownie."
     const val homeNoInvitationTilesMessage =

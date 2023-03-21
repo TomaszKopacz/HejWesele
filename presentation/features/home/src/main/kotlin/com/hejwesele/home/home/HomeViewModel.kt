@@ -84,6 +84,10 @@ internal class HomeViewModel @Inject constructor(
         updateState { copy(openIntent = consumed()) }
     }
 
+    fun onErrorRetry() {
+        // no-op
+    }
+
     private fun handleInvitationResult(result: Result<Invitation>) {
         result
             .onSuccess { invitation ->

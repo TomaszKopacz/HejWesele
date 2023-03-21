@@ -4,6 +4,7 @@ import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -45,8 +46,10 @@ import com.hejwesele.android.theme.md_theme_dark_background
 import com.hejwesele.android.theme.md_theme_dark_onBackground
 import com.hejwesele.gallery.IGalleryNavigation
 import com.hejwesele.gallery.R
+import com.hejwesele.internet.InternetConnectionPopup
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @Composable
 @Destination(navArgsDelegate = GalleryPreviewNavArgs::class)
@@ -54,7 +57,7 @@ fun GalleryPreview(navigation: IGalleryNavigation) {
     GalleryPreviewScreen(navigation)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class, ExperimentalCoroutinesApi::class)
 @Composable
 private fun GalleryPreviewScreen(
     navigation: IGalleryNavigation,
@@ -84,11 +87,10 @@ private fun GalleryPreviewScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarState) }
     ) { padding ->
-        Surface(color = md_theme_dark_background) {
-            with(uiState) {
-                if (loading) {
-                    Loader()
-                } else {
+        with(uiState) {
+            Surface(color = md_theme_dark_background) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    InternetConnectionPopup()
                     GalleryPreviewContent(
                         padding = padding,
                         photoUrls = photoUrls,
@@ -97,6 +99,7 @@ private fun GalleryPreviewScreen(
                         onBack = { viewModel.onBack() },
                         onSave = { photoUrl -> viewModel.onSavePhotoClicked(photoUrl) }
                     )
+                    if (loading) Loader()
                 }
             }
         }
@@ -157,10 +160,7 @@ private fun GalleryPreviewContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(
-                top = padding.calculateTopPadding(),
-                bottom = padding.calculateBottomPadding()
-            )
+            .padding(bottom = padding.calculateBottomPadding())
     ) {
         Actions(
             onBack = onBack,

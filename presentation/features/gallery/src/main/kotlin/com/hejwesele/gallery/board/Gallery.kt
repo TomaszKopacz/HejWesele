@@ -1,9 +1,11 @@
 package com.hejwesele.gallery.board
 
+import android.annotation.SuppressLint
 import android.content.Context
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -60,10 +62,12 @@ import com.hejwesele.extensions.openActivity
 import com.hejwesele.gallery.IGalleryNavigation
 import com.hejwesele.gallery.R
 import com.hejwesele.gallery.destinations.PhotoConfirmationDestination
+import com.hejwesele.internet.InternetConnectionPopup
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.OpenResultRecipient
 import com.ramcosta.composedestinations.result.ResultRecipient
 import de.palm.composestateevents.EventEffect
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @Composable
 fun Gallery(
@@ -73,7 +77,12 @@ fun Gallery(
     GalleryBoardScreen(navigation, resultRecipient)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalAnimationApi::class,
+    ExperimentalCoroutinesApi::class
+)
 @Composable
 private fun GalleryBoardScreen(
     navigation: IGalleryNavigation,
@@ -112,32 +121,32 @@ private fun GalleryBoardScreen(
                 modifier = Modifier.offset(y = Dimension.marginLarge2X)
             )
         }
-    ) { padding ->
+    ) {
         with(uiState) {
-            if (loading) {
-                Loader()
-            } else if (error != null) {
-                ErrorView(
-                    onRetry = { viewModel.onErrorRetry() }
-                )
-            } else {
-                val galleryData = GalleryData(
-                    shouldShowContent = weddingStarted,
-                    galleryHintVisible = galleryHintEnabled,
-                    galleryLinkVisible = externalGalleryEnabled,
-                    photos = photos,
-                    imageCropFailure = imageCropFailure,
-                    onHintDismissed = { viewModel.onGalleryHintDismissed() },
-                    onGalleryLinkClicked = { viewModel.onGalleryLinkClicked() },
-                    onPhotoClicked = { index -> navigation.openPreview(photos, index) },
-                    onAddClicked = { viewModel.onAddPhotoClicked() },
-                    onImageCropFailureDismissed = { viewModel.onImageCropErrorDismissed() }
-                )
-                GalleryBody(
-                    padding = padding,
-                    galleryEnabled = enabled,
-                    galleryData = galleryData
-                )
+            Column {
+                InternetConnectionPopup()
+                when {
+                    loading -> Loader()
+                    error != null -> ErrorView { viewModel.onErrorRetry() }
+                    else -> {
+                        val galleryData = GalleryData(
+                            shouldShowContent = weddingStarted,
+                            galleryHintVisible = galleryHintEnabled,
+                            galleryLinkVisible = externalGalleryEnabled,
+                            photos = photos,
+                            imageCropFailure = imageCropFailure,
+                            onHintDismissed = { viewModel.onGalleryHintDismissed() },
+                            onGalleryLinkClicked = { viewModel.onGalleryLinkClicked() },
+                            onPhotoClicked = { index -> navigation.openPreview(photos, index) },
+                            onAddClicked = { viewModel.onAddPhotoClicked() },
+                            onImageCropFailureDismissed = { viewModel.onImageCropErrorDismissed() }
+                        )
+                        GalleryBody(
+                            galleryEnabled = enabled,
+                            galleryData = galleryData
+                        )
+                    }
+                }
             }
         }
     }
@@ -180,7 +189,6 @@ private fun GalleryEventHandler(
 
 @Composable
 private fun GalleryBody(
-    padding: PaddingValues,
     galleryEnabled: Boolean,
     galleryData: GalleryData
 ) = with(galleryData) {
@@ -190,7 +198,6 @@ private fun GalleryBody(
         if (galleryEnabled) {
             if (shouldShowContent) {
                 GalleryContent(
-                    padding = padding,
                     photos = photos,
                     galleryHintVisible = galleryHintVisible,
                     galleryLinkVisible = galleryLinkVisible,
@@ -225,7 +232,6 @@ private fun GalleryBody(
 
 @Composable
 private fun GalleryContent(
-    padding: PaddingValues,
     photos: List<String>,
     galleryHintVisible: Boolean,
     galleryLinkVisible: Boolean,
@@ -235,7 +241,6 @@ private fun GalleryContent(
 ) {
     if (photos.isNotEmpty()) {
         PopulatedGalleryContent(
-            padding = padding,
             photos = photos,
             galleryHintVisible = galleryHintVisible,
             galleryLinkVisible = galleryLinkVisible,
@@ -245,7 +250,6 @@ private fun GalleryContent(
         )
     } else {
         EmptyGalleryContent(
-            padding = padding,
             galleryHintVisible = galleryHintVisible,
             galleryLinkVisible = galleryLinkVisible,
             onHintDismissed = onHintDismissed,
@@ -256,7 +260,6 @@ private fun GalleryContent(
 
 @Composable
 private fun PopulatedGalleryContent(
-    padding: PaddingValues,
     photos: List<String>,
     galleryHintVisible: Boolean,
     galleryLinkVisible: Boolean,
@@ -265,7 +268,7 @@ private fun PopulatedGalleryContent(
     onPhotoClicked: (Int) -> Unit
 ) {
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
-        margin(padding.calculateTopPadding() + Dimension.marginSmall)
+        margin(Dimension.marginSmall)
         if (galleryHintVisible) {
             singleItem {
                 GalleryHintTile(
@@ -304,14 +307,13 @@ private fun PopulatedGalleryContent(
 
 @Composable
 private fun EmptyGalleryContent(
-    padding: PaddingValues,
     galleryHintVisible: Boolean,
     galleryLinkVisible: Boolean,
     onHintDismissed: () -> Unit,
     onGalleryLinkClicked: () -> Unit
 ) {
     ScrollableColumn {
-        VerticalMargin(padding.calculateTopPadding() + Dimension.marginSmall)
+        VerticalMargin(Dimension.marginSmall)
         if (galleryHintVisible) {
             GalleryHintTile(
                 onCloseClick = onHintDismissed
