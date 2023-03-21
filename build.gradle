@@ -10,7 +10,6 @@ plugins {
     alias libs.plugins.versions
     alias libs.plugins.versionCatalogUpdate
     alias libs.plugins.dependencyAnalysis
-    alias libs.plugins.snyk
 }
 
 apply from: "gradle/versions.gradle"
@@ -29,7 +28,6 @@ apply from: "gradle/jacocoProject.gradle"
 apply from: "gradle/dependencyUpdates.gradle"
 apply from: "gradle/versionCatalogUpdate.gradle"
 apply from: "gradle/dependencyAnalysis.gradle"
-apply from: "gradle/snyk.gradle"
 apply from: "gradle/releaseNotes.gradle"
 
 task clean(type: Delete) {

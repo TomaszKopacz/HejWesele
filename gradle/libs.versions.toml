@@ -7,7 +7,6 @@ ksp = "1.7.22-1.0.8"
 versions = "0.44.0"
 versionCatalogUpdate = "0.7.0"
 dependencyAnalysis = "1.17.0"
-snyk = "0.4"
 licensee = "1.6.0"
 playPublisher = "3.7.0"
 # Quality
@@ -195,7 +194,6 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
 versionCatalogUpdate = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdate" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependencyAnalysis" }
-snyk = { id = "io.snyk.gradle.plugin.snykplugin", version.ref = "snyk" }
 licensee = { id = "app.cash.licensee", version.ref = "licensee" }
 playPublisher = { id = "com.github.triplet.play", version.ref = "playPublisher" }
 # Firebase/Play Services/Google Services/Play Store
