@@ -1,7 +1,6 @@
 package com.hejwesele
 
 import android.app.Application
-import androidx.hilt.work.HiltWorkerFactory
 import com.hejwesele.android.analytics.Analytics
 import com.hejwesele.android.crashlytics.Crashlytics
 import com.hejwesele.android.thememanager.ThemeManager
@@ -24,9 +23,6 @@ class App : Application() {
 
     @Inject
     internal lateinit var themeManager: ThemeManager
-
-    @Inject
-    internal lateinit var workerFactory: HiltWorkerFactory
 
     override fun onCreate() {
         super.onCreate()

@@ -5,7 +5,7 @@ plugins {
     alias libs.plugins.kotlin.android apply false
     alias libs.plugins.kotlin.kapt apply false
     alias libs.plugins.hilt apply false
-    alias libs.plugins.moshix apply false
+//    alias libs.plugins.moshix apply false
     alias libs.plugins.serialization apply false
     alias libs.plugins.versions
     alias libs.plugins.versionCatalogUpdate
