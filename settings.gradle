@@ -47,6 +47,7 @@ include ":repositories:settings"
 
 include ":libraries:analytics"
 include ":libraries:appinfo"
+include ":libraries:bitmap"
 include ":libraries:coroutines"
 include ":libraries:crashlytics"
 include ":libraries:intent"

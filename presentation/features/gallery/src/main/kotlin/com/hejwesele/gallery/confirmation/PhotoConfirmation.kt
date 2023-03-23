@@ -281,6 +281,8 @@ private fun ConfirmationBottomSheetContent(
     VerticalMargin(bottomPadding)
 }
 
+private const val PreviewBitmapSize = 200
+
 @OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
@@ -291,7 +293,7 @@ private fun PhotoConfirmationScreenPreview() {
         PhotoConfirmationScreen(
             isLoading = false,
             isError = false,
-            photo = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888),
+            photo = Bitmap.createBitmap(PreviewBitmapSize, PreviewBitmapSize, Bitmap.Config.ARGB_8888),
             isUploadingPhoto = false,
             uploadingMessage = null,
             sheetState = sheetState,

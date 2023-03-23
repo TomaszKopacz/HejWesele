@@ -14,22 +14,22 @@ class DataStore<T : Any> @Inject constructor(
     fileName: String,
     private val context: Context
 ) {
-    private val Context.dataStore by dataStore(
+    private val Context.dataStoreReference by dataStore(
         serializer = specification.serializer,
         fileName = fileName
     )
 
     suspend fun readData(): Result<T> = runCatching {
         withContext(Dispatchers.IO) {
-            context.dataStore.data.first()
+            context.dataStoreReference.data.first()
         }
     }
 
-    fun observeData(): Flow<T> = context.dataStore.data.flowOn(Dispatchers.IO)
+    fun observeData(): Flow<T> = context.dataStoreReference.data.flowOn(Dispatchers.IO)
 
     suspend fun writeData(transform: (T) -> T): Result<T> = runCatching {
         withContext(Dispatchers.IO) {
-            context.dataStore.updateData(transform)
+            context.dataStoreReference.updateData(transform)
         }
     }
 }

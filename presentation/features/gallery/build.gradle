@@ -29,6 +29,7 @@ dependencies {
     implementation projects.repositories.events
     implementation projects.repositories.galleries
 
+    implementation projects.libraries.bitmap
     implementation projects.libraries.intent
     implementation projects.libraries.mvvm
     implementation projects.libraries.osinfo

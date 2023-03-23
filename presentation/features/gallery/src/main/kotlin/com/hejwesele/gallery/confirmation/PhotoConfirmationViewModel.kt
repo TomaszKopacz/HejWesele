@@ -5,7 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
 import com.hejwesele.android.theme.Label
-import com.hejwesele.extensions.BitmapProvider
+import com.hejwesele.bitmap.BitmapProvider
 import com.hejwesele.gallery.confirmation.usecase.AddPhotoToGallery
 import com.hejwesele.gallery.destinations.PhotoConfirmationDestination
 import dagger.hilt.android.lifecycle.HiltViewModel

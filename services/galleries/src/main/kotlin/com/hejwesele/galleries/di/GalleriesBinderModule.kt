@@ -1,9 +1,9 @@
 package com.hejwesele.galleries.di
 
-import com.hejwesele.galleries.RemoteDatabaseGalleriesRemoteSource
 import com.hejwesele.galleries.FirebaseGalleriesRemoteStorage
 import com.hejwesele.galleries.GalleriesRemoteSource
 import com.hejwesele.galleries.GalleriesRemoteStorage
+import com.hejwesele.galleries.RemoteDatabaseGalleriesRemoteSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

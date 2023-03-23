@@ -35,6 +35,8 @@ import com.hejwesele.android.theme.Label
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 
+private const val PopupDelay = 2_000L
+
 @ExperimentalAnimationApi
 @ExperimentalCoroutinesApi
 @Composable
@@ -42,8 +44,6 @@ fun InternetConnectionPopup(
     viewModel: InternetConnectionViewModel = hiltViewModel(),
     statusBarSensitive: Boolean = true
 ) {
-    val popUpDelay = 2_000L
-
     val state by viewModel.connectionState.collectAsState()
 
     val isConnected = state === InternetConnectionState.AVAILABLE
@@ -51,7 +51,7 @@ fun InternetConnectionPopup(
 
     LaunchedEffect(isConnected) {
         if (isConnected) {
-            delay(popUpDelay)
+            delay(PopupDelay)
         }
         isPopupVisible = !isConnected
     }

@@ -111,7 +111,7 @@ private fun GalleryEntryPoint(
     )
 
     val galleryData = with(uiState) {
-         GalleryData(
+        GalleryData(
             shouldShowContent = weddingStarted,
             galleryHintVisible = galleryHintEnabled,
             galleryLinkVisible = externalGalleryEnabled,

@@ -33,7 +33,7 @@ class DataStoreConfigurationLocalSource @Inject constructor(
         configurationStore.writeData { configuration.mapDto() }.map { configuration }
     }
 
-    override suspend fun setAppTheme(theme: Theme): Result<Theme>  = withContext(Dispatchers.IO) {
+    override suspend fun setAppTheme(theme: Theme): Result<Theme> = withContext(Dispatchers.IO) {
         configurationStore.writeData { it.copy(theme = theme.mapDto()) }.map { theme }
     }
 
