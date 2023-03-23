@@ -29,9 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil.compose.SubcomposeAsyncImage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -40,6 +40,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.Loader
 import com.hejwesele.android.components.LoaderDialog
 import com.hejwesele.android.components.ScreenOrientationLocker
+import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.android.theme.md_theme_dark_background
@@ -54,12 +55,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @Composable
 @Destination(navArgsDelegate = GalleryPreviewNavArgs::class)
 fun GalleryPreview(navigation: IGalleryNavigation) {
-    GalleryPreviewScreen(navigation)
+    GalleryPreviewEntryPoint(navigation)
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class, ExperimentalCoroutinesApi::class)
 @Composable
-private fun GalleryPreviewScreen(
+private fun GalleryPreviewEntryPoint(
     navigation: IGalleryNavigation,
     viewModel: GalleryPreviewViewModel = hiltViewModel()
 ) {
@@ -84,22 +84,52 @@ private fun GalleryPreviewScreen(
         permissionsLauncher = permissionsLauncher
     )
 
+    GalleryPreviewScreen(
+        isLoading = uiState.loading,
+        photoUrls = uiState.photoUrls,
+        selectedPhotoIndex = uiState.selectedPhotoIndex,
+        isSavingPhoto = uiState.savingPhoto,
+        snackbarState = snackbarState,
+        isInternetPopupEnabled = true,
+        onBackClicked = { viewModel.onBack() },
+        onSaveClicked = { photoUrl -> viewModel.onSavePhotoClicked(photoUrl) }
+    )
+}
+
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalAnimationApi::class,
+    ExperimentalCoroutinesApi::class
+)
+@Composable
+private fun GalleryPreviewScreen(
+    isLoading: Boolean,
+    photoUrls: List<String>,
+    selectedPhotoIndex: Int,
+    isSavingPhoto: Boolean,
+    snackbarState: SnackbarHostState,
+    isInternetPopupEnabled: Boolean,
+    onBackClicked: () -> Unit,
+    onSaveClicked: (String) -> Unit
+) {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarState) }
     ) { padding ->
-        with(uiState) {
-            Surface(color = md_theme_dark_background) {
-                Column(modifier = Modifier.fillMaxWidth()) {
+        Surface(color = md_theme_dark_background) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                if (isInternetPopupEnabled) {
                     InternetConnectionPopup()
-                    GalleryPreviewContent(
-                        padding = padding,
-                        photoUrls = photoUrls,
-                        selectedPhotoIndex = selectedPhotoIndex,
-                        savingPhoto = savingPhoto,
-                        onBack = { viewModel.onBack() },
-                        onSave = { photoUrl -> viewModel.onSavePhotoClicked(photoUrl) }
-                    )
-                    if (loading) Loader()
+                }
+                GalleryPreviewContent(
+                    padding = padding,
+                    photoUrls = photoUrls,
+                    selectedPhotoIndex = selectedPhotoIndex,
+                    isSavingPhoto = isSavingPhoto,
+                    onBack = onBackClicked,
+                    onSave = { photoUrl -> onSaveClicked(photoUrl) }
+                )
+                if (isLoading) {
+                    Loader()
                 }
             }
         }
@@ -152,7 +182,7 @@ private fun GalleryPreviewContent(
     padding: PaddingValues,
     photoUrls: List<String>,
     selectedPhotoIndex: Int,
-    savingPhoto: Boolean,
+    isSavingPhoto: Boolean,
     onBack: () -> Unit,
     onSave: (String) -> Unit
 ) {
@@ -172,7 +202,7 @@ private fun GalleryPreviewContent(
                 .padding(bottom = padding.calculateBottomPadding()),
             state = pagerState,
             photoUrls = photoUrls,
-            savingPhoto = savingPhoto
+            savingPhoto = isSavingPhoto
         )
     }
 }
@@ -207,7 +237,7 @@ private fun Actions(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun PhotosCarousel(
     modifier: Modifier,
@@ -220,7 +250,7 @@ private fun PhotosCarousel(
         state = state,
         count = photoUrls.count()
     ) { page ->
-        GlideImage(
+        SubcomposeAsyncImage(
             model = photoUrls[page],
             contentDescription = null,
             contentScale = ContentScale.FillWidth,
@@ -229,5 +259,24 @@ private fun PhotosCarousel(
         if (savingPhoto) {
             LoaderDialog(label = Label.gallerySavingPhotoInProgressText)
         }
+    }
+}
+
+@Preview
+@Composable
+private fun GalleryPreviewScreenPreview() {
+    val snackbarState = remember { SnackbarHostState() }
+
+    AppTheme(darkTheme = false) {
+        GalleryPreviewScreen(
+            isLoading = false,
+            photoUrls = listOf("fake url 1", "fake url 2"),
+            selectedPhotoIndex = 1,
+            isSavingPhoto = false,
+            snackbarState = snackbarState,
+            isInternetPopupEnabled = false,
+            onBackClicked = {},
+            onSaveClicked = {}
+        )
     }
 }

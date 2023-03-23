@@ -35,7 +35,7 @@ class SaveImage @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    private fun saveImageForAndroidQOrHigher(url: String) {
+    private suspend fun saveImageForAndroidQOrHigher(url: String) = withContext(Dispatchers.IO) {
         val contentResolver = context.contentResolver
 
         val collection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -55,7 +55,7 @@ class SaveImage @Inject constructor(
         } ?: throw IOException("Failed to save image from url $url")
     }
 
-    private fun saveImageForAndroidLowerThanQ(url: String) {
+    private suspend fun saveImageForAndroidLowerThanQ(url: String) = withContext(Dispatchers.IO) {
         val directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString()
         val fileName = UUID.randomUUID().toString() + JPG
         val image = File(directory, fileName)

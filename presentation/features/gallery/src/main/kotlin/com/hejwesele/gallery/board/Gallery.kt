@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.LottieAnimation
@@ -54,6 +55,7 @@ import com.hejwesele.android.components.layouts.ScrollableColumn
 import com.hejwesele.android.components.layouts.gridItems
 import com.hejwesele.android.components.layouts.margin
 import com.hejwesele.android.components.layouts.singleItem
+import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.android.tools.ImageCropper
@@ -74,17 +76,11 @@ fun Gallery(
     navigation: IGalleryNavigation,
     resultRecipient: ResultRecipient<PhotoConfirmationDestination, Boolean>
 ) {
-    GalleryBoardScreen(navigation, resultRecipient)
+    GalleryEntryPoint(navigation, resultRecipient)
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalAnimationApi::class,
-    ExperimentalCoroutinesApi::class
-)
 @Composable
-private fun GalleryBoardScreen(
+private fun GalleryEntryPoint(
     navigation: IGalleryNavigation,
     resultRecipient: OpenResultRecipient<Boolean>,
     viewModel: GalleryViewModel = hiltViewModel()
@@ -114,42 +110,30 @@ private fun GalleryBoardScreen(
         context = context
     )
 
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarState,
-                modifier = Modifier.offset(y = Dimension.marginLarge2X)
-            )
-        }
-    ) {
-        with(uiState) {
-            Column {
-                InternetConnectionPopup()
-                when {
-                    loading -> Loader()
-                    error != null -> ErrorView { viewModel.onErrorRetry() }
-                    else -> {
-                        val galleryData = GalleryData(
-                            shouldShowContent = weddingStarted,
-                            galleryHintVisible = galleryHintEnabled,
-                            galleryLinkVisible = externalGalleryEnabled,
-                            photos = photos,
-                            imageCropFailure = imageCropFailure,
-                            onHintDismissed = { viewModel.onGalleryHintDismissed() },
-                            onGalleryLinkClicked = { viewModel.onGalleryLinkClicked() },
-                            onPhotoClicked = { index -> navigation.openPreview(photos, index) },
-                            onAddClicked = { viewModel.onAddPhotoClicked() },
-                            onImageCropFailureDismissed = { viewModel.onImageCropErrorDismissed() }
-                        )
-                        GalleryBody(
-                            galleryEnabled = enabled,
-                            galleryData = galleryData
-                        )
-                    }
-                }
-            }
-        }
+    val galleryData = with(uiState) {
+         GalleryData(
+            shouldShowContent = weddingStarted,
+            galleryHintVisible = galleryHintEnabled,
+            galleryLinkVisible = externalGalleryEnabled,
+            photos = photos,
+            imageCropFailure = imageCropFailure,
+            onHintDismissed = { viewModel.onGalleryHintDismissed() },
+            onGalleryLinkClicked = { viewModel.onGalleryLinkClicked() },
+            onPhotoClicked = { index -> navigation.openPreview(photos, index) },
+            onAddClicked = { viewModel.onAddPhotoClicked() },
+            onImageCropFailureDismissed = { viewModel.onImageCropErrorDismissed() }
+        )
     }
+
+    GalleryBoardScreen(
+        isEnabled = uiState.enabled,
+        isLoading = uiState.loading,
+        isError = uiState.error != null,
+        galleryData = galleryData,
+        snackbarState = snackbarState,
+        internetPopupEnabled = true,
+        onErrorRetry = { viewModel.onErrorRetry() }
+    )
 }
 
 @Composable
@@ -185,6 +169,48 @@ private fun GalleryEventHandler(
             )
         }
     )
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalAnimationApi::class,
+    ExperimentalCoroutinesApi::class
+)
+@Composable
+private fun GalleryBoardScreen(
+    isEnabled: Boolean,
+    isLoading: Boolean,
+    isError: Boolean,
+    galleryData: GalleryData,
+    snackbarState: SnackbarHostState,
+    internetPopupEnabled: Boolean,
+    onErrorRetry: () -> Unit
+) {
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarState,
+                modifier = Modifier.offset(y = Dimension.marginLarge2X)
+            )
+        }
+    ) {
+        Column {
+            if (internetPopupEnabled) {
+                InternetConnectionPopup()
+            }
+            when {
+                isLoading -> Loader()
+                isError -> ErrorView { onErrorRetry() }
+                else -> {
+                    GalleryBody(
+                        galleryEnabled = isEnabled,
+                        galleryData = galleryData
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -443,6 +469,24 @@ private fun FloatingAddButton(
     }
 }
 
+@Preview
+@Composable
+private fun GalleryBoardScreenPreview() {
+    val snackbarState = remember { SnackbarHostState() }
+
+    AppTheme(darkTheme = false) {
+        GalleryBoardScreen(
+            isEnabled = true,
+            isLoading = false,
+            isError = false,
+            galleryData = GalleryData.preview,
+            snackbarState = snackbarState,
+            internetPopupEnabled = false,
+            onErrorRetry = {}
+        )
+    }
+}
+
 private data class GalleryData(
     val shouldShowContent: Boolean,
     val galleryHintVisible: Boolean,
@@ -454,4 +498,19 @@ private data class GalleryData(
     val onPhotoClicked: (Int) -> Unit,
     val onAddClicked: () -> Unit,
     val onImageCropFailureDismissed: () -> Unit
-)
+) {
+    companion object {
+        val preview = GalleryData(
+            shouldShowContent = true,
+            galleryHintVisible = true,
+            galleryLinkVisible = true,
+            photos = List(50) { "fake photo url" },
+            imageCropFailure = false,
+            onHintDismissed = {},
+            onGalleryLinkClicked = {},
+            onPhotoClicked = {},
+            onAddClicked = {},
+            onImageCropFailureDismissed = {}
+        )
+    }
+}

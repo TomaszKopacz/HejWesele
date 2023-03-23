@@ -15,12 +15,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.hejwesele.android.components.layouts.ScrollableColumn
+import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.components.R
@@ -80,6 +82,14 @@ fun ErrorView(
     }
 }
 
+@Preview
+@Composable
+private fun ErrorViewPreview() {
+    AppTheme(darkTheme = false) {
+        ErrorView(onRetry = {})
+    }
+}
+
 @Composable
 fun ErrorDialog(
     title: String = Label.errorTitle,
@@ -131,5 +141,13 @@ fun ErrorDialog(
                 VerticalMargin(Dimension.marginNormal)
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun ErrorDialogPreview() {
+    AppTheme(darkTheme = false) {
+        ErrorDialog(onDismiss = {})
     }
 }

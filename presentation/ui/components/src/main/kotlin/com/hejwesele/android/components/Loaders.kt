@@ -12,8 +12,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
 
 @Composable
@@ -27,6 +29,14 @@ fun Loader() {
             strokeWidth = Dimension.progressIndicatorThickness,
             modifier = Modifier.size(Dimension.progressIndicatorSize)
         )
+    }
+}
+
+@Preview
+@Composable
+private fun LoaderPreview() {
+    AppTheme(darkTheme = false) {
+        Loader()
     }
 }
 
@@ -62,5 +72,13 @@ fun LoaderDialog(label: String?) {
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun LoaderDialogPreview() {
+    AppTheme(darkTheme = false) {
+        LoaderDialog(label = "Loading...")
     }
 }

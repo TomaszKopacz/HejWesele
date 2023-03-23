@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Icon
@@ -32,6 +33,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -44,11 +46,11 @@ import com.hejwesele.android.components.CircleImage
 import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.HorizontalMargin
 import com.hejwesele.android.components.Loader
-import com.hejwesele.internet.InternetConnectionPopup
 import com.hejwesele.android.components.TextPlaceholder
 import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.components.layouts.BottomSheetScaffold
 import com.hejwesele.android.components.layouts.ScrollableColumn
+import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.extensions.addEmptyLines
@@ -57,21 +59,19 @@ import com.hejwesele.home.IHomeNavigation
 import com.hejwesele.home.R
 import com.hejwesele.home.home.model.IntentUiModel
 import com.hejwesele.home.home.model.InvitationTileUiModel
+import com.hejwesele.internet.InternetConnectionPopup
+import com.hejwesele.invitations.model.InvitationTileType
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
 @Suppress("UnusedPrivateMember")
 @Composable
-fun Home(navigation: IHomeNavigation) = HomeScreen()
+fun Home(navigation: IHomeNavigation) = HomeEntryPoint()
 
-@OptIn(
-    ExperimentalMaterialApi::class,
-    ExperimentalAnimationApi::class,
-    ExperimentalCoroutinesApi::class
- )
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun HomeScreen(
+private fun HomeEntryPoint(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val systemUiController = rememberSystemUiController()
@@ -104,38 +104,74 @@ private fun HomeScreen(
         action = { intent -> openActivity(context, intent.intentPackage, intent.url) }
     )
 
+    HomeScreen(
+        isLoading = uiState.isLoading,
+        tiles = uiState.tiles,
+        onTileClicked = { invitation ->
+            coroutineScope.launch {
+                viewModel.onTileClicked(invitation)
+            }
+        },
+        sheetState = sheetState,
+        intents = uiState.intents,
+        onIntentSelected = { intent ->
+            coroutineScope.launch {
+                viewModel.onTileIntentOptionSelected(intent)
+            }
+        },
+        isError = uiState.error != null,
+        onErrorRetry = {
+            coroutineScope.launch {
+                viewModel.onErrorRetry()
+            }
+        },
+        internetPopupEnabled = true
+    )
+
+    BackHandler(sheetState.isVisible) {
+        coroutineScope.launch { sheetState.hide() }
+    }
+}
+
+@OptIn(
+    ExperimentalMaterialApi::class,
+    ExperimentalAnimationApi::class,
+    ExperimentalCoroutinesApi::class
+)
+@Composable
+private fun HomeScreen(
+    isLoading: Boolean,
+    tiles: List<InvitationTileUiModel>,
+    onTileClicked: (InvitationTileUiModel) -> Unit,
+    sheetState: ModalBottomSheetState,
+    intents: List<IntentUiModel>,
+    onIntentSelected: (IntentUiModel) -> Unit,
+    isError: Boolean,
+    onErrorRetry: () -> Unit,
+    internetPopupEnabled: Boolean
+) {
     BottomSheetScaffold(
         state = sheetState,
         sheetContent = {
             InvitationBottomSheetContent(
-                intents = uiState.intents,
-                onIntentSelected = { intent ->
-                    coroutineScope.launch {
-                        viewModel.onTileIntentOptionSelected(intent)
-                    }
-                }
+                intents = intents,
+                onIntentSelected = onIntentSelected
             )
         }
     ) {
         when {
-            uiState.isLoading -> Loader()
-            uiState.error != null -> ErrorView(
-                onRetry = { viewModel.onErrorRetry() }
+            isLoading -> Loader()
+            isError -> ErrorView(
+                onRetry = onErrorRetry
             )
             else -> HomeContent(
-                tiles = uiState.tiles,
-                onTileClicked = { invitation ->
-                    coroutineScope.launch {
-                        viewModel.onTileClicked(invitation)
-                    }
-                }
+                tiles = tiles,
+                onTileClicked = onTileClicked
             )
         }
-        InternetConnectionPopup()
-    }
-
-    BackHandler(sheetState.isVisible) {
-        coroutineScope.launch { sheetState.hide() }
+        if (internetPopupEnabled) {
+            InternetConnectionPopup()
+        }
     }
 }
 
@@ -195,7 +231,7 @@ private fun InvitationTile(tile: InvitationTileUiModel, onTileClicked: (Invitati
         ) {
             with(tile) {
                 when {
-                    avatars.isNotEmpty() -> InvitationTileAvatars(tile)
+                    avatars.isNotEmpty() -> InvitationTileAvatars(tile.avatars, tile.animationResId)
                     else -> InvitationTileLottieAnimation(tile.animationResId)
                 }
                 InvitationTileTitle(title, subtitle)
@@ -240,16 +276,16 @@ private fun InvitationTileDescription(text: String) {
 }
 
 @Composable
-private fun InvitationTileAvatars(tile: InvitationTileUiModel) {
-    if (tile.avatars.isEmpty()) {
-        InvitationTileLottieAnimation(animationRes = tile.animationResId)
+private fun InvitationTileAvatars(avatars: List<String>, animationRes: Int) {
+    if (avatars.isEmpty()) {
+        InvitationTileLottieAnimation(animationRes = animationRes)
     } else {
         Row(
             Modifier
                 .padding(bottom = Dimension.marginNormal)
                 .fillMaxWidth()
         ) {
-            tile.avatars.forEachIndexed { index, url ->
+            avatars.forEachIndexed { index, url ->
                 CircleImage(
                     url = url,
                     modifier = Modifier
@@ -330,3 +366,80 @@ private fun IntentItem(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
+@Preview
+@Composable
+internal fun HomeScreenPreview() {
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Expanded
+    )
+
+    AppTheme(darkTheme = false) {
+        HomeScreen(
+            isLoading = false,
+            tiles = listOf(
+                HomePreviewData.tile1,
+                HomePreviewData.tile2
+            ),
+            onTileClicked = {},
+            sheetState = sheetState,
+            intents = listOf(
+                HomePreviewData.intent1,
+                HomePreviewData.intent2
+            ),
+            onIntentSelected = {},
+            isError = false,
+            onErrorRetry = {},
+            internetPopupEnabled = false
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun InvitationTilePreview() {
+    AppTheme(darkTheme = false) {
+        InvitationTile(
+            tile = HomePreviewData.tile2,
+            onTileClicked = {}
+        )
+    }
+}
+
+private object HomePreviewData {
+    val intent1 = IntentUiModel(
+        title = "mr_groom",
+        iconResId = R.drawable.ic_instagram_primary,
+        intentPackage = null,
+        url = "fake url"
+    )
+
+    val intent2 = IntentUiModel(
+        title = "mrs_bride",
+        iconResId = R.drawable.ic_instagram_primary,
+        intentPackage = null,
+        url = "fake url"
+    )
+
+    val tile1 = InvitationTileUiModel(
+        type = InvitationTileType.COUPLE,
+        title = "Wedding couple",
+        subtitle = "Mr & Mrs Smith",
+        description = "Hello!, Welcome to our wedding. Thank you for joining us this day, have fun!",
+        avatars = listOf("fake url 1", "fake url 2"),
+        animationResId = R.raw.lottie_heart,
+        intents = listOf(intent1, intent2),
+        clickable = false
+    )
+
+    val tile2 = InvitationTileUiModel(
+        type = InvitationTileType.CHURCH,
+        title = "Church",
+        subtitle = "",
+        description = "This is our adorable church. Amen.",
+        avatars = emptyList(),
+        animationResId = R.raw.lottie_heart,
+        intents = listOf(intent1, intent2),
+        clickable = false
+    )
+}

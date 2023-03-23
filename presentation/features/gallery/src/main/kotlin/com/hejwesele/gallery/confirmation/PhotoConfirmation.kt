@@ -30,6 +30,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.ErrorDialog
@@ -38,6 +39,7 @@ import com.hejwesele.android.components.LoaderDialog
 import com.hejwesele.android.components.PlainButton
 import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.components.layouts.BottomSheetScaffold
+import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.android.theme.md_theme_dark_background
@@ -54,16 +56,12 @@ import kotlinx.coroutines.launch
 fun PhotoConfirmation(
     resultSender: ResultBackNavigator<Boolean>
 ) {
-    PhotoConfirmationScreen(resultSender)
+    PhotoConfirmationEntryPoint(resultSender)
 }
 
-@OptIn(
-    ExperimentalMaterialApi::class,
-    ExperimentalAnimationApi::class,
-    ExperimentalCoroutinesApi::class
-)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun PhotoConfirmationScreen(
+private fun PhotoConfirmationEntryPoint(
     resultSender: ResultBackNavigator<Boolean>,
     viewModel: PhotoConfirmationViewModel = hiltViewModel()
 ) {
@@ -87,12 +85,52 @@ private fun PhotoConfirmationScreen(
         resultSender = resultSender
     )
 
+    PhotoConfirmationScreen(
+        isLoading = uiState.loadingData,
+        isError = uiState.error != null,
+        photo = uiState.photo,
+        isUploadingPhoto = uiState.uploadingPhoto,
+        uploadingMessage = uiState.uploadingMessage,
+        sheetState = sheetState,
+        internetPopupEnabled = true,
+        onPhotoAccepted = { viewModel.onPhotoAccepted() },
+        onPhotoDeclined = { viewModel.onPhotoDeclined() },
+        onPhotoConfirmationDeclined = { viewModel.onPhotoConfirmationDeclined() },
+        onPhotoConfirmationAccepted = { viewModel.onPhotoConfirmationAccepted() },
+        onErrorDismissed = { viewModel.onErrorDismissed() }
+    )
+
+    BackHandler(sheetState.isVisible) {
+        coroutineScope.launch { sheetState.hide() }
+    }
+}
+
+@OptIn(
+    ExperimentalMaterialApi::class,
+    ExperimentalAnimationApi::class,
+    ExperimentalCoroutinesApi::class
+)
+@Composable
+private fun PhotoConfirmationScreen(
+    isLoading: Boolean,
+    isError: Boolean,
+    photo: Bitmap?,
+    isUploadingPhoto: Boolean,
+    uploadingMessage: String?,
+    sheetState: ModalBottomSheetState,
+    internetPopupEnabled: Boolean,
+    onPhotoAccepted: () -> Unit,
+    onPhotoDeclined: () -> Unit,
+    onPhotoConfirmationDeclined: () -> Unit,
+    onPhotoConfirmationAccepted: () -> Unit,
+    onErrorDismissed: () -> Unit
+) {
     BottomSheetScaffold(
         state = sheetState,
         sheetContent = {
             ConfirmationBottomSheetContent(
-                onDecline = { viewModel.onPhotoConfirmationDeclined() },
-                onAccept = { viewModel.onPhotoConfirmationAccepted() }
+                onDecline = onPhotoConfirmationDeclined,
+                onAccept = onPhotoConfirmationAccepted
             )
         }
     ) {
@@ -101,27 +139,23 @@ private fun PhotoConfirmationScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                InternetConnectionPopup()
-                with(uiState) {
-                    if (photo != null) {
-                        PhotoPreviewContent(
-                            photo = photo,
-                            onAccept = { viewModel.onPhotoAccepted() },
-                            onCancel = { viewModel.onPhotoDeclined() }
-                        )
-                    }
-                    when {
-                        loadingData -> Loader()
-                        uploadingPhoto -> LoaderDialog(label = uploadingMessage)
-                        error != null -> ErrorDialog { viewModel.onErrorDismissed() }
-                    }
+                if (internetPopupEnabled) {
+                    InternetConnectionPopup()
+                }
+                if (photo != null) {
+                    PhotoPreviewContent(
+                        photo = photo,
+                        onAccept = onPhotoAccepted,
+                        onCancel = onPhotoDeclined
+                    )
+                }
+                when {
+                    isLoading -> Loader()
+                    isUploadingPhoto -> LoaderDialog(label = uploadingMessage)
+                    isError -> ErrorDialog { onErrorDismissed() }
                 }
             }
         }
-    }
-
-    BackHandler(sheetState.isVisible) {
-        coroutineScope.launch { sheetState.hide() }
     }
 }
 
@@ -245,4 +279,28 @@ private fun ConfirmationBottomSheetContent(
         )
     }
     VerticalMargin(bottomPadding)
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Preview
+@Composable
+private fun PhotoConfirmationScreenPreview() {
+    val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded)
+
+    AppTheme(darkTheme = false) {
+        PhotoConfirmationScreen(
+            isLoading = false,
+            isError = false,
+            photo = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888),
+            isUploadingPhoto = false,
+            uploadingMessage = null,
+            sheetState = sheetState,
+            internetPopupEnabled = false,
+            onPhotoAccepted = {},
+            onPhotoDeclined = {},
+            onPhotoConfirmationDeclined = {},
+            onPhotoConfirmationAccepted = {},
+            onErrorDismissed = {}
+        )
+    }
 }

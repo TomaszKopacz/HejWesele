@@ -35,7 +35,7 @@ androidx-compose-material3 = "1.0.1"
 androidx-hilt-navigation-compose = "1.0.0"
 accompanist = "0.24.7-alpha"
 airbnb-compose-lottie = "5.2.0"
-glide-compose = "1.0.0-alpha.1"
+coil-compose = "2.2.2"
 imagecropper-compose = "4.5.0"
 stateevents-compose = "1.1.0"
 
@@ -96,6 +96,8 @@ androidx-compose-animation = { module = "androidx.compose.animation:animation", 
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidx-compose" }
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "androidx-compose" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidx-compose-material3"}
+androidx-compose-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "androidx-compose"}
+androidx-compose-tooling-preview = { module = 'androidx.compose.ui:ui-tooling-preview', version.ref = "androidx-compose"}
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidx-hilt-navigation-compose" }
 accompanist-insets-ui = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
@@ -104,7 +106,7 @@ accompanist-navigation-material = { module = "com.google.accompanist:accompanist
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 airbnb-compose-lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "airbnb-compose-lottie" }
-glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glide-compose" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil-compose" }
 imagecropper-compose = { module  = "com.vanniktech:android-image-cropper", version.ref = "imagecropper-compose"}
 stateevents-compose = { module  = "com.github.leonard-palm:compose-state-events", version.ref = "stateevents-compose"}
 
