@@ -25,7 +25,9 @@ object Dimension {
 
     val elevationSmall = 2.dp
 
+    val iconSizeSmall = 16.dp
     val iconSizeNormal = 24.dp
+    val iconSizeExtraLarge = 72.dp
 
     val imageSizeSmall = 48.dp
 

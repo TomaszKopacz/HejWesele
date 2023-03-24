@@ -4,6 +4,7 @@ object Label {
     const val ok = "OK"
     const val retry = "Odśwież"
     const val cancel = "Anuluj"
+    const val next = "DALEJ"
 
     // Error
     const val errorTitle = "Upss, coś poszło nie tak"
@@ -13,8 +14,14 @@ object Label {
     const val networkReconnectedMessage = "Przywrócono połączenie"
     const val networkDisconnectedMessage = "Brak dostępu do internetu"
 
+    // Login
+    const val loginEventNameLabel = "Nazwa"
+    const val loginEventNameErrorMessage = "Max 5 characters!"
+    const val loginEventPasswordLabel = "Hasło"
+    const val loginHelpLabel = "Gdzie mogę znaleźć nazwę i hasło?"
+    const val loginScanQrButtonLabel = "SKANUJ QR"
+
     // Home
-    const val errorMessage = "Upss.. Coś poszło nie tak.\nUpewnij się, że masz internet i załaduj stronę ponownie."
     const val homeNoInvitationTilesMessage =
         "Aktualnie nie ma tutaj żadnych informacji do wyświetlenia, może pojawią się za chwilkę :)"
     const val homeIntentTitleMaps = "Mapy Google"

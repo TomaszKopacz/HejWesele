@@ -5,9 +5,16 @@ plugins {
 
 android {
     namespace "com.hejwesele.extensions"
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
+    }
 }
 
 dependencies {
+    implementation libs.androidx.compose.foundation
     implementation libs.androidx.compose.ui
     implementation libs.androidx.core
 }

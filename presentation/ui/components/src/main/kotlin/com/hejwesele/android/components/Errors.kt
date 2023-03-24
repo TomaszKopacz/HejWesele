@@ -1,5 +1,6 @@
 package com.hejwesele.android.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,49 +34,49 @@ fun ErrorView(
     description: String = Label.errorDescription,
     onRetry: () -> Unit
 ) {
-    ScrollableColumn {
+    ScrollableColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Surface(
-                color = MaterialTheme.colorScheme.background
+            Column(
+                modifier = Modifier.padding(Dimension.marginLarge),
+                verticalArrangement = Arrangement.Center
             ) {
-                Column(
-                    modifier = Modifier.padding(Dimension.marginLarge),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.lottie_error))
-                    LottieAnimation(
-                        composition = composition,
-                        iterations = LottieConstants.IterateForever,
-                        modifier = Modifier
-                            .padding(top = Dimension.marginLarge)
-                            .aspectRatio(1.0f)
-                    )
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.error,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    VerticalMargin(Dimension.marginNormal)
-                    Text(
-                        text = description,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    VerticalMargin(Dimension.marginNormal)
-                    PlainButton(
-                        text = Label.retry,
-                        color = MaterialTheme.colorScheme.error,
-                        onClick = onRetry,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-                }
+                val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.lottie_error))
+                LottieAnimation(
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever,
+                    modifier = Modifier
+                        .padding(top = Dimension.marginLarge)
+                        .aspectRatio(1.0f)
+                )
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                VerticalMargin(Dimension.marginNormal)
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                VerticalMargin(Dimension.marginNormal)
+                PlainButton(
+                    text = Label.retry,
+                    color = MaterialTheme.colorScheme.error,
+                    onClick = onRetry,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
             }
         }
     }
