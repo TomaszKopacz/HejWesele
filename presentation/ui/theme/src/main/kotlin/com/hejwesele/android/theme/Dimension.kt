@@ -3,6 +3,8 @@ package com.hejwesele.android.theme
 import androidx.compose.ui.unit.dp
 
 object Dimension {
+    val marginExtraSmall2X = 4.dp
+    val marginExtraSmall = 8.dp
     val marginSmall = 12.dp
     val marginNormal = 16.dp
     val marginLarge = 24.dp
