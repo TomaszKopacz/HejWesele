@@ -12,9 +12,11 @@ import com.hejwesele.android.theme.Transitions
 import com.hejwesele.gallery.IGalleryNavigation
 import com.hejwesele.gallery.destinations.PhotoConfirmationDestination
 import com.hejwesele.home.IHomeNavigation
+import com.hejwesele.login.ILoginFeatureNavigation
 import com.hejwesele.main.IMainFeatureProvider
 import com.hejwesele.navigation.features.GalleryFeatureNavigation
 import com.hejwesele.navigation.features.HomeFeatureNavigation
+import com.hejwesele.navigation.features.LoginFeatureNavigation
 import com.hejwesele.navigation.features.MainFeatureProvider
 import com.hejwesele.navigation.features.ScheduleFeatureNavigation
 import com.hejwesele.navigation.features.SettingsFeatureNavigation
@@ -53,6 +55,8 @@ internal fun AppNavigation(
 private fun provideDependencies(
     navController: NavHostController
 ): @Composable (DependenciesContainerBuilder<*>.() -> Unit) = {
+    val loginFeatureNavigation: ILoginFeatureNavigation = LoginFeatureNavigation(navController)
+
     val homeNavigation: IHomeNavigation = HomeFeatureNavigation(navController)
     val scheduleNavigation: IScheduleNavigation = ScheduleFeatureNavigation(navController)
     val galleryNavigation: IGalleryNavigation = GalleryFeatureNavigation(navController)
@@ -62,8 +66,10 @@ private fun provideDependencies(
         galleryFeatureNavigation = galleryNavigation,
         galleryFeatureRecipient = galleryFeatureRecipient
     )
+
     val settingsNavigation: ISettingsFeatureNavigation = SettingsFeatureNavigation(navController)
 
+    dependency(loginFeatureNavigation)
     dependency(mainFeatureProvider)
     dependency(homeNavigation)
     dependency(scheduleNavigation)

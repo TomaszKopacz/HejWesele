@@ -22,9 +22,10 @@ dependencyResolutionManagement {
 
 include ":app"
 
-include ":presentation:features:main"
 include ":presentation:features:gallery"
 include ":presentation:features:home"
+include ":presentation:features:login:"
+include ":presentation:features:main"
 include ":presentation:features:schedule"
 include ":presentation:features:services"
 include ":presentation:features:settings"
