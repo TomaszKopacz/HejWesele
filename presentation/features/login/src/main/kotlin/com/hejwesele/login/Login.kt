@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,19 +14,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import com.hejwesele.android.components.FilledButton
 import com.hejwesele.android.components.FormTextField
+import com.hejwesele.android.components.PlainIconButton
 import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.theme.Dimension
 import com.ramcosta.composedestinations.annotation.Destination
 
 @Composable
 @Destination
-fun Login(
-    navigation: ILoginFeatureNavigation
-) {
+fun Login(navigation: ILoginFeatureNavigation) {
     LoginScreen(navigation)
 }
 
+@Suppress("MagicNumber")
 @Composable
 private fun LoginScreen(
     navigation: ILoginFeatureNavigation
@@ -65,6 +67,18 @@ private fun LoginScreen(
                 isError = true,
                 errorMessage = "Wystąpił błąd",
                 onTextChanged = {}
+            )
+            VerticalMargin(height = Dimension.marginLarge)
+            FilledButton(
+                text = "DALEJ",
+                onClick = { navigation.openEvent() }
+            )
+            VerticalMargin(height = Dimension.marginLarge)
+            PlainIconButton(
+                text = "SKANUJ QR",
+                icon = R.drawable.ic_qr,
+                color = MaterialTheme.colorScheme.primary,
+                onClick = {}
             )
         }
     }

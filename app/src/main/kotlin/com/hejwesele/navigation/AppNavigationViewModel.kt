@@ -24,7 +24,7 @@ internal class AppNavigationViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val startRoute = if (isLoggedIn()) MainNavGraph else LoginNavGraph
+            val startRoute = if (isLoggedIn()) LoginNavGraph else LoginNavGraph
             updateState { copy(startRoute = startRoute) }
         }
     }

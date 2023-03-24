@@ -72,7 +72,6 @@ fun ErrorView(
                     PlainButton(
                         text = Label.retry,
                         color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.titleSmall,
                         onClick = onRetry,
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
@@ -133,10 +132,11 @@ fun ErrorDialog(
                 )
                 VerticalMargin(Dimension.marginNormal)
                 PlainButton(
+                    modifier = Modifier.align(Alignment.End),
                     text = Label.ok,
                     color = MaterialTheme.colorScheme.error,
-                    onClick = onDismiss,
-                    modifier = Modifier.align(Alignment.End)
+                    size = PlainButtonSize.LARGE,
+                    onClick = onDismiss
                 )
                 VerticalMargin(Dimension.marginNormal)
             }
