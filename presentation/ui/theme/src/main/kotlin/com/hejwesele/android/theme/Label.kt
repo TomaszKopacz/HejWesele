@@ -16,10 +16,10 @@ object Label {
 
     // Login
     const val loginEventNameLabel = "Nazwa"
-    const val loginEventNameErrorMessage = "Max 5 characters!"
     const val loginEventPasswordLabel = "Hasło"
     const val loginHelpLabel = "Gdzie mogę znaleźć nazwę i hasło?"
     const val loginScanQrButtonLabel = "SKANUJ QR"
+    const val loginIncorrectPasswordLabel = "Niepoprawne hasło"
 
     // Home
     const val homeNoInvitationTilesMessage =

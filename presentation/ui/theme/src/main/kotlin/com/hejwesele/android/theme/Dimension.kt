@@ -15,6 +15,9 @@ object Dimension {
     val marginLarge_1_4 = 6.dp
     val marginLarge_3_4 = 18.dp
 
+    const val weightHalf = 0.5f
+    const val weightFull = 1.0f
+
     val radiusRoundedCornerExtraSmall = 12.dp
     val radiusRoundedCornerSmall = 16.dp
     val radiusRoundedCornerMedium = 20.dp

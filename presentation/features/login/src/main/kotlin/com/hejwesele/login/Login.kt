@@ -14,16 +14,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.FilledButton
 import com.hejwesele.android.components.FormTextField
 import com.hejwesele.android.components.HorizontalMargin
@@ -36,6 +38,7 @@ import com.hejwesele.android.theme.Label
 import com.hejwesele.extensions.noRippleClickable
 import com.hejwesele.internet.InternetConnectionPopup
 import com.ramcosta.composedestinations.annotation.Destination
+import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @Composable
@@ -45,10 +48,43 @@ fun Login(navigation: ILoginFeatureNavigation) {
 }
 
 @Composable
-private fun LoginEntryPoint(navigation: ILoginFeatureNavigation) {
+private fun LoginEntryPoint(
+    navigation: ILoginFeatureNavigation,
+    viewModel: LoginViewModel = hiltViewModel()
+) {
+    val systemUiController = rememberSystemUiController()
+    SideEffect {
+        systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = true)
+    }
+
+    val uiState by viewModel.states.collectAsState()
+
+    LoginEventHandler(
+        uiState = uiState,
+        viewModel = viewModel,
+        navigation = navigation
+    )
+
     LoginScreen(
+        nameErrorMessage = uiState.eventNameError?.message,
+        passwordErrorMessage = uiState.eventPasswordError?.message,
         isInternetPopupEnabled = true,
-        onNextButtonClick = { navigation.openEvent() }
+        onNameInputChanged = { text -> viewModel.onNameInputChanged(text) },
+        onPasswordInputChanged = { text -> viewModel.onPasswordInputChanged(text) },
+        onNextButtonClick = { viewModel.onSubmit() }
+    )
+}
+
+@Composable
+private fun LoginEventHandler(
+    uiState: LoginUiState,
+    viewModel: LoginViewModel,
+    navigation: ILoginFeatureNavigation
+) {
+    EventEffect(
+        event = uiState.openEvent,
+        onConsumed = { viewModel.onEventOpened() },
+        action = { navigation.openEvent() }
     )
 }
 
@@ -57,14 +93,15 @@ private fun LoginEntryPoint(navigation: ILoginFeatureNavigation) {
     ExperimentalAnimationApi::class,
     ExperimentalCoroutinesApi::class
 )
-@Suppress("MagicNumber")
 @Composable
 private fun LoginScreen(
+    nameErrorMessage: String?,
+    passwordErrorMessage: String?,
     isInternetPopupEnabled: Boolean,
+    onNameInputChanged: (String) -> Unit,
+    onPasswordInputChanged: (String) -> Unit,
     onNextButtonClick: () -> Unit
 ) {
-    var errorMessage: String? by remember { mutableStateOf(null) }
-
     Scaffold { padding ->
         Column {
             if (isInternetPopupEnabled) {
@@ -90,15 +127,16 @@ private fun LoginScreen(
                 VerticalMargin(Dimension.marginLarge2X)
                 LogoIcon(modifier = Modifier.size(Dimension.iconSizeExtraLarge))
                 VerticalMargin(Dimension.marginLarge)
-                Spacer(modifier = Modifier.weight(0.5f))
+                Spacer(modifier = Modifier.weight(Dimension.weightHalf))
                 NameTextField(
-                    errorMessage = errorMessage,
-                    onTextChanged = { text ->
-                        errorMessage = if (text.length > 5) Label.loginEventNameErrorMessage else null
-                    }
+                    errorMessage = nameErrorMessage,
+                    onTextChanged = { text -> onNameInputChanged(text) }
                 )
                 VerticalMargin(Dimension.marginExtraSmall)
-                PasswordTextField()
+                PasswordTextField(
+                    errorMessage = passwordErrorMessage,
+                    onTextChanged = { text -> onPasswordInputChanged(text) }
+                )
                 VerticalMargin(Dimension.marginNormal)
                 HelpLabel(
                     modifier = Modifier
@@ -110,7 +148,7 @@ private fun LoginScreen(
                     onClick = onNextButtonClick
                 )
                 VerticalMargin(Dimension.marginLarge)
-                Spacer(modifier = Modifier.weight(1.0f))
+                Spacer(modifier = Modifier.weight(Dimension.weightFull))
                 ButtonScanQr()
                 VerticalMargin(Dimension.marginNormal)
             }
@@ -148,17 +186,22 @@ private fun NameTextField(
         imeAction = ImeAction.Next,
         isError = errorMessage != null,
         errorMessage = errorMessage,
-        onTextChanged = { value -> onTextChanged(value) }
+        onTextChanged = { text -> onTextChanged(text) }
     )
 }
 
 @Composable
-private fun PasswordTextField() {
+private fun PasswordTextField(
+    errorMessage: String?,
+    onTextChanged: (String) -> Unit
+) {
     FormTextField(
         label = Label.loginEventPasswordLabel,
         imeAction = ImeAction.Done,
+        isError = errorMessage != null,
+        errorMessage = errorMessage,
         transformation = PasswordVisualTransformation(),
-        onTextChanged = {}
+        onTextChanged = { text -> onTextChanged(text) }
     )
 }
 
@@ -205,7 +248,11 @@ private fun ButtonScanQr() {
 private fun LoginScreenPreview() {
     AppTheme(darkTheme = false) {
         LoginScreen(
+            nameErrorMessage = null,
+            passwordErrorMessage = null,
             isInternetPopupEnabled = false,
+            onNameInputChanged = {},
+            onPasswordInputChanged = {},
             onNextButtonClick = {}
         )
     }
