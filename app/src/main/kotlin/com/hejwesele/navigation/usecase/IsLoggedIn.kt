@@ -10,6 +10,6 @@ class IsLoggedIn @Inject constructor(
 ) {
 
     suspend operator fun invoke() = withContext(Dispatchers.IO) {
-        eventsRepository.getStoredEvent().getOrNull()?.event != null
+        eventsRepository.getStoredEventSettings().getOrNull() != null
     }
 }

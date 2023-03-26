@@ -1,5 +1,10 @@
-package com.hejwesele.home.home.usecase
+package com.hejwesele.login.usecase
 
+import com.hejwesele.android.osinfo.OsInfo
+import com.hejwesele.encryption.base64
+import com.hejwesele.encryption.bytes
+import com.hejwesele.encryption.sha256
+import com.hejwesele.encryption.string
 import com.hejwesele.events.EventsRepository
 import com.hejwesele.events.model.Event
 import kotlinx.coroutines.Dispatchers
@@ -7,7 +12,9 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
 
+// TODO - this use case is only for development, should be removed from here
 internal class AddEvent @Inject constructor(
+    private val osInfo: OsInfo,
     private val repository: EventsRepository
 ) {
 
@@ -15,11 +22,11 @@ internal class AddEvent @Inject constructor(
         repository.addEvent(
             Event(
                 id = "",
-                name = "Tomek&Patrycja2024",
+                name = "hej",
+                password = "hej".bytes().sha256().base64(osInfo).string(),
                 date = "2024-07-14T15:30:00".toLocalDateTime(),
                 invitationId = "-NNxXTrIHZwNNP1ZUlWP",
                 galleryId = null
-
             )
         )
     }

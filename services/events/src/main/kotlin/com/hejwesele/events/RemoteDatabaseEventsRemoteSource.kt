@@ -5,6 +5,7 @@ import com.hejwesele.events.mappers.mapDto
 import com.hejwesele.events.mappers.mapModel
 import com.hejwesele.events.model.Event
 import com.hejwesele.remotedatabase.RemoteDatabase
+import com.hejwesele.result.extensions.flatMap
 import com.hejwesele.result.notFound
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,6 +19,15 @@ class RemoteDatabaseEventsRemoteSource @Inject constructor(
 
     companion object {
         private const val EVENTS_PATH = "events/"
+    }
+
+    override suspend fun getEvents(): Result<List<Event>> = withContext(Dispatchers.IO) {
+        database.readAll(
+            path = EVENTS_PATH,
+            type = EventDto::class
+        ).flatMap { dtos ->
+            runCatching { dtos.mapModel() }
+        }
     }
 
     override suspend fun getEvent(eventId: String): Result<Event> = withContext(Dispatchers.IO) {

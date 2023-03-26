@@ -112,31 +112,25 @@ internal class GalleryViewModel @Inject constructor(
     }
 
     private suspend fun handleEventSettings(settings: EventSettings) {
-        val event = settings.event
+        state = state.copy(
+            eventDate = settings.date,
+            galleryId = settings.galleryId,
+            hintDismissed = settings.galleryHintDismissed
+        )
 
-        if (event == null) {
-            // TODO - show error dialog and logout
+        val galleryId = settings.galleryId
+        if (galleryId != null) {
+            observeGallery(galleryId)
+                .collect { result ->
+                    result
+                        .onSuccess { gallery ->
+                            state = state.copy(externalGalleryUrl = gallery.externalGallery)
+                            showGalleryData(gallery)
+                        }
+                        .onFailure { error -> showGalleryError(error) }
+                }
         } else {
-            state = state.copy(
-                eventDate = event.date,
-                galleryId = event.galleryId,
-                hintDismissed = settings.galleryHintDismissed
-            )
-
-            val galleryId = event.galleryId
-            if (galleryId != null) {
-                observeGallery(galleryId)
-                    .collect { result ->
-                        result
-                            .onSuccess { gallery ->
-                                state = state.copy(externalGalleryUrl = gallery.externalGallery)
-                                showGalleryData(gallery)
-                            }
-                            .onFailure { error -> showGalleryError(error) }
-                    }
-            } else {
-                showGalleryDisabled()
-            }
+            showGalleryDisabled()
         }
     }
 

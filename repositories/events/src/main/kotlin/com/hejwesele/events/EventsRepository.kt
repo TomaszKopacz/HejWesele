@@ -16,15 +16,22 @@ class EventsRepository @Inject constructor(
         remoteSource.getEvent(eventId)
     }
 
+    suspend fun findEvent(eventName: String): Result<Event?> = withContext(Dispatchers.IO) {
+        remoteSource.getEvents()
+            .mapCatching { events ->
+                events.firstOrNull { event -> event.name == eventName }
+            }
+    }
+
     suspend fun addEvent(event: Event) = withContext(Dispatchers.IO) {
         remoteSource.addEvent(event)
     }
 
-    suspend fun storeEvent(event: Event): Result<Event> = withContext(Dispatchers.IO) {
-        localSource.setEvent(event)
+    suspend fun storeEventSettings(event: EventSettings): Result<EventSettings> = withContext(Dispatchers.IO) {
+        localSource.setEventSettings(event)
     }
 
-    suspend fun getStoredEvent(): Result<EventSettings> = withContext(Dispatchers.IO) {
+    suspend fun getStoredEventSettings(): Result<EventSettings> = withContext(Dispatchers.IO) {
         localSource.getEventSettings()
     }
 

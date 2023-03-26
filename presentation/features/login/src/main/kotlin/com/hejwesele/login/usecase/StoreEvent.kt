@@ -1,7 +1,7 @@
-package com.hejwesele.home.home.usecase
+package com.hejwesele.login.usecase
 
 import com.hejwesele.events.EventsRepository
-import com.hejwesele.events.model.Event
+import com.hejwesele.events.model.EventSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -9,7 +9,7 @@ import javax.inject.Inject
 internal class StoreEvent @Inject constructor(
     private val repository: EventsRepository
 ) {
-    suspend operator fun invoke(event: Event) = withContext(Dispatchers.IO) {
-        repository.storeEvent(event)
+    suspend operator fun invoke(eventSettings: EventSettings) = withContext(Dispatchers.IO) {
+        repository.storeEventSettings(eventSettings)
     }
 }

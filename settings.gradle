@@ -51,16 +51,17 @@ include ":libraries:appinfo"
 include ":libraries:bitmap"
 include ":libraries:coroutines"
 include ":libraries:crashlytics"
+include ":libraries:datastore"
 include ":libraries:encryption"
 include ":libraries:intent"
 include ":libraries:internet"
 include ":libraries:messaging"
 include ":libraries:mvvm"
 include ":libraries:osinfo"
-include ":libraries:datastore"
 include ":libraries:remotedatabase"
 include ":libraries:result"
 include ":libraries:remotestorage"
+include ":libraries:validation"
 
 apply from: new File(settingsDir, "gradle/buildCache.gradle")
 

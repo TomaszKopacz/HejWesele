@@ -29,6 +29,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.FilledButton
 import com.hejwesele.android.components.FormTextField
 import com.hejwesele.android.components.HorizontalMargin
+import com.hejwesele.android.components.LoaderDialog
 import com.hejwesele.android.components.PlainIconButton
 import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.components.layouts.ScrollableColumn
@@ -66,6 +67,8 @@ private fun LoginEntryPoint(
     )
 
     LoginScreen(
+        isLoading = uiState.isLoading,
+        isNextButtonEnabled = uiState.isFormValid,
         nameErrorMessage = uiState.eventNameError?.message,
         passwordErrorMessage = uiState.eventPasswordError?.message,
         isInternetPopupEnabled = true,
@@ -95,6 +98,8 @@ private fun LoginEventHandler(
 )
 @Composable
 private fun LoginScreen(
+    isLoading: Boolean,
+    isNextButtonEnabled: Boolean,
     nameErrorMessage: String?,
     passwordErrorMessage: String?,
     isInternetPopupEnabled: Boolean,
@@ -145,6 +150,7 @@ private fun LoginScreen(
                 )
                 VerticalMargin(Dimension.marginLarge)
                 ButtonNext(
+                    isEnabled = isNextButtonEnabled,
                     onClick = onNextButtonClick
                 )
                 VerticalMargin(Dimension.marginLarge)
@@ -152,6 +158,9 @@ private fun LoginScreen(
                 ButtonScanQr()
                 VerticalMargin(Dimension.marginNormal)
             }
+        }
+        if (isLoading) {
+            LoaderDialog(label = Label.loginLoadingLabel)
         }
     }
 }
@@ -226,9 +235,13 @@ private fun HelpLabel(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ButtonNext(onClick: () -> Unit) {
+private fun ButtonNext(
+    isEnabled: Boolean,
+    onClick: () -> Unit
+) {
     FilledButton(
         text = Label.next,
+        enabled = isEnabled,
         onClick = onClick
     )
 }
@@ -248,6 +261,8 @@ private fun ButtonScanQr() {
 private fun LoginScreenPreview() {
     AppTheme(darkTheme = false) {
         LoginScreen(
+            isLoading = false,
+            isNextButtonEnabled = true,
             nameErrorMessage = null,
             passwordErrorMessage = null,
             isInternetPopupEnabled = false,

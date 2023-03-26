@@ -6,7 +6,6 @@ import com.hejwesele.events.di.EventsDataStore
 import com.hejwesele.events.dto.EventSettingsDto
 import com.hejwesele.events.mappers.mapDto
 import com.hejwesele.events.mappers.mapModel
-import com.hejwesele.events.model.Event
 import com.hejwesele.events.model.EventSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -23,8 +22,8 @@ class DataStoreEventsLocalSource @Inject constructor(
         eventsStore.readData().mapCatching { it.mapModel() }
     }
 
-    override suspend fun setEvent(event: Event): Result<Event> = withContext(Dispatchers.IO) {
-        eventsStore.writeData { it.copy(event = event.mapDto()) }.map { event }
+    override suspend fun setEventSettings(eventSettings: EventSettings): Result<EventSettings> = withContext(Dispatchers.IO) {
+        eventsStore.writeData { eventSettings.mapDto() }.map { eventSettings }
     }
 
     override suspend fun setGalleryHintDismissed(dismissed: Boolean): Result<Boolean> = withContext(Dispatchers.IO) {

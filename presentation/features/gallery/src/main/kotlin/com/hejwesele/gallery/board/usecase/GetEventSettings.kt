@@ -11,6 +11,6 @@ class GetEventSettings @Inject constructor(
 ) {
 
     suspend operator fun invoke(): Result<EventSettings> = withContext(Dispatchers.IO) {
-        repository.getStoredEvent()
+        repository.getStoredEventSettings()
     }
 }

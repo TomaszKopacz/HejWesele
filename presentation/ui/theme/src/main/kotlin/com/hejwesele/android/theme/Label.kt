@@ -19,7 +19,11 @@ object Label {
     const val loginEventPasswordLabel = "Hasło"
     const val loginHelpLabel = "Gdzie mogę znaleźć nazwę i hasło?"
     const val loginScanQrButtonLabel = "SKANUJ QR"
-    const val loginIncorrectPasswordLabel = "Niepoprawne hasło"
+    const val loginEventNameEmptyErrorLabel = "Nazwa nie może być pusta"
+    const val loginEventNotFoundErrorLabel = "Nie znaleziono wydarzenia"
+    const val loginEventPasswordEmptyErrorLabel = "Hasło nie może być puste"
+    const val loginIncorrectPasswordErrorLabel = "Niepoprawne hasło"
+    const val loginLoadingLabel = "Logowanie..."
 
     // Home
     const val homeNoInvitationTilesMessage =
