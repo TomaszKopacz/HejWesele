@@ -63,13 +63,6 @@ internal class LoginViewModel @Inject constructor(
         )
     }
 
-    private fun isFormValid(): Boolean = with(state) {
-        val nameInputResult = eventNameValidator.validate(eventNameInput)
-        val passwordInputResult = eventPasswordValidator.validate(eventPasswordInput)
-
-        nameInputResult + passwordInputResult is Valid
-    }
-
     fun onSubmit() {
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
@@ -78,9 +71,13 @@ internal class LoginViewModel @Inject constructor(
 
             findEvent(state.eventNameInput)
                 .onSuccess { event -> handleEvent(event) }
-                .onFailure {
-                    // TODO - error handling
-                }
+                .onFailure { updateState { copy(isLoading = false, isError = true) } }
+        }
+    }
+
+    fun onErrorDismissed() {
+        viewModelScope.launch {
+            updateState { copy(isError = false) }
         }
     }
 
@@ -88,6 +85,13 @@ internal class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             updateState { copy(openEvent = triggered) }
         }
+    }
+
+    private fun isFormValid(): Boolean = with(state) {
+        val nameInputResult = eventNameValidator.validate(eventNameInput)
+        val passwordInputResult = eventPasswordValidator.validate(eventPasswordInput)
+
+        nameInputResult + passwordInputResult is Valid
     }
 
     private fun validateInput(
@@ -116,6 +120,7 @@ internal class LoginViewModel @Inject constructor(
                         updateState {
                             copy(
                                 isLoading = false,
+                                isError = false,
                                 eventNameError = null,
                                 eventPasswordError = Throwable(Label.loginIncorrectPasswordErrorLabel)
                             )
@@ -127,6 +132,7 @@ internal class LoginViewModel @Inject constructor(
                 updateState {
                     copy(
                         isLoading = false,
+                        isError = false,
                         eventNameError = Throwable(Label.loginEventNotFoundErrorLabel),
                         eventPasswordError = null
                     )
@@ -163,13 +169,19 @@ internal class LoginViewModel @Inject constructor(
                     copy(
                         openEvent = triggered,
                         isLoading = false,
+                        isError = false,
                         eventNameError = null,
                         eventPasswordError = null
                     )
                 }
             }
             .onFailure {
-                // TODO = error handling
+                updateState {
+                    copy(
+                        isLoading = false,
+                        isError = true
+                    )
+                }
             }
     }
 
@@ -195,6 +207,7 @@ internal class LoginViewModel @Inject constructor(
 internal data class LoginUiState(
     val openEvent: StateEvent,
     val isLoading: Boolean,
+    val isError: Boolean,
     val eventNameError: Throwable?,
     val eventPasswordError: Throwable?,
     val isFormValid: Boolean
@@ -203,6 +216,7 @@ internal data class LoginUiState(
         val DEFAULT = LoginUiState(
             openEvent = consumed,
             isLoading = false,
+            isError = false,
             eventNameError = null,
             eventPasswordError = null,
             isFormValid = false

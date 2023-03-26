@@ -26,6 +26,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hejwesele.android.components.ErrorDialog
 import com.hejwesele.android.components.FilledButton
 import com.hejwesele.android.components.FormTextField
 import com.hejwesele.android.components.HorizontalMargin
@@ -68,12 +69,14 @@ private fun LoginEntryPoint(
 
     LoginScreen(
         isLoading = uiState.isLoading,
+        isError = uiState.isError,
         isNextButtonEnabled = uiState.isFormValid,
         nameErrorMessage = uiState.eventNameError?.message,
         passwordErrorMessage = uiState.eventPasswordError?.message,
         isInternetPopupEnabled = true,
         onNameInputChanged = { text -> viewModel.onNameInputChanged(text) },
         onPasswordInputChanged = { text -> viewModel.onPasswordInputChanged(text) },
+        onErrorDismissed = { viewModel.onErrorDismissed() },
         onNextButtonClick = { viewModel.onSubmit() }
     )
 }
@@ -99,12 +102,14 @@ private fun LoginEventHandler(
 @Composable
 private fun LoginScreen(
     isLoading: Boolean,
+    isError: Boolean,
     isNextButtonEnabled: Boolean,
     nameErrorMessage: String?,
     passwordErrorMessage: String?,
     isInternetPopupEnabled: Boolean,
     onNameInputChanged: (String) -> Unit,
     onPasswordInputChanged: (String) -> Unit,
+    onErrorDismissed: () -> Unit,
     onNextButtonClick: () -> Unit
 ) {
     Scaffold { padding ->
@@ -158,6 +163,9 @@ private fun LoginScreen(
                 ButtonScanQr()
                 VerticalMargin(Dimension.marginNormal)
             }
+        }
+        if (isError) {
+            ErrorDialog(onDismiss = onErrorDismissed)
         }
         if (isLoading) {
             LoaderDialog(label = Label.loginLoadingLabel)
@@ -262,12 +270,14 @@ private fun LoginScreenPreview() {
     AppTheme(darkTheme = false) {
         LoginScreen(
             isLoading = false,
+            isError = false,
             isNextButtonEnabled = true,
             nameErrorMessage = null,
             passwordErrorMessage = null,
             isInternetPopupEnabled = false,
             onNameInputChanged = {},
             onPasswordInputChanged = {},
+            onErrorDismissed = {},
             onNextButtonClick = {}
         )
     }
