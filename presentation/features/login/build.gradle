@@ -33,6 +33,7 @@ dependencies {
     implementation projects.repositories.events
 
     implementation libs.accompanist.systemuicontroller
+    implementation libs.androidx.compose.material
     implementation libs.androidx.compose.material3
     implementation libs.androidx.compose.tooling.preview
     implementation libs.androidx.hilt.navigation.compose

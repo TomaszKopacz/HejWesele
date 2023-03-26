@@ -63,6 +63,12 @@ internal class LoginViewModel @Inject constructor(
         )
     }
 
+    fun onHelpRequested() {
+        viewModelScope.launch {
+            updateState { copy(showHelp = triggered) }
+        }
+    }
+
     fun onSubmit() {
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
@@ -81,9 +87,13 @@ internal class LoginViewModel @Inject constructor(
         }
     }
 
+    fun onHelpShown() {
+        updateState { copy(showHelp = consumed) }
+    }
+
     fun onEventOpened() {
         viewModelScope.launch {
-            updateState { copy(openEvent = triggered) }
+            updateState { copy(openEvent = consumed) }
         }
     }
 
@@ -205,6 +215,7 @@ internal class LoginViewModel @Inject constructor(
 }
 
 internal data class LoginUiState(
+    val showHelp: StateEvent,
     val openEvent: StateEvent,
     val isLoading: Boolean,
     val isError: Boolean,
@@ -214,6 +225,7 @@ internal data class LoginUiState(
 ) {
     companion object {
         val DEFAULT = LoginUiState(
+            showHelp = consumed,
             openEvent = consumed,
             isLoading = false,
             isError = false,

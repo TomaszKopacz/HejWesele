@@ -18,6 +18,9 @@ object Label {
     const val loginEventNameLabel = "Nazwa"
     const val loginEventPasswordLabel = "Hasło"
     const val loginHelpLabel = "Gdzie mogę znaleźć nazwę i hasło?"
+    const val loginHelpBottomSheetTitle = "Gdzie można znaleźć nazwę wydarzenia i hasło?"
+    const val loginHelpBottomSheetDescription = "Nazwa wydarzenia i hasło powinny zostać dołączone do Twojego zaproszenia ślubnego. " +
+        "Jeśli ich tam nie ma lub zaproszenie zgubiło się, skontaktuj się z organizatorem wydarzenia."
     const val loginScanQrButtonLabel = "SKANUJ QR"
     const val loginEventNameEmptyErrorLabel = "Nazwa nie może być pusta"
     const val loginEventNotFoundErrorLabel = "Nie znaleziono wydarzenia"
