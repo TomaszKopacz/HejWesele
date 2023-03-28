@@ -8,11 +8,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import com.hejwesele.ILoginNavigation
 import com.hejwesele.android.theme.Transitions
 import com.hejwesele.gallery.IGalleryNavigation
 import com.hejwesele.gallery.destinations.PhotoConfirmationDestination
 import com.hejwesele.home.IHomeNavigation
-import com.hejwesele.login.ILoginFeatureNavigation
 import com.hejwesele.main.IMainFeatureProvider
 import com.hejwesele.navigation.features.GalleryFeatureNavigation
 import com.hejwesele.navigation.features.HomeFeatureNavigation
@@ -55,7 +55,7 @@ internal fun AppNavigation(
 private fun provideDependencies(
     navController: NavHostController
 ): @Composable (DependenciesContainerBuilder<*>.() -> Unit) = {
-    val loginFeatureNavigation: ILoginFeatureNavigation = LoginFeatureNavigation(navController)
+    val loginFeatureNavigation: ILoginNavigation = LoginFeatureNavigation(navController)
 
     val homeNavigation: IHomeNavigation = HomeFeatureNavigation(navController)
     val scheduleNavigation: IScheduleNavigation = ScheduleFeatureNavigation(navController)

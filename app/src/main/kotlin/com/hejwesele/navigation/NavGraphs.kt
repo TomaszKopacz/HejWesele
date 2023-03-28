@@ -1,8 +1,9 @@
 package com.hejwesele.navigation
 
+import com.hejwesele.destinations.LoginDestination
+import com.hejwesele.destinations.QrScannerDestination
 import com.hejwesele.gallery.destinations.GalleryPreviewDestination
 import com.hejwesele.gallery.destinations.PhotoConfirmationDestination
-import com.hejwesele.login.destinations.LoginDestination
 import com.hejwesele.main.destinations.MainDestination
 import com.hejwesele.settings.destinations.SettingsOverviewDestination
 import com.hejwesele.settings.destinations.SettingsTermsAndConditionsDestination
@@ -26,7 +27,8 @@ internal object LoginNavGraph : NavGraphSpec {
     override val route: String = "loginNavGraph"
     override val startRoute: Route = LoginDestination routedIn this
     override val destinationsByRoute = listOf<DestinationSpec<*>>(
-        LoginDestination
+        LoginDestination,
+        QrScannerDestination
     ).routedIn(this).associateBy { it.route }
 }
 

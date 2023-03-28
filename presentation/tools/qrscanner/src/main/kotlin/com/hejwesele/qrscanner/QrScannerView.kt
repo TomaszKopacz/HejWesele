@@ -24,6 +24,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.viewinterop.AndroidView
@@ -89,40 +90,21 @@ private fun SquareWindowOverlay() {
         val canvasHeight = size.height
         val margin = Dimension.marginLarge.toPx()
         val cornerRadius = Dimension.radiusRoundedCornerLarge.toPx()
-        val lowerDimension = min(canvasWidth.toDouble(), canvasHeight.toDouble()).toFloat()
-        val windowSize = lowerDimension - 2 * margin
+        val windowSize = min(canvasWidth.toDouble(), canvasHeight.toDouble()).toFloat() - 2 * margin
         val left = (canvasWidth - windowSize) / 2
         val right = left + windowSize
         val top = (canvasHeight - windowSize) / 2
         val bottom = top + windowSize
-
-        val path = Path().apply {
-            addRoundRect(
-                RoundRect(
-                    rect = Rect(
-                        left = left,
-                        top = top,
-                        right = right,
-                        bottom = bottom
-                    ),
-                    topLeft = CornerRadius(cornerRadius, cornerRadius),
-                    topRight = CornerRadius(cornerRadius, cornerRadius),
-                    bottomRight = CornerRadius(cornerRadius, cornerRadius),
-                    bottomLeft = CornerRadius(cornerRadius, cornerRadius)
-                )
-            )
-        }
-
         val outlineWidth = Dimension.borderWidthNormal
         val outlineCornerSize = 2 * margin
 
-        clipPath(
-            path = path,
-            clipOp = ClipOp.Difference
-        ) {
-            drawRect(Color.Black.copy(alpha = 0.5f))
-        }
-
+        drawWindow(
+            left = left,
+            top = top,
+            right = right,
+            bottom = bottom,
+            cornerRadius = cornerRadius
+        )
         drawArc(
             topLeft = Offset(left, top),
             size = Size(outlineCornerSize, outlineCornerSize),
@@ -159,6 +141,38 @@ private fun SquareWindowOverlay() {
             style = Stroke(width = outlineWidth.toPx()),
             color = outlineColor
         )
+    }
+}
+
+private fun DrawScope.drawWindow(
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+    cornerRadius: Float
+) {
+    val path = Path().apply {
+        addRoundRect(
+            RoundRect(
+                rect = Rect(
+                    left = left,
+                    top = top,
+                    right = right,
+                    bottom = bottom
+                ),
+                topLeft = CornerRadius(cornerRadius, cornerRadius),
+                topRight = CornerRadius(cornerRadius, cornerRadius),
+                bottomRight = CornerRadius(cornerRadius, cornerRadius),
+                bottomLeft = CornerRadius(cornerRadius, cornerRadius)
+            )
+        )
+    }
+
+    clipPath(
+        path = path,
+        clipOp = ClipOp.Difference
+    ) {
+        drawRect(Color.Black.copy(alpha = 0.5f))
     }
 }
 

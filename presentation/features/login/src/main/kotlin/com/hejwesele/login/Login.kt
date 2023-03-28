@@ -1,6 +1,5 @@
 package com.hejwesele.login
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
@@ -36,6 +35,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hejwesele.ILoginNavigation
 import com.hejwesele.android.components.ErrorDialog
 import com.hejwesele.android.components.FilledButton
 import com.hejwesele.android.components.FormTextField
@@ -50,7 +50,6 @@ import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.extensions.noRippleClickable
 import com.hejwesele.internet.InternetConnectionPopup
-import com.hejwesele.qrscanner.QrScannerView
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -59,18 +58,14 @@ import kotlinx.coroutines.launch
 @Suppress("UnusedPrivateMember")
 @Composable
 @Destination
-fun Login(navigation: ILoginFeatureNavigation) {
-    // LoginEntryPoint(navigation)
-    QrScannerView(
-        modifier = Modifier.fillMaxSize(),
-        onScanned = { Log.d("TOMASZKOPACZ", "Scanned: $it") }
-    )
+fun Login(navigation: ILoginNavigation) {
+    LoginEntryPoint(navigation)
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun LoginEntryPoint(
-    navigation: ILoginFeatureNavigation,
+    navigation: ILoginNavigation,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val systemUiController = rememberSystemUiController()
@@ -105,6 +100,7 @@ private fun LoginEntryPoint(
         onPasswordInputChanged = { text -> viewModel.onPasswordInputChanged(text) },
         onHelpClicked = { viewModel.onHelpRequested() },
         onNextButtonClick = { viewModel.onSubmit() },
+        onScanQrButtonClick = { viewModel.onScanQrClicked() },
         onErrorDismissed = { viewModel.onErrorDismissed() }
     )
 
@@ -119,7 +115,7 @@ private fun LoginEventHandler(
     uiState: LoginUiState,
     sheetState: ModalBottomSheetState,
     viewModel: LoginViewModel,
-    navigation: ILoginFeatureNavigation
+    navigation: ILoginNavigation
 ) {
     EventEffect(
         event = uiState.showHelp,
@@ -130,6 +126,11 @@ private fun LoginEventHandler(
         event = uiState.openEvent,
         onConsumed = { viewModel.onEventOpened() },
         action = { navigation.openEvent() }
+    )
+    EventEffect(
+        event = uiState.openQrScanner,
+        onConsumed = { viewModel.onQrScannerOpened() },
+        action = { navigation.openQrScanner() }
     )
 }
 
@@ -147,6 +148,7 @@ private fun LoginScreen(
     onPasswordInputChanged: (String) -> Unit,
     onHelpClicked: () -> Unit,
     onNextButtonClick: () -> Unit,
+    onScanQrButtonClick: () -> Unit,
     onErrorDismissed: () -> Unit
 ) {
     BottomSheetScaffold(
@@ -161,7 +163,8 @@ private fun LoginScreen(
             onNameInputChanged = onNameInputChanged,
             onPasswordInputChanged = onPasswordInputChanged,
             onHelpClicked = onHelpClicked,
-            onNextButtonClick = onNextButtonClick
+            onNextButtonClick = onNextButtonClick,
+            onScanQrButtonClick = onScanQrButtonClick
         )
         if (isError) {
             ErrorDialog(onDismiss = onErrorDismissed)
@@ -182,7 +185,8 @@ private fun LoginScreenContent(
     onNameInputChanged: (String) -> Unit,
     onPasswordInputChanged: (String) -> Unit,
     onHelpClicked: () -> Unit,
-    onNextButtonClick: () -> Unit
+    onNextButtonClick: () -> Unit,
+    onScanQrButtonClick: () -> Unit
 ) {
     val bottomPadding = WindowInsets.navigationBars
         .only(WindowInsetsSides.Bottom)
@@ -236,7 +240,9 @@ private fun LoginScreenContent(
             )
             VerticalMargin(Dimension.marginLarge)
             Spacer(modifier = Modifier.weight(Dimension.weightFull))
-            ButtonScanQr()
+            ButtonScanQr(
+                onClick = onScanQrButtonClick
+            )
             VerticalMargin(Dimension.marginNormal)
         }
     }
@@ -324,12 +330,14 @@ private fun ButtonNext(
 }
 
 @Composable
-private fun ButtonScanQr() {
+private fun ButtonScanQr(
+    onClick: () -> Unit
+) {
     PlainIconButton(
         text = Label.loginScanQrButtonLabel,
         icon = R.drawable.ic_qr,
         color = MaterialTheme.colorScheme.primary,
-        onClick = {}
+        onClick = onClick
     )
 }
 
@@ -371,6 +379,7 @@ private fun LoginScreenPreview() {
             onPasswordInputChanged = {},
             onHelpClicked = {},
             onNextButtonClick = {},
+            onScanQrButtonClick = {},
             onErrorDismissed = {}
         )
     }

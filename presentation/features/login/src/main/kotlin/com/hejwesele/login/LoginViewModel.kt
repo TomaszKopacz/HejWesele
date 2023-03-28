@@ -81,6 +81,12 @@ internal class LoginViewModel @Inject constructor(
         }
     }
 
+    fun onScanQrClicked() {
+        viewModelScope.launch {
+            updateState { copy(openQrScanner = triggered) }
+        }
+    }
+
     fun onErrorDismissed() {
         viewModelScope.launch {
             updateState { copy(isError = false) }
@@ -94,6 +100,12 @@ internal class LoginViewModel @Inject constructor(
     fun onEventOpened() {
         viewModelScope.launch {
             updateState { copy(openEvent = consumed) }
+        }
+    }
+
+    fun onQrScannerOpened() {
+        viewModelScope.launch {
+            updateState { copy(openQrScanner = consumed) }
         }
     }
 
@@ -217,6 +229,7 @@ internal class LoginViewModel @Inject constructor(
 internal data class LoginUiState(
     val showHelp: StateEvent,
     val openEvent: StateEvent,
+    val openQrScanner: StateEvent,
     val isLoading: Boolean,
     val isError: Boolean,
     val eventNameError: Throwable?,
@@ -227,6 +240,7 @@ internal data class LoginUiState(
         val DEFAULT = LoginUiState(
             showHelp = consumed,
             openEvent = consumed,
+            openQrScanner = consumed,
             isLoading = false,
             isError = false,
             eventNameError = null,
