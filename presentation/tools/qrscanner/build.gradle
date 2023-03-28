@@ -1,0 +1,35 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+}
+
+android {
+    namespace "com.hejwesele.qrscanner"
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
+    }
+}
+
+dependencies {
+    implementation projects.libraries.qr
+
+    implementation projects.presentation.ui.theme
+
+    implementation libs.androidx.activity.compose
+    implementation libs.androidx.compose.foundation
+    implementation libs.androidx.compose.material3
+    implementation libs.androidx.compose.ui
+    implementation libs.androidx.compose.ui.graphics
+    implementation libs.androidx.hilt.navigation.compose
+    implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation libs.camera
+    implementation libs.camera.lifecycle
+    implementation libs.camera.view
+
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
+}

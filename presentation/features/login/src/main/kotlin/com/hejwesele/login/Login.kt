@@ -1,5 +1,6 @@
 package com.hejwesele.login
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
@@ -49,15 +50,21 @@ import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.extensions.noRippleClickable
 import com.hejwesele.internet.InternetConnectionPopup
+import com.hejwesele.qrscanner.QrScannerView
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
+@Suppress("UnusedPrivateMember")
 @Composable
 @Destination
 fun Login(navigation: ILoginFeatureNavigation) {
-    LoginEntryPoint(navigation)
+    // LoginEntryPoint(navigation)
+    QrScannerView(
+        modifier = Modifier.fillMaxSize(),
+        onScanned = { Log.d("TOMASZKOPACZ", "Scanned: $it") }
+    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)

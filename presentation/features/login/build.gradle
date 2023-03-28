@@ -26,6 +26,7 @@ dependencies {
     implementation projects.libraries.validation
 
     implementation projects.presentation.tools.internet
+    implementation projects.presentation.tools.qrscanner
     implementation projects.presentation.ui.components
     implementation projects.presentation.ui.extensions
     implementation projects.presentation.ui.theme
