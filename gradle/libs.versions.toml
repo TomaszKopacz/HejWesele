@@ -57,6 +57,9 @@ barcode = "17.0.3"
 # Camera
 camera = "1.3.0-alpha04"
 
+# JSON
+moshi = "1.14.0"
+
 # Tools
 logcat = "0.1"
 
@@ -136,6 +139,10 @@ barcode = { module = "com.google.mlkit:barcode-scanning", version.ref = "barcode
 camera = { module = "androidx.camera:camera-camera2", version.ref = "camera" }
 camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camera" }
 camera-view = { module = "androidx.camera:camera-view", version.ref = "camera" }
+
+# JSON
+moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
+moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshi" }
 
 # Other
 logcat = { module = "com.squareup.logcat:logcat", version.ref = "logcat" }

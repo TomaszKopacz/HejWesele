@@ -1,18 +1,21 @@
 package com.hejwesele.qr
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
+import com.hejwesele.qr.usecase.ParseEventQr
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class QrScannerViewModel @Inject constructor() : StateViewModel<QrScannerUiState>(QrScannerUiState.DEFAULT) {
+internal class QrScannerViewModel @Inject constructor(
+    private val parseEventQr: ParseEventQr
+) : StateViewModel<QrScannerUiState>(QrScannerUiState.DEFAULT) {
 
     fun onBackClicked() {
         viewModelScope.launch {
@@ -21,14 +24,24 @@ internal class QrScannerViewModel @Inject constructor() : StateViewModel<QrScann
     }
 
     fun onQrScanned(text: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             updateState { copy(isLoading = true) }
 
             delay(LOGIN_DELAY)
 
-            Log.d("HejWesele", text)
-
-            updateState { copy(isLoading = false, openEvent = triggered) }
+            parseEventQr(text)
+                .onSuccess { credentials ->
+                    if (credentials.name == "hej" && credentials.password == "nEeL9j6VAMtdsehezoLxjI655S4vkTWs1/EJcsjVY7o=") {
+                        updateState { copy(isLoading = false, openEvent = triggered) }
+                    } else {
+                        // TODO - handle error
+                        updateState { copy(isLoading = false) }
+                    }
+                }
+                .onFailure {
+                    // TODO - handle error
+                    updateState { copy(isLoading = false) }
+                }
         }
     }
 
