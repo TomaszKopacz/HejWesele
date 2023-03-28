@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
 import com.hejwesele.android.osinfo.OsInfo
 import com.hejwesele.gallery.destinations.GalleryPreviewDestination
-import com.hejwesele.gallery.preview.usecase.PermissionHandler
 import com.hejwesele.gallery.preview.usecase.SaveImage
+import com.hejwesele.permissions.PermissionsHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent
 import de.palm.composestateevents.StateEventWithContent
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class GalleryPreviewViewModel @Inject constructor(
     state: SavedStateHandle,
-    private val permissionHandler: PermissionHandler,
+    private val permissionsHandler: PermissionsHandler,
     private val osInfo: OsInfo,
     private val savePhoto: SaveImage
 ) : StateViewModel<GalleryPreviewUiState>(GalleryPreviewUiState.DEFAULT) {
@@ -57,7 +57,7 @@ internal class GalleryPreviewViewModel @Inject constructor(
                 savePhotoToStorage(photoUrl)
             } else {
                 val permissions = arrayOf(WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE)
-                val permissionsGranted = permissionHandler.checkPermissions(permissions)
+                val permissionsGranted = permissionsHandler.checkPermissions(permissions)
 
                 if (permissionsGranted) {
                     savePhotoToStorage(photoUrl)

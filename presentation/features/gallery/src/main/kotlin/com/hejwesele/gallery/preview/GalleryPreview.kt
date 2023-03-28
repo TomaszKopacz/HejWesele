@@ -96,46 +96,6 @@ private fun GalleryPreviewEntryPoint(
     )
 }
 
-@OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalAnimationApi::class,
-    ExperimentalCoroutinesApi::class
-)
-@Composable
-private fun GalleryPreviewScreen(
-    isLoading: Boolean,
-    photoUrls: List<String>,
-    selectedPhotoIndex: Int,
-    isSavingPhoto: Boolean,
-    snackbarState: SnackbarHostState,
-    isInternetPopupEnabled: Boolean,
-    onBackClicked: () -> Unit,
-    onSaveClicked: (String) -> Unit
-) {
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarState) }
-    ) { padding ->
-        Surface(color = md_theme_dark_background) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                if (isInternetPopupEnabled) {
-                    InternetConnectionPopup()
-                }
-                GalleryPreviewContent(
-                    padding = padding,
-                    photoUrls = photoUrls,
-                    selectedPhotoIndex = selectedPhotoIndex,
-                    isSavingPhoto = isSavingPhoto,
-                    onBack = onBackClicked,
-                    onSave = { photoUrl -> onSaveClicked(photoUrl) }
-                )
-                if (isLoading) {
-                    Loader()
-                }
-            }
-        }
-    }
-}
-
 @Composable
 private fun GalleryPreviewEventsHandler(
     uiState: GalleryPreviewUiState,
@@ -174,6 +134,46 @@ private fun GalleryPreviewEventsHandler(
             )
         }
     )
+}
+
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalAnimationApi::class,
+    ExperimentalCoroutinesApi::class
+)
+@Composable
+private fun GalleryPreviewScreen(
+    isLoading: Boolean,
+    photoUrls: List<String>,
+    selectedPhotoIndex: Int,
+    isSavingPhoto: Boolean,
+    snackbarState: SnackbarHostState,
+    isInternetPopupEnabled: Boolean,
+    onBackClicked: () -> Unit,
+    onSaveClicked: (String) -> Unit
+) {
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarState) }
+    ) { padding ->
+        Surface(color = md_theme_dark_background) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                if (isInternetPopupEnabled) {
+                    InternetConnectionPopup()
+                }
+                GalleryPreviewContent(
+                    padding = padding,
+                    photoUrls = photoUrls,
+                    selectedPhotoIndex = selectedPhotoIndex,
+                    isSavingPhoto = isSavingPhoto,
+                    onBack = onBackClicked,
+                    onSave = { photoUrl -> onSaveClicked(photoUrl) }
+                )
+                if (isLoading) {
+                    Loader()
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalPagerApi::class)

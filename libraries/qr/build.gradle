@@ -3,6 +3,10 @@ plugins {
     id "org.jetbrains.kotlin.android"
 }
 
+android {
+    namespace "com.hejwesele.qr"
+}
+
 dependencies {
     implementation libs.barcode
 }

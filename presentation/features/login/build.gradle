@@ -24,6 +24,7 @@ dependencies {
     implementation projects.libraries.encryption
     implementation projects.libraries.json
     implementation projects.libraries.mvvm
+    implementation projects.libraries.permissions
     implementation projects.libraries.result
     implementation projects.libraries.validation
 

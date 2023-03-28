@@ -1,5 +1,6 @@
 package com.hejwesele.login
 
+import android.Manifest
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
 import com.hejwesele.android.osinfo.OsInfo
@@ -8,6 +9,7 @@ import com.hejwesele.encryption.base64
 import com.hejwesele.encryption.bytes
 import com.hejwesele.encryption.sha256
 import com.hejwesele.encryption.string
+import com.hejwesele.permissions.PermissionsHandler
 import com.hejwesele.usecase.LoginEvent
 import com.hejwesele.validation.StringNotEmpty
 import com.hejwesele.validation.ValidationResult.Invalid
@@ -15,6 +17,7 @@ import com.hejwesele.validation.ValidationResult.Valid
 import com.hejwesele.validation.Validator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent
+import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class LoginViewModel @Inject constructor(
     private val osInfo: OsInfo,
+    private val permissionsHandler: PermissionsHandler,
     private val loginEvent: LoginEvent
 ) : StateViewModel<LoginUiState>(LoginUiState.DEFAULT) {
 
@@ -84,6 +88,21 @@ internal class LoginViewModel @Inject constructor(
 
     fun onScanQrClicked() {
         viewModelScope.launch {
+            val permission = Manifest.permission.CAMERA
+            val permissionsGranted = permissionsHandler.checkPermission(permission)
+
+            if (permissionsGranted) {
+                updateState { copy(openQrScanner = triggered) }
+            } else {
+                updateState {
+                    copy(requestCameraPermission = triggered(permission))
+                }
+            }
+        }
+    }
+
+    fun onCameraPermissionResult(isGranted: Boolean) {
+        if (isGranted) {
             updateState { copy(openQrScanner = triggered) }
         }
     }
@@ -101,6 +120,12 @@ internal class LoginViewModel @Inject constructor(
     fun onEventOpened() {
         viewModelScope.launch {
             updateState { copy(openEvent = consumed) }
+        }
+    }
+
+    fun onCameraPermissionRequested() {
+        viewModelScope.launch {
+            updateState { copy(requestCameraPermission = consumed()) }
         }
     }
 
@@ -198,6 +223,7 @@ internal class LoginViewModel @Inject constructor(
 internal data class LoginUiState(
     val showHelp: StateEvent,
     val openEvent: StateEvent,
+    val requestCameraPermission: StateEventWithContent<String>,
     val openQrScanner: StateEvent,
     val isLoading: Boolean,
     val isError: Boolean,
@@ -209,6 +235,7 @@ internal data class LoginUiState(
         val DEFAULT = LoginUiState(
             showHelp = consumed,
             openEvent = consumed,
+            requestCameraPermission = consumed(),
             openQrScanner = consumed,
             isLoading = false,
             isError = false,

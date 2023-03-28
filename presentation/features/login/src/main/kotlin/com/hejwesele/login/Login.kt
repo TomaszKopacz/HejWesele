@@ -1,6 +1,9 @@
 package com.hejwesele.login
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -55,7 +58,6 @@ import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
-@Suppress("UnusedPrivateMember")
 @Composable
 @Destination
 fun Login(navigation: ILoginNavigation) {
@@ -81,9 +83,14 @@ private fun LoginEntryPoint(
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
 
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(RequestPermission()) { isGranted ->
+        viewModel.onCameraPermissionResult(isGranted)
+    }
+
     LoginEventHandler(
         uiState = uiState,
         sheetState = sheetState,
+        cameraPermissionLauncher = cameraPermissionLauncher,
         viewModel = viewModel,
         navigation = navigation
     )
@@ -114,6 +121,7 @@ private fun LoginEntryPoint(
 private fun LoginEventHandler(
     uiState: LoginUiState,
     sheetState: ModalBottomSheetState,
+    cameraPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
     viewModel: LoginViewModel,
     navigation: ILoginNavigation
 ) {
@@ -126,6 +134,11 @@ private fun LoginEventHandler(
         event = uiState.openEvent,
         onConsumed = { viewModel.onEventOpened() },
         action = { navigation.openEvent() }
+    )
+    EventEffect(
+        event = uiState.requestCameraPermission,
+        onConsumed = { viewModel.onCameraPermissionRequested() },
+        action = { permission -> cameraPermissionLauncher.launch(permission) }
     )
     EventEffect(
         event = uiState.openQrScanner,
