@@ -8,10 +8,7 @@ import com.hejwesele.encryption.base64
 import com.hejwesele.encryption.bytes
 import com.hejwesele.encryption.sha256
 import com.hejwesele.encryption.string
-import com.hejwesele.events.model.Event
-import com.hejwesele.events.model.EventSettings
-import com.hejwesele.login.usecase.FindEvent
-import com.hejwesele.login.usecase.StoreEvent
+import com.hejwesele.usecase.LoginEvent
 import com.hejwesele.validation.StringNotEmpty
 import com.hejwesele.validation.ValidationResult.Invalid
 import com.hejwesele.validation.ValidationResult.Valid
@@ -23,14 +20,12 @@ import de.palm.composestateevents.triggered
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 internal class LoginViewModel @Inject constructor(
     private val osInfo: OsInfo,
-    private val findEvent: FindEvent,
-    private val storeEvent: StoreEvent
+    private val loginEvent: LoginEvent
 ) : StateViewModel<LoginUiState>(LoginUiState.DEFAULT) {
 
     private var state = State()
@@ -70,14 +65,20 @@ internal class LoginViewModel @Inject constructor(
     }
 
     fun onSubmit() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             updateState { copy(isLoading = true) }
 
             delay(LOGIN_DELAY)
 
-            findEvent(state.eventNameInput)
-                .onSuccess { event -> handleEvent(event) }
-                .onFailure { updateState { copy(isLoading = false, isError = true) } }
+            loginEvent(
+                name = state.eventNameInput,
+                password = state.eventPasswordInput.encodePassword(),
+                onServiceError = { sendGeneralErrorState() },
+                onEventNotFound = { sendEventNotFoundState() },
+                onPasswordInvalid = { sendPasswordInvalidState() },
+                onSaveEventFailed = { sendEventSavingErrorState() },
+                onDone = { sendSuccessState() }
+            )
         }
     }
 
@@ -130,91 +131,59 @@ internal class LoginViewModel @Inject constructor(
         }
     }
 
-    private suspend fun handleEvent(event: Event?) {
-        validateEvent(
-            event = event,
-            onFound = {
-                validatePassword(
-                    inputPassword = state.eventPasswordInput,
-                    eventPassword = it.password,
-                    onValid = { storeEventOnDevice(it) },
-                    onInvalid = {
-                        updateState {
-                            copy(
-                                isLoading = false,
-                                isError = false,
-                                eventNameError = null,
-                                eventPasswordError = Throwable(Label.loginIncorrectPasswordErrorLabel)
-                            )
-                        }
-                    }
-                )
-            },
-            onNotFound = {
-                updateState {
-                    copy(
-                        isLoading = false,
-                        isError = false,
-                        eventNameError = Throwable(Label.loginEventNotFoundErrorLabel),
-                        eventPasswordError = null
-                    )
-                }
-            }
-        )
-    }
-
-    private suspend fun validateEvent(
-        event: Event?,
-        onFound: suspend (Event) -> Unit,
-        onNotFound: suspend () -> Unit
-    ) {
-        if (event != null) onFound(event) else onNotFound()
-    }
-
-    private suspend fun validatePassword(
-        inputPassword: String,
-        eventPassword: String,
-        onValid: suspend () -> Unit,
-        onInvalid: suspend () -> Unit
-    ) = withContext(Dispatchers.Default) {
-        if (inputPassword.bytes().sha256().base64(osInfo).string() == eventPassword) {
-            onValid()
-        } else {
-            onInvalid()
+    private fun sendGeneralErrorState() {
+        updateState {
+            copy(
+                isLoading = false,
+                isError = true
+            )
         }
     }
 
-    private suspend fun storeEventOnDevice(event: Event) = withContext(Dispatchers.IO) {
-        storeEvent(event.toEventSettings())
-            .onSuccess {
-                updateState {
-                    copy(
-                        openEvent = triggered,
-                        isLoading = false,
-                        isError = false,
-                        eventNameError = null,
-                        eventPasswordError = null
-                    )
-                }
-            }
-            .onFailure {
-                updateState {
-                    copy(
-                        isLoading = false,
-                        isError = true
-                    )
-                }
-            }
+    private fun sendEventNotFoundState() {
+        updateState {
+            copy(
+                isLoading = false,
+                isError = false,
+                eventNameError = Throwable(Label.loginEventNotFoundErrorLabel),
+                eventPasswordError = null
+            )
+        }
     }
 
-    private fun Event.toEventSettings() = EventSettings(
-        id = id,
-        name = name,
-        date = date,
-        invitationId = invitationId,
-        galleryId = galleryId,
-        galleryHintDismissed = false
-    )
+    private fun sendPasswordInvalidState() {
+        updateState {
+            copy(
+                isLoading = false,
+                isError = false,
+                eventNameError = null,
+                eventPasswordError = Throwable(Label.loginIncorrectPasswordErrorLabel)
+            )
+        }
+    }
+
+    private fun sendEventSavingErrorState() {
+        updateState {
+            copy(
+                isLoading = false,
+                isError = true
+            )
+        }
+    }
+
+    private fun sendSuccessState() {
+        updateState {
+            copy(
+                openEvent = triggered,
+                isLoading = false,
+                isError = false,
+                eventNameError = null,
+                eventPasswordError = null
+            )
+        }
+    }
+
+    private fun String.encodePassword() = bytes().sha256().base64(osInfo).string()
 
     private data class State(
         val eventNameInput: String = "",

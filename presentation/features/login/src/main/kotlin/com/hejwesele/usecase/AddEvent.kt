@@ -1,4 +1,4 @@
-package com.hejwesele.login.usecase
+package com.hejwesele.usecase
 
 import com.hejwesele.android.osinfo.OsInfo
 import com.hejwesele.encryption.base64

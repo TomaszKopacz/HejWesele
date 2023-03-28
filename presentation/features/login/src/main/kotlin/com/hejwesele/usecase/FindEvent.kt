@@ -1,4 +1,4 @@
-package com.hejwesele.login.usecase
+package com.hejwesele.usecase
 
 import com.hejwesele.events.EventsRepository
 import kotlinx.coroutines.Dispatchers

@@ -1,7 +1,9 @@
 package com.hejwesele.qr
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,15 +21,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.ILoginNavigation
+import com.hejwesele.android.components.ErrorDialog
 import com.hejwesele.android.components.LoaderDialog
 import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.android.theme.md_theme_dark_onBackground
+import com.hejwesele.internet.InternetConnectionPopup
 import com.hejwesele.login.R
 import com.hejwesele.qrscanner.QrScannerView
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @Composable
 @Destination
@@ -55,7 +60,10 @@ private fun QrScannerEntryPoint(
 
     QrScannerScreen(
         isLoading = uiState.isLoading,
+        isError = uiState.isError,
+        isInternetPopupEnabled = true,
         onBack = { viewModel.onBackClicked() },
+        onErrorDismiss = { viewModel.onErrorDismissed() },
         onScanned = { text -> viewModel.onQrScanned(text) }
     )
 }
@@ -81,49 +89,79 @@ private fun QrScannerEventHandler(
 @Composable
 private fun QrScannerScreen(
     isLoading: Boolean,
+    isError: Boolean,
+    isInternetPopupEnabled: Boolean,
     onBack: () -> Unit,
+    onErrorDismiss: () -> Unit,
     onScanned: (String) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         QrScannerContent(
+            isInternetPopupEnabled = isInternetPopupEnabled,
             onBack = onBack,
             onScanned = onScanned
         )
         if (isLoading) {
             LoaderDialog(label = Label.loginLoadingLabel)
         }
+        if (isError) {
+            ErrorDialog(
+                onDismiss = onErrorDismiss
+            )
+        }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalAnimationApi::class,
+    ExperimentalCoroutinesApi::class
+)
 @Composable
 private fun QrScannerContent(
+    isInternetPopupEnabled: Boolean,
     onBack: () -> Unit,
     onScanned: (String) -> Unit
 ) {
     Scaffold { padding ->
-        QrScannerView(
-            modifier = Modifier.fillMaxSize(),
-            onScanned = { text -> onScanned(text) }
-        )
-        Box(
-            modifier = Modifier
-                .padding(
-                    top = padding.calculateTopPadding(),
-                    start = Dimension.marginNormal,
-                    end = Dimension.marginNormal,
-                    bottom = Dimension.marginNormal
+        Column(modifier = Modifier.fillMaxSize()) {
+            if (isInternetPopupEnabled) {
+                InternetConnectionPopup(statusBarSensitive = false)
+            }
+            Box(modifier = Modifier.fillMaxSize()) {
+                QrScannerView(
+                    modifier = Modifier.fillMaxSize(),
+                    onScanned = { text -> onScanned(text) }
                 )
-        ) {
-            Icon(
-                modifier = Modifier
-                    .size(Dimension.iconSizeNormal)
-                    .clickable { onBack() },
-                contentDescription = null,
-                painter = painterResource(R.drawable.ic_arrow_left),
-                tint = md_theme_dark_onBackground
-            )
+                BackIcon(
+                    modifier = Modifier
+                        .padding(
+                            top = padding.calculateTopPadding(),
+                            start = Dimension.marginNormal,
+                            end = Dimension.marginNormal,
+                            bottom = Dimension.marginNormal
+                        ),
+                    onClick = onBack
+                )
+            }
         }
+    }
+}
+
+@Composable
+private fun BackIcon(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Box(modifier = modifier) {
+        Icon(
+            modifier = Modifier
+                .size(Dimension.iconSizeNormal)
+                .clickable { onClick() },
+            contentDescription = null,
+            painter = painterResource(R.drawable.ic_arrow_left),
+            tint = md_theme_dark_onBackground
+        )
     }
 }
 
@@ -133,7 +171,10 @@ private fun QrScannerScreenPreview() {
     AppTheme(darkTheme = false) {
         QrScannerScreen(
             isLoading = false,
+            isError = false,
+            isInternetPopupEnabled = false,
             onBack = {},
+            onErrorDismiss = {},
             onScanned = {}
         )
     }

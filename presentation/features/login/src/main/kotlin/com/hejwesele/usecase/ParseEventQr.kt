@@ -1,4 +1,4 @@
-package com.hejwesele.qr.usecase
+package com.hejwesele.usecase
 
 import com.hejwesele.json.JsonParser
 import com.hejwesele.qr.model.EventCredentials
