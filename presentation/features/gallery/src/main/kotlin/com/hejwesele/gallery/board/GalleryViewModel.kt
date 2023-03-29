@@ -3,7 +3,6 @@ package com.hejwesele.gallery.board
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
 import com.hejwesele.events.model.EventSettings
-import com.hejwesele.galleries.model.Gallery
 import com.hejwesele.gallery.board.usecase.DismissGalleryHint
 import com.hejwesele.gallery.board.usecase.GetEventSettings
 import com.hejwesele.gallery.board.usecase.ObserveGallery
@@ -107,10 +106,6 @@ internal class GalleryViewModel @Inject constructor(
         updateState { copy(showPhotoUploadSuccess = consumed) }
     }
 
-    fun onErrorRetry() {
-        /* no-op */
-    }
-
     private suspend fun handleEventSettings(settings: EventSettings) {
         state = state.copy(
             eventDate = settings.date,
@@ -125,57 +120,48 @@ internal class GalleryViewModel @Inject constructor(
                     result
                         .onSuccess { gallery ->
                             state = state.copy(externalGalleryUrl = gallery.externalGallery)
-                            showGalleryData(gallery)
+
+                            val weddingDate = requireNotNull(state.eventDate)
+                            val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                            val weddingStarted = now >= weddingDate
+                            val galleryLinkPresent = !gallery.externalGallery.isNullOrEmpty()
+                            val galleryHintEnabled = weddingStarted && !state.hintDismissed && !galleryLinkPresent
+                            val photos = gallery.photos
+
+                            updateState {
+                                copy(
+                                    enabled = true,
+                                    loading = false,
+                                    weddingStarted = weddingStarted,
+                                    galleryHintEnabled = galleryHintEnabled,
+                                    externalGalleryEnabled = galleryLinkPresent,
+                                    photos = ArrayList(photos.reversed()),
+                                    imageCropFailure = false,
+                                    error = null
+                                )
+                            }
                         }
-                        .onFailure { error -> showGalleryError(error) }
+                        .onFailure { error ->
+                            updateState {
+                                copy(
+                                    loading = false,
+                                    error = error
+                                )
+                            }
+                        }
                 }
         } else {
-            showGalleryDisabled()
-        }
-    }
-
-    private fun showGalleryData(gallery: Gallery) {
-        val weddingDate = requireNotNull(state.eventDate)
-        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        val weddingStarted = now >= weddingDate
-        val galleryLinkPresent = !gallery.externalGallery.isNullOrEmpty()
-        val galleryHintEnabled = weddingStarted && !state.hintDismissed && !galleryLinkPresent
-        val photos = gallery.photos
-
-        updateState {
-            copy(
-                enabled = true,
-                loading = false,
-                weddingStarted = weddingStarted,
-                galleryHintEnabled = galleryHintEnabled,
-                externalGalleryEnabled = galleryLinkPresent,
-                photos = ArrayList(photos.reversed()),
-                imageCropFailure = false,
-                error = null
-            )
-        }
-    }
-
-    private fun showGalleryError(error: Throwable) {
-        updateState {
-            copy(
-                loading = false,
-                error = error
-            )
-        }
-    }
-
-    private fun showGalleryDisabled() {
-        updateState {
-            copy(
-                enabled = false,
-                loading = false,
-                galleryHintEnabled = false,
-                externalGalleryEnabled = false,
-                photos = arrayListOf(),
-                imageCropFailure = false,
-                error = null
-            )
+            updateState {
+                copy(
+                    enabled = false,
+                    loading = false,
+                    galleryHintEnabled = false,
+                    externalGalleryEnabled = false,
+                    photos = arrayListOf(),
+                    imageCropFailure = false,
+                    error = null
+                )
+            }
         }
     }
 

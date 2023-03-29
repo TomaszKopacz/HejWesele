@@ -27,6 +27,6 @@ fun Services() {
                     .asPaddingValues()
             )
     ) {
-        TextPlaceholder("Partnerzy i atrakcje")
+        TextPlaceholder(text = "Partnerzy i atrakcje")
     }
 }

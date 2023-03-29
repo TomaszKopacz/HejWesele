@@ -85,8 +85,8 @@ internal class HomeViewModel @Inject constructor(
     private fun InvitationTile.toUiModel() = InvitationTileUiModel(
         type = type,
         title = title,
-        subtitle = subtitle ?: "",
-        description = description ?: "",
+        subtitle = subtitle.orEmpty(),
+        description = description.orEmpty(),
         avatars = avatars,
         animationResId = getAnimationResource(type),
         intents = intents.map { it.toUiModel() },
@@ -117,8 +117,8 @@ internal class HomeViewModel @Inject constructor(
 
     private fun String.getIntentTitle(type: IntentType) = when (type) {
         IntentType.INSTAGRAM -> removePrefix(IntentUrlPrefix.INSTAGRAM).split('/').first()
-        IntentType.GOOGLE_MAPS -> Label.homeIntentTitleMaps
-        else -> Label.homeIntentTitleWeb
+        IntentType.GOOGLE_MAPS -> Label.homeIntentMapsLabel
+        else -> Label.homeIntentWebLabel
     }
 }
 

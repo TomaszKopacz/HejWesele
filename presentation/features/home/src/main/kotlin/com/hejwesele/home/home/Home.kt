@@ -6,6 +6,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -154,6 +155,10 @@ private fun HomeScreen(
 ) {
     BottomSheetScaffold(
         state = sheetState,
+        padding = PaddingValues(
+            horizontal = Dimension.marginLarge,
+            vertical = Dimension.marginNormal
+        ),
         sheetContent = {
             InvitationBottomSheetContent(
                 intents = intents,
@@ -164,9 +169,13 @@ private fun HomeScreen(
         when {
             isLoading -> Loader()
             isError -> ErrorView(
+                modifier = Modifier.fillMaxSize(),
                 onRetry = onErrorRetry
             )
             else -> HomeContent(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surface),
                 tiles = tiles,
                 onTileClicked = onTileClicked
             )
@@ -179,18 +188,19 @@ private fun HomeScreen(
 
 @Composable
 private fun HomeContent(
+    modifier: Modifier = Modifier,
     tiles: List<InvitationTileUiModel>,
     onTileClicked: (InvitationTileUiModel) -> Unit
 ) {
-    ScrollableColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
-    ) {
-        CoupleLottieAnimation()
+    ScrollableColumn(modifier = modifier) {
+        CoupleLottieAnimation(
+            modifier = Modifier
+                .padding(top = Dimension.marginLarge)
+                .aspectRatio(1.0f)
+        )
         when {
             tiles.isEmpty() -> TextPlaceholder(
-                text = Label.homeNoInvitationTilesMessage
+                text = Label.homeNoInvitationTilesText
             )
             else -> InvitationsTilesCarousel(
                 tiles = tiles,
@@ -202,12 +212,18 @@ private fun HomeContent(
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-private fun InvitationsTilesCarousel(tiles: List<InvitationTileUiModel>, onTileClicked: (InvitationTileUiModel) -> Unit) {
+private fun InvitationsTilesCarousel(
+    modifier: Modifier = Modifier,
+    tiles: List<InvitationTileUiModel>,
+    onTileClicked: (InvitationTileUiModel) -> Unit
+) {
     HorizontalPager(
+        modifier = modifier,
         count = tiles.count(),
         contentPadding = PaddingValues(Dimension.marginLarge_3_4)
     ) { page ->
         InvitationTile(
+            modifier = Modifier.fillMaxWidth(),
             tile = tiles[page],
             onTileClicked = onTileClicked
         )
@@ -215,42 +231,66 @@ private fun InvitationsTilesCarousel(tiles: List<InvitationTileUiModel>, onTileC
 }
 
 @Composable
-private fun InvitationTile(tile: InvitationTileUiModel, onTileClicked: (InvitationTileUiModel) -> Unit) {
-    Surface(
-        Modifier
-            .padding(horizontal = Dimension.marginLarge_1_4)
-            .shadow(
-                elevation = Dimension.elevationSmall,
-                shape = MaterialTheme.shapes.small
-            )
-            .fillMaxWidth()
-            .clickable(enabled = tile.clickable) {
-                onTileClicked(tile)
-            },
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        shape = MaterialTheme.shapes.small
-    ) {
-        Column(
+private fun InvitationTile(
+    modifier: Modifier = Modifier,
+    tile: InvitationTileUiModel,
+    onTileClicked: (InvitationTileUiModel) -> Unit
+) {
+    Box(modifier = modifier) {
+        Surface(
             Modifier
-                .padding(Dimension.marginNormal)
+                .padding(horizontal = Dimension.marginLarge_1_4)
+                .shadow(
+                    elevation = Dimension.elevationSmall,
+                    shape = MaterialTheme.shapes.small
+                )
                 .fillMaxWidth()
+                .clickable(enabled = tile.clickable) {
+                    onTileClicked(tile)
+                },
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            shape = MaterialTheme.shapes.small
         ) {
-            with(tile) {
-                when {
-                    avatars.isNotEmpty() -> InvitationTileAvatars(tile.avatars, tile.animationResId)
-                    else -> InvitationTileLottieAnimation(tile.animationResId)
+            Column(
+                Modifier
+                    .padding(Dimension.marginNormal)
+                    .fillMaxWidth()
+            ) {
+                with(tile) {
+                    when {
+                        avatars.isNotEmpty() -> InvitationTileAvatars(
+                            modifier = Modifier.fillMaxWidth(),
+                            avatars = tile.avatars,
+                            animationResId = tile.animationResId
+                        )
+                        else -> InvitationTileLottieAnimation(
+                            modifier = Modifier
+                                .padding(bottom = Dimension.marginNormal)
+                                .size(Dimension.imageSmall)
+                                .aspectRatio(1.0f),
+                            animationResId = tile.animationResId
+                        )
+                    }
+                    InvitationTileTitle(
+                        modifier = Modifier.padding(bottom = Dimension.marginSmall),
+                        title = title,
+                        subtitle = subtitle
+                    )
+                    InvitationTileDescription(text = description)
                 }
-                InvitationTileTitle(title, subtitle)
-                InvitationTileDescription(description)
             }
         }
     }
 }
 
 @Composable
-private fun InvitationTileTitle(title: String, subtitle: String?) {
+private fun InvitationTileTitle(
+    modifier: Modifier = Modifier,
+    title: String,
+    subtitle: String?
+) {
     Row(
-        Modifier.padding(bottom = Dimension.marginSmall),
+        modifier = modifier,
         verticalAlignment = Alignment.Bottom
     ) {
         Text(
@@ -271,9 +311,13 @@ private fun InvitationTileTitle(title: String, subtitle: String?) {
 
 @Suppress("MagicNumber")
 @Composable
-private fun InvitationTileDescription(text: String) {
+private fun InvitationTileDescription(
+    modifier: Modifier = Modifier,
+    text: String
+) {
     val linesCount = 4
     Text(
+        modifier = modifier,
         text = text.addEmptyLines(linesCount),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -282,9 +326,20 @@ private fun InvitationTileDescription(text: String) {
 }
 
 @Composable
-private fun InvitationTileAvatars(avatars: List<String>, animationRes: Int) {
+private fun InvitationTileAvatars(
+    modifier: Modifier = Modifier,
+    avatars: List<String>,
+    animationResId: Int
+) {
+    Box(modifier = modifier)
     if (avatars.isEmpty()) {
-        InvitationTileLottieAnimation(animationRes = animationRes)
+        InvitationTileLottieAnimation(
+            modifier = Modifier
+                .padding(bottom = Dimension.marginNormal)
+                .size(Dimension.imageSmall)
+                .aspectRatio(1.0f),
+            animationResId = animationResId
+        )
     } else {
         Row(
             Modifier
@@ -295,7 +350,7 @@ private fun InvitationTileAvatars(avatars: List<String>, animationRes: Int) {
                 CircleImage(
                     url = url,
                     modifier = Modifier
-                        .size(Dimension.imageSizeSmall)
+                        .size(Dimension.imageSmall)
                         .offset(-Dimension.marginSmall.times(index))
                 )
             }
@@ -304,63 +359,67 @@ private fun InvitationTileAvatars(avatars: List<String>, animationRes: Int) {
 }
 
 @Composable
-private fun InvitationTileLottieAnimation(@RawRes animationRes: Int) {
-    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(animationRes))
+private fun InvitationTileLottieAnimation(
+    modifier: Modifier = Modifier,
+    @RawRes animationResId: Int
+) {
+    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(animationResId))
     LottieAnimation(
+        modifier = modifier,
         composition = composition,
-        iterations = LottieConstants.IterateForever,
-        modifier = Modifier
-            .padding(bottom = Dimension.marginNormal)
-            .size(Dimension.imageSizeSmall)
-            .aspectRatio(1.0f)
+        iterations = LottieConstants.IterateForever
     )
 }
 
 @Composable
-private fun CoupleLottieAnimation() {
+private fun CoupleLottieAnimation(
+    modifier: Modifier = Modifier
+) {
     val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.lottie_wedding_couple))
     LottieAnimation(
+        modifier = modifier,
         composition = composition,
-        iterations = LottieConstants.IterateForever,
-        modifier = Modifier
-            .padding(top = Dimension.marginLarge)
-            .aspectRatio(1.0f)
+        iterations = LottieConstants.IterateForever
     )
 }
 
 @Composable
 private fun InvitationBottomSheetContent(intents: List<IntentUiModel>, onIntentSelected: (IntentUiModel) -> Unit) {
-    intents.forEach { intent ->
+    fun Int.isLastItem() = this == intents.size - 1
+
+    intents.forEachIndexed { index, intent ->
         IntentItem(
+            modifier = Modifier.fillMaxWidth(),
             intent = intent,
             onClick = onIntentSelected
         )
-        VerticalMargin(Dimension.marginNormal)
+        if (!index.isLastItem()) {
+            VerticalMargin(Dimension.marginNormal)
+        }
     }
 }
 
 @Composable
 private fun IntentItem(
+    modifier: Modifier = Modifier,
     intent: IntentUiModel,
     onClick: (IntentUiModel) -> Unit
 ) {
     Surface(
-        Modifier
-            .fillMaxWidth()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = { onClick(intent) }
-            )
+        modifier = modifier.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = { onClick(intent) }
+        )
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 painter = painterResource(id = intent.iconResId),
                 contentDescription = null,
-                modifier = Modifier.size(Dimension.iconSizeNormal),
+                modifier = Modifier.size(Dimension.iconNormal),
                 tint = MaterialTheme.colorScheme.primary
             )
             HorizontalMargin(Dimension.marginNormal)

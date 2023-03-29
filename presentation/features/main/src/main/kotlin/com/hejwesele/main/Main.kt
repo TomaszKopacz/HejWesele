@@ -142,7 +142,7 @@ private fun RowScope.MainBottomNavigationItem(
             Icon(
                 painter = painterResource(iconResId),
                 tint = iconTint,
-                modifier = Modifier.size(Dimension.iconSizeNormal),
+                modifier = Modifier.size(Dimension.iconNormal),
                 contentDescription = null
             )
         },

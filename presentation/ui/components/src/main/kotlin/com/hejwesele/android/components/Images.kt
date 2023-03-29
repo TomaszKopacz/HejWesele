@@ -19,8 +19,8 @@ import com.hejwesele.android.theme.Dimension
 
 @Composable
 fun CircleImage(
-    url: String,
-    modifier: Modifier
+    modifier: Modifier,
+    url: String
 ) {
     Surface(
         modifier = modifier
@@ -55,8 +55,8 @@ private fun CircleImagePreview() {
 
 @Composable
 fun RoundedCornerImage(
-    url: String,
-    modifier: Modifier
+    modifier: Modifier,
+    url: String
 ) {
     Surface(
         shape = MaterialTheme.shapes.large,

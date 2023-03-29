@@ -19,10 +19,10 @@ import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
 
 @Composable
-fun Loader() {
+fun Loader(modifier: Modifier = Modifier) {
     Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
             color = MaterialTheme.colorScheme.secondaryContainer,
@@ -41,7 +41,10 @@ private fun LoaderPreview() {
 }
 
 @Composable
-fun LoaderDialog(label: String?) {
+fun LoaderDialog(
+    modifier: Modifier = Modifier,
+    label: String?
+) {
     Dialog(
         onDismissRequest = { },
         properties = DialogProperties(
@@ -49,6 +52,7 @@ fun LoaderDialog(label: String?) {
         )
     ) {
         Surface(
+            modifier = modifier,
             elevation = Dimension.elevationSmall,
             shape = MaterialTheme.shapes.large,
             color = MaterialTheme.colorScheme.surface

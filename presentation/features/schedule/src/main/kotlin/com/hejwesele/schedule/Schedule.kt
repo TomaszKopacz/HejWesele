@@ -27,6 +27,6 @@ fun Schedule() {
                     .asPaddingValues()
             )
     ) {
-        TextPlaceholder("Harmonogram")
+        TextPlaceholder(text = "Harmonogram")
     }
 }

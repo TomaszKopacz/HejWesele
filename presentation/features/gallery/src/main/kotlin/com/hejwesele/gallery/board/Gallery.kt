@@ -7,18 +7,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -35,18 +31,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hejwesele.android.components.ContinuousLottieAnimation
 import com.hejwesele.android.components.ErrorDialog
 import com.hejwesele.android.components.ErrorView
+import com.hejwesele.android.components.FloatingButton
+import com.hejwesele.android.components.HintTile
 import com.hejwesele.android.components.Loader
 import com.hejwesele.android.components.RoundedCornerImage
 import com.hejwesele.android.components.TextPlaceholder
@@ -59,7 +53,6 @@ import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.android.tools.ImageCropper
-import com.hejwesele.extensions.disabled
 import com.hejwesele.extensions.openActivity
 import com.hejwesele.gallery.IGalleryNavigation
 import com.hejwesele.gallery.R
@@ -132,7 +125,7 @@ private fun GalleryEntryPoint(
         galleryData = galleryData,
         snackbarState = snackbarState,
         internetPopupEnabled = true,
-        onErrorRetry = { viewModel.onErrorRetry() }
+        onErrorRetry = {}
     )
 }
 
@@ -191,7 +184,7 @@ private fun GalleryBoardScreen(
         snackbarHost = {
             SnackbarHost(
                 hostState = snackbarState,
-                modifier = Modifier.offset(y = Dimension.marginLarge2X)
+                modifier = Modifier.offset(y = Dimension.marginOutsizeLarge)
             )
         }
     ) {
@@ -201,9 +194,13 @@ private fun GalleryBoardScreen(
             }
             when {
                 isLoading -> Loader()
-                isError -> ErrorView { onErrorRetry() }
+                isError -> ErrorView(
+                    modifier = Modifier.fillMaxSize(),
+                    onRetry = onErrorRetry
+                )
                 else -> {
                     GalleryBody(
+                        modifier = Modifier.fillMaxSize(),
                         galleryEnabled = isEnabled,
                         galleryData = galleryData
                     )
@@ -215,12 +212,11 @@ private fun GalleryBoardScreen(
 
 @Composable
 private fun GalleryBody(
+    modifier: Modifier = Modifier,
     galleryEnabled: Boolean,
     galleryData: GalleryData
 ) = with(galleryData) {
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Box(modifier = modifier) {
         if (galleryEnabled) {
             if (shouldShowContent) {
                 GalleryContent(
@@ -234,19 +230,20 @@ private fun GalleryBody(
             } else {
                 TextPlaceholder(text = Label.galleryBeforeWeddingPlaceholderText)
             }
-            FloatingAddButton(
+            FloatingButton(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(
                         end = Dimension.marginSmall,
                         bottom = Dimension.marginSmall
                     ),
+                icon = Icons.Default.Add,
                 enabled = shouldShowContent,
                 action = { onAddClicked() }
             )
             if (imageCropFailure) {
                 ErrorDialog(
-                    description = Label.galleryCropPhotoErrorDescription,
+                    description = Label.galleryCropPhotoErrorDescriptionText,
                     onDismiss = onImageCropFailureDismissed
                 )
             }
@@ -258,6 +255,7 @@ private fun GalleryBody(
 
 @Composable
 private fun GalleryContent(
+    modifier: Modifier = Modifier,
     photos: List<String>,
     galleryHintVisible: Boolean,
     galleryLinkVisible: Boolean,
@@ -267,6 +265,7 @@ private fun GalleryContent(
 ) {
     if (photos.isNotEmpty()) {
         PopulatedGalleryContent(
+            modifier = modifier.fillMaxWidth(),
             photos = photos,
             galleryHintVisible = galleryHintVisible,
             galleryLinkVisible = galleryLinkVisible,
@@ -276,6 +275,7 @@ private fun GalleryContent(
         )
     } else {
         EmptyGalleryContent(
+            modifier = modifier,
             galleryHintVisible = galleryHintVisible,
             galleryLinkVisible = galleryLinkVisible,
             onHintDismissed = onHintDismissed,
@@ -286,6 +286,7 @@ private fun GalleryContent(
 
 @Composable
 private fun PopulatedGalleryContent(
+    modifier: Modifier = Modifier,
     photos: List<String>,
     galleryHintVisible: Boolean,
     galleryLinkVisible: Boolean,
@@ -293,11 +294,15 @@ private fun PopulatedGalleryContent(
     onGalleryLinkClicked: () -> Unit,
     onPhotoClicked: (Int) -> Unit
 ) {
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+    LazyColumn(modifier = modifier) {
         margin(Dimension.marginSmall)
         if (galleryHintVisible) {
             singleItem {
-                GalleryHintTile(
+                HintTile(
+                    modifier = Modifier
+                        .padding(horizontal = Dimension.marginNormal)
+                        .fillMaxWidth(),
+                    text = Label.galleryExternalGalleryHintText,
                     onCloseClick = onHintDismissed
                 )
             }
@@ -306,6 +311,9 @@ private fun PopulatedGalleryContent(
         if (galleryLinkVisible) {
             singleItem {
                 GalleryTile(
+                    modifier = Modifier
+                        .padding(horizontal = Dimension.marginNormal)
+                        .fillMaxWidth(),
                     onClick = onGalleryLinkClicked
                 )
             }
@@ -333,21 +341,29 @@ private fun PopulatedGalleryContent(
 
 @Composable
 private fun EmptyGalleryContent(
+    modifier: Modifier = Modifier,
     galleryHintVisible: Boolean,
     galleryLinkVisible: Boolean,
     onHintDismissed: () -> Unit,
     onGalleryLinkClicked: () -> Unit
 ) {
-    ScrollableColumn {
+    ScrollableColumn(modifier = modifier) {
         VerticalMargin(Dimension.marginSmall)
         if (galleryHintVisible) {
-            GalleryHintTile(
+            HintTile(
+                modifier = Modifier
+                    .padding(horizontal = Dimension.marginNormal)
+                    .fillMaxWidth(),
+                text = Label.galleryExternalGalleryHintText,
                 onCloseClick = onHintDismissed
             )
             VerticalMargin(Dimension.marginNormal)
         }
         if (galleryLinkVisible) {
             GalleryTile(
+                modifier = Modifier
+                    .padding(horizontal = Dimension.marginNormal)
+                    .fillMaxWidth(),
                 onClick = onGalleryLinkClicked
             )
             VerticalMargin(Dimension.marginNormal)
@@ -359,49 +375,12 @@ private fun EmptyGalleryContent(
 }
 
 @Composable
-private fun GalleryHintTile(onCloseClick: () -> Unit) {
+private fun GalleryTile(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Surface(
-        modifier = Modifier
-            .padding(horizontal = Dimension.marginNormal)
-            .fillMaxWidth(),
-        color = MaterialTheme.colorScheme.tertiaryContainer,
-        shape = MaterialTheme.shapes.small
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(Dimension.marginNormal)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.Top
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_info),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onTertiaryContainer
-            )
-            Text(
-                text = Label.galleryExternalGalleryHintText,
-                color = MaterialTheme.colorScheme.onTertiaryContainer,
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Start,
-                modifier = Modifier
-                    .weight(1f, true)
-                    .padding(horizontal = Dimension.marginSmall)
-            )
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = null,
-                modifier = Modifier.clickable { onCloseClick() }
-            )
-        }
-    }
-}
-
-@Composable
-private fun GalleryTile(onClick: () -> Unit) {
-    Surface(
-        modifier = Modifier
-            .padding(horizontal = Dimension.marginNormal)
-            .fillMaxWidth()
+        modifier = modifier
             .shadow(
                 elevation = Dimension.elevationSmall,
                 shape = MaterialTheme.shapes.small
@@ -416,7 +395,10 @@ private fun GalleryTile(onClick: () -> Unit) {
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            GalleryLottieAnimation()
+            ContinuousLottieAnimation(
+                animationResId = R.raw.lottie_gallery,
+                size = 48.dp
+            )
             Text(
                 text = Label.galleryExternalGalleryTileText,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -427,45 +409,6 @@ private fun GalleryTile(onClick: () -> Unit) {
                     .padding(start = Dimension.marginSmall)
             )
         }
-    }
-}
-
-@Composable
-private fun GalleryLottieAnimation() {
-    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.lottie_gallery))
-    LottieAnimation(
-        composition = composition,
-        iterations = LottieConstants.IterateForever,
-        modifier = Modifier
-            .size(48.dp)
-            .aspectRatio(1.0f)
-    )
-}
-
-@Composable
-private fun FloatingAddButton(
-    modifier: Modifier = Modifier,
-    enabled: Boolean,
-    action: () -> Unit
-) {
-    val iconColor = MaterialTheme.colorScheme.onTertiaryContainer
-
-    Surface(
-        modifier = modifier
-            .shadow(
-                elevation = Dimension.elevationSmall,
-                shape = MaterialTheme.shapes.large
-            )
-            .clickable(enabled = enabled) { action() },
-        color = MaterialTheme.colorScheme.tertiaryContainer,
-        shape = MaterialTheme.shapes.large
-    ) {
-        Icon(
-            imageVector = Icons.Default.Add,
-            contentDescription = null,
-            tint = if (enabled) iconColor else iconColor.disabled,
-            modifier = Modifier.padding(Dimension.marginNormal)
-        )
     }
 }
 

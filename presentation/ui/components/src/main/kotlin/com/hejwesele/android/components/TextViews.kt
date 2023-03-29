@@ -16,10 +16,13 @@ import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
 
 @Composable
-fun TextPlaceholder(text: String) {
+fun TextPlaceholder(
+    modifier: Modifier = Modifier,
+    text: String
+) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
+        modifier = modifier
             .padding(Dimension.marginLarge)
             .fillMaxSize()
     ) {

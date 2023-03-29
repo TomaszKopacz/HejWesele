@@ -8,12 +8,10 @@ object Dimension {
     val marginSmall = 12.dp
     val marginNormal = 16.dp
     val marginLarge = 24.dp
-
-    val marginLarge2X = 48.dp
-    val marginLarge3X = 72.dp
-
     val marginLarge_1_4 = 6.dp
     val marginLarge_3_4 = 18.dp
+    val marginOutsizeLarge = 48.dp
+    val marginOutsizeExtraLarge = 72.dp
 
     const val weightHalf = 0.5f
     const val weightFull = 1.0f
@@ -28,11 +26,11 @@ object Dimension {
 
     val elevationSmall = 2.dp
 
-    val iconSizeSmall = 16.dp
-    val iconSizeNormal = 24.dp
-    val iconSizeExtraLarge = 72.dp
+    val iconSmall = 16.dp
+    val iconNormal = 24.dp
+    val iconOutsizeExtraLarge = 72.dp
 
-    val imageSizeSmall = 48.dp
+    val imageSmall = 48.dp
 
     val gridPaddingThin = 2.dp
 

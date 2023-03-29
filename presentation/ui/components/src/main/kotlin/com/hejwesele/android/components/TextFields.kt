@@ -85,7 +85,7 @@ fun FormTextField(
                         horizontal = Dimension.marginSmall,
                         vertical = Dimension.marginExtraSmall2X
                     ),
-                    text = errorMessage ?: "",
+                    text = errorMessage.orEmpty(),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall
                 )

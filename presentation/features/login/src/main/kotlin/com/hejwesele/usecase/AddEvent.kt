@@ -1,6 +1,5 @@
 package com.hejwesele.usecase
 
-import com.hejwesele.android.osinfo.OsInfo
 import com.hejwesele.encryption.base64
 import com.hejwesele.encryption.bytes
 import com.hejwesele.encryption.sha256
@@ -14,7 +13,6 @@ import javax.inject.Inject
 
 // TODO - this use case is only for development, should be removed from here
 internal class AddEvent @Inject constructor(
-    private val osInfo: OsInfo,
     private val repository: EventsRepository
 ) {
 
@@ -23,7 +21,7 @@ internal class AddEvent @Inject constructor(
             Event(
                 id = "",
                 name = "hej",
-                password = "hej".bytes().sha256().base64(osInfo).string(),
+                password = "hej".bytes().sha256().base64().string(),
                 date = "2024-07-14T15:30:00".toLocalDateTime(),
                 invitationId = "-NNxXTrIHZwNNP1ZUlWP",
                 galleryId = null

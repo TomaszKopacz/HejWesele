@@ -6,7 +6,3 @@ plugins {
 android {
     namespace "com.hejwesele.encryption"
 }
-
-dependencies {
-    api projects.libraries.osinfo
-}

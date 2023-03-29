@@ -3,8 +3,14 @@ package com.hejwesele.android.components.layouts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +28,7 @@ import com.hejwesele.android.theme.Dimension
 @Composable
 fun BottomSheetScaffold(
     state: ModalBottomSheetState,
+    padding: PaddingValues? = null,
     sheetContent: @Composable () -> Unit,
     content: @Composable () -> Unit
 ) {
@@ -33,13 +40,22 @@ fun BottomSheetScaffold(
         ),
         sheetBackgroundColor = MaterialTheme.colorScheme.background,
         sheetContent = {
+            val bottomPadding = WindowInsets.navigationBars
+                .only(WindowInsetsSides.Bottom)
+                .asPaddingValues()
+                .calculateBottomPadding()
+
+            val paddingValues = padding ?: PaddingValues(
+                start = Dimension.marginLarge,
+                end = Dimension.marginLarge,
+                top = Dimension.marginNormal,
+                bottom = bottomPadding
+            )
+
             Column(
                 Modifier
                     .fillMaxWidth()
-                    .padding(
-                        horizontal = Dimension.marginLarge,
-                        vertical = Dimension.marginNormal
-                    )
+                    .padding(paddingValues)
             ) {
                 Box(
                     Modifier
@@ -50,6 +66,7 @@ fun BottomSheetScaffold(
                 )
                 VerticalMargin(Dimension.marginLarge)
                 sheetContent()
+                VerticalMargin(Dimension.marginSmall)
             }
         },
         content = { content() }

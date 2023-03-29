@@ -117,8 +117,8 @@ complexity:
     threshold: 60
   LongParameterList:
     active: true
-    functionThreshold: 14
-    constructorThreshold: 14
+    functionThreshold: 11
+    constructorThreshold: 11
     ignoreDefaultParameters: false
     ignoreDataClasses: true
     ignoreAnnotatedParameter: []
@@ -147,7 +147,7 @@ complexity:
     thresholdInClasses: 20
     thresholdInInterfaces: 20
     thresholdInObjects: 20
-    thresholdInEnums: 5
+    thresholdInEnums: 20
     ignoreDeprecated: false
     ignorePrivate: false
     ignoreOverridden: false
@@ -554,6 +554,7 @@ style:
     active: false
   MaxLineLength:
     active: true
+    excludes: ['**/Label.kt']
     maxLineLength: 135
     excludePackageStatements: true
     excludeImportStatements: true

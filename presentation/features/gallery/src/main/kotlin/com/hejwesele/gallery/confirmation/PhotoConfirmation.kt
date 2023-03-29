@@ -85,6 +85,14 @@ private fun PhotoConfirmationEntryPoint(
         resultSender = resultSender
     )
 
+    val actions = PhotoConfirmationActions(
+        onPhotoAccepted = { viewModel.onPhotoAccepted() },
+        onPhotoDeclined = { viewModel.onPhotoDeclined() },
+        onPhotoConfirmationAccepted = { viewModel.onPhotoConfirmationAccepted() },
+        onPhotoConfirmationDeclined = { viewModel.onPhotoConfirmationDeclined() },
+        onErrorDismissed = { viewModel.onErrorDismissed() }
+    )
+
     PhotoConfirmationScreen(
         isLoading = uiState.loadingData,
         isError = uiState.error != null,
@@ -93,69 +101,11 @@ private fun PhotoConfirmationEntryPoint(
         uploadingMessage = uiState.uploadingMessage,
         sheetState = sheetState,
         internetPopupEnabled = true,
-        onPhotoAccepted = { viewModel.onPhotoAccepted() },
-        onPhotoDeclined = { viewModel.onPhotoDeclined() },
-        onPhotoConfirmationDeclined = { viewModel.onPhotoConfirmationDeclined() },
-        onPhotoConfirmationAccepted = { viewModel.onPhotoConfirmationAccepted() },
-        onErrorDismissed = { viewModel.onErrorDismissed() }
+        actions = actions
     )
 
     BackHandler(sheetState.isVisible) {
         coroutineScope.launch { sheetState.hide() }
-    }
-}
-
-@OptIn(
-    ExperimentalMaterialApi::class,
-    ExperimentalAnimationApi::class,
-    ExperimentalCoroutinesApi::class
-)
-@Composable
-private fun PhotoConfirmationScreen(
-    isLoading: Boolean,
-    isError: Boolean,
-    photo: Bitmap?,
-    isUploadingPhoto: Boolean,
-    uploadingMessage: String?,
-    sheetState: ModalBottomSheetState,
-    internetPopupEnabled: Boolean,
-    onPhotoAccepted: () -> Unit,
-    onPhotoDeclined: () -> Unit,
-    onPhotoConfirmationDeclined: () -> Unit,
-    onPhotoConfirmationAccepted: () -> Unit,
-    onErrorDismissed: () -> Unit
-) {
-    BottomSheetScaffold(
-        state = sheetState,
-        sheetContent = {
-            ConfirmationBottomSheetContent(
-                onDecline = onPhotoConfirmationDeclined,
-                onAccept = onPhotoConfirmationAccepted
-            )
-        }
-    ) {
-        Surface(
-            color = md_theme_dark_background,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                if (internetPopupEnabled) {
-                    InternetConnectionPopup()
-                }
-                if (photo != null) {
-                    PhotoPreviewContent(
-                        photo = photo,
-                        onAccept = onPhotoAccepted,
-                        onCancel = onPhotoDeclined
-                    )
-                }
-                when {
-                    isLoading -> Loader()
-                    isUploadingPhoto -> LoaderDialog(label = uploadingMessage)
-                    isError -> ErrorDialog { onErrorDismissed() }
-                }
-            }
-        }
     }
 }
 
@@ -189,8 +139,60 @@ private fun PhotoConfirmationEventHandler(
     )
 }
 
+@OptIn(
+    ExperimentalMaterialApi::class,
+    ExperimentalAnimationApi::class,
+    ExperimentalCoroutinesApi::class
+)
+@Composable
+private fun PhotoConfirmationScreen(
+    isLoading: Boolean,
+    isError: Boolean,
+    photo: Bitmap?,
+    isUploadingPhoto: Boolean,
+    uploadingMessage: String?,
+    sheetState: ModalBottomSheetState,
+    internetPopupEnabled: Boolean,
+    actions: PhotoConfirmationActions
+) {
+    BottomSheetScaffold(
+        state = sheetState,
+        sheetContent = {
+            ConfirmationBottomSheetContent(
+                onDecline = actions.onPhotoConfirmationDeclined,
+                onAccept = actions.onPhotoConfirmationAccepted
+            )
+        }
+    ) {
+        Surface(
+            color = md_theme_dark_background,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                if (internetPopupEnabled) {
+                    InternetConnectionPopup()
+                }
+                if (photo != null) {
+                    PhotoPreviewContent(
+                        modifier = Modifier.fillMaxSize(),
+                        photo = photo,
+                        onAccept = actions.onPhotoAccepted,
+                        onCancel = actions.onPhotoDeclined
+                    )
+                }
+                when {
+                    isLoading -> Loader()
+                    isUploadingPhoto -> LoaderDialog(label = uploadingMessage)
+                    isError -> ErrorDialog { actions.onErrorDismissed() }
+                }
+            }
+        }
+    }
+}
+
 @Composable
 private fun PhotoPreviewContent(
+    modifier: Modifier = Modifier,
     photo: Bitmap,
     onAccept: () -> Unit,
     onCancel: () -> Unit
@@ -201,9 +203,7 @@ private fun PhotoPreviewContent(
         .calculateBottomPadding()
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = bottomPadding)
+        modifier = modifier.padding(bottom = bottomPadding + Dimension.marginLarge)
     ) {
         Actions(
             onAccept = onAccept,
@@ -234,7 +234,7 @@ private fun Actions(
             onClick = onCancel
         )
         PlainButton(
-            text = Label.galleryPublishPhoto,
+            text = Label.galleryPublishPhotoLabel,
             color = md_theme_dark_onBackground,
             onClick = onAccept
         )
@@ -246,19 +246,14 @@ private fun ConfirmationBottomSheetContent(
     onDecline: () -> Unit,
     onAccept: () -> Unit
 ) {
-    val bottomPadding = WindowInsets.navigationBars
-        .only(WindowInsetsSides.Bottom)
-        .asPaddingValues()
-        .calculateBottomPadding()
-
     Text(
-        text = Label.galleryPublishConfirmationTitle,
+        text = Label.galleryPublishConfirmationTitleText,
         style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.onSurface
     )
     VerticalMargin(Dimension.marginNormal)
     Text(
-        text = Label.galleryPublishConfirmationDescription,
+        text = Label.galleryPublishConfirmationDescriptionText,
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurface
     )
@@ -273,16 +268,22 @@ private fun ConfirmationBottomSheetContent(
             onClick = onDecline
         )
         PlainButton(
-            text = Label.galleryPublishPhoto,
+            text = Label.galleryPublishPhotoLabel,
             color = MaterialTheme.colorScheme.primary,
             onClick = onAccept
         )
     }
-    VerticalMargin(bottomPadding)
 }
 
-private const val PreviewBitmapSize = 200
+private data class PhotoConfirmationActions(
+    val onPhotoAccepted: () -> Unit,
+    val onPhotoDeclined: () -> Unit,
+    val onPhotoConfirmationAccepted: () -> Unit,
+    val onPhotoConfirmationDeclined: () -> Unit,
+    val onErrorDismissed: () -> Unit
+)
 
+@Suppress("MagicNumber")
 @OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
@@ -293,16 +294,18 @@ private fun PhotoConfirmationScreenPreview() {
         PhotoConfirmationScreen(
             isLoading = false,
             isError = false,
-            photo = Bitmap.createBitmap(PreviewBitmapSize, PreviewBitmapSize, Bitmap.Config.ARGB_8888),
+            photo = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888),
             isUploadingPhoto = false,
             uploadingMessage = null,
             sheetState = sheetState,
             internetPopupEnabled = false,
-            onPhotoAccepted = {},
-            onPhotoDeclined = {},
-            onPhotoConfirmationDeclined = {},
-            onPhotoConfirmationAccepted = {},
-            onErrorDismissed = {}
+            actions = PhotoConfirmationActions(
+                onPhotoAccepted = {},
+                onPhotoDeclined = {},
+                onPhotoConfirmationAccepted = {},
+                onPhotoConfirmationDeclined = {},
+                onErrorDismissed = {}
+            )
         )
     }
 }

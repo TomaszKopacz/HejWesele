@@ -30,14 +30,13 @@ import com.hejwesele.components.R
 
 @Composable
 fun ErrorView(
-    title: String = Label.errorTitle,
-    description: String = Label.errorDescription,
+    modifier: Modifier = Modifier,
+    title: String = Label.errorTitleText,
+    description: String = Label.errorDescriptionText,
     onRetry: () -> Unit
 ) {
     ScrollableColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+        modifier = modifier.background(MaterialTheme.colorScheme.background)
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -86,20 +85,25 @@ fun ErrorView(
 @Composable
 private fun ErrorViewPreview() {
     AppTheme(darkTheme = false) {
-        ErrorView(onRetry = {})
+        ErrorView(
+            modifier = Modifier.fillMaxSize(),
+            onRetry = {}
+        )
     }
 }
 
 @Composable
 fun ErrorDialog(
-    title: String = Label.errorTitle,
-    description: String = Label.errorDescription,
+    modifier: Modifier = Modifier,
+    title: String = Label.errorTitleText,
+    description: String = Label.errorDescriptionText,
     onDismiss: () -> Unit
 ) {
     Dialog(
         onDismissRequest = onDismiss
     ) {
         Surface(
+            modifier = modifier,
             elevation = Dimension.elevationSmall,
             shape = MaterialTheme.shapes.small,
             color = MaterialTheme.colorScheme.background

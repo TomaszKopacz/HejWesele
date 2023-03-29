@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestPermissi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -95,6 +96,15 @@ private fun LoginEntryPoint(
         navigation = navigation
     )
 
+    val actions = LoginActions(
+        onNameInputChanged = { text -> viewModel.onNameInputChanged(text) },
+        onPasswordInputChanged = { text -> viewModel.onPasswordInputChanged(text) },
+        onHelpClicked = { viewModel.onHelpRequested() },
+        onNextButtonClick = { viewModel.onSubmit() },
+        onScanQrButtonClick = { viewModel.onScanQrClicked() },
+        onErrorDismissed = { viewModel.onErrorDismissed() }
+    )
+
     LoginScreen(
         isLoading = uiState.isLoading,
         isError = uiState.isError,
@@ -103,12 +113,7 @@ private fun LoginEntryPoint(
         passwordErrorMessage = uiState.eventPasswordError?.message,
         isInternetPopupEnabled = true,
         sheetState = sheetState,
-        onNameInputChanged = { text -> viewModel.onNameInputChanged(text) },
-        onPasswordInputChanged = { text -> viewModel.onPasswordInputChanged(text) },
-        onHelpClicked = { viewModel.onHelpRequested() },
-        onNextButtonClick = { viewModel.onSubmit() },
-        onScanQrButtonClick = { viewModel.onScanQrClicked() },
-        onErrorDismissed = { viewModel.onErrorDismissed() }
+        actions = actions
     )
 
     BackHandler(sheetState.isVisible) {
@@ -157,33 +162,31 @@ private fun LoginScreen(
     passwordErrorMessage: String?,
     isInternetPopupEnabled: Boolean,
     sheetState: ModalBottomSheetState,
-    onNameInputChanged: (String) -> Unit,
-    onPasswordInputChanged: (String) -> Unit,
-    onHelpClicked: () -> Unit,
-    onNextButtonClick: () -> Unit,
-    onScanQrButtonClick: () -> Unit,
-    onErrorDismissed: () -> Unit
+    actions: LoginActions
 ) {
     BottomSheetScaffold(
         state = sheetState,
         sheetContent = { HelpBottomSheetContent() }
     ) {
         LoginScreenContent(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface),
             isNextButtonEnabled = isNextButtonEnabled,
             nameErrorMessage = nameErrorMessage,
             passwordErrorMessage = passwordErrorMessage,
             isInternetPopupEnabled = isInternetPopupEnabled,
-            onNameInputChanged = onNameInputChanged,
-            onPasswordInputChanged = onPasswordInputChanged,
-            onHelpClicked = onHelpClicked,
-            onNextButtonClick = onNextButtonClick,
-            onScanQrButtonClick = onScanQrButtonClick
+            onNameInputChanged = actions.onNameInputChanged,
+            onPasswordInputChanged = actions.onPasswordInputChanged,
+            onHelpClicked = actions.onHelpClicked,
+            onNextButtonClicked = actions.onNextButtonClick,
+            onScanQrButtonClicked = actions.onScanQrButtonClick
         )
         if (isError) {
-            ErrorDialog(onDismiss = onErrorDismissed)
+            ErrorDialog(onDismiss = actions.onErrorDismissed)
         }
         if (isLoading) {
-            LoaderDialog(label = Label.loginLoadingLabel)
+            LoaderDialog(label = Label.loginLoadingText)
         }
     }
 }
@@ -191,6 +194,7 @@ private fun LoginScreen(
 @OptIn(ExperimentalAnimationApi::class, ExperimentalCoroutinesApi::class)
 @Composable
 private fun LoginScreenContent(
+    modifier: Modifier = Modifier,
     isNextButtonEnabled: Boolean,
     nameErrorMessage: String?,
     passwordErrorMessage: String?,
@@ -198,15 +202,15 @@ private fun LoginScreenContent(
     onNameInputChanged: (String) -> Unit,
     onPasswordInputChanged: (String) -> Unit,
     onHelpClicked: () -> Unit,
-    onNextButtonClick: () -> Unit,
-    onScanQrButtonClick: () -> Unit
+    onNextButtonClicked: () -> Unit,
+    onScanQrButtonClicked: () -> Unit
 ) {
     val bottomPadding = WindowInsets.navigationBars
         .only(WindowInsetsSides.Bottom)
         .asPaddingValues()
         .calculateBottomPadding()
 
-    Column {
+    Column(modifier = modifier) {
         if (isInternetPopupEnabled) {
             InternetConnectionPopup()
         }
@@ -214,7 +218,6 @@ private fun LoginScreenContent(
         ScrollableColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surface)
                 .padding(
                     start = Dimension.marginLarge,
                     end = Dimension.marginLarge,
@@ -224,37 +227,27 @@ private fun LoginScreenContent(
             InfoIconButton(
                 modifier = Modifier
                     .align(Alignment.End)
-                    .size(Dimension.iconSizeNormal)
+                    .size(Dimension.iconNormal)
                     .noRippleClickable(onClick = {})
             )
-            VerticalMargin(Dimension.marginLarge2X)
-            LogoIcon(modifier = Modifier.size(Dimension.iconSizeExtraLarge))
+            VerticalMargin(Dimension.marginOutsizeLarge)
+            Icon(
+                modifier = Modifier.size(Dimension.iconOutsizeExtraLarge),
+                painter = painterResource(R.drawable.ic_logo),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
             VerticalMargin(Dimension.marginLarge)
             Spacer(modifier = Modifier.weight(Dimension.weightHalf))
-            NameTextField(
-                errorMessage = nameErrorMessage,
-                onTextChanged = { text -> onNameInputChanged(text) }
-            )
-            VerticalMargin(Dimension.marginExtraSmall)
-            PasswordTextField(
-                errorMessage = passwordErrorMessage,
-                onTextChanged = { text -> onPasswordInputChanged(text) }
-            )
-            VerticalMargin(Dimension.marginNormal)
-            HelpLabel(
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .noRippleClickable { onHelpClicked() }
-            )
-            VerticalMargin(Dimension.marginLarge)
-            ButtonNext(
-                isEnabled = isNextButtonEnabled,
-                onClick = onNextButtonClick
-            )
-            VerticalMargin(Dimension.marginLarge)
-            Spacer(modifier = Modifier.weight(Dimension.weightFull))
-            ButtonScanQr(
-                onClick = onScanQrButtonClick
+            LoginForm(
+                isNextButtonEnabled = isNextButtonEnabled,
+                nameErrorMessage = nameErrorMessage,
+                passwordErrorMessage = passwordErrorMessage,
+                onNameInputChanged = onNameInputChanged,
+                onPasswordInputChanged = onPasswordInputChanged,
+                onHelpClicked = onHelpClicked,
+                onNextButtonClicked = onNextButtonClicked,
+                onScanQrButtonClick = onScanQrButtonClicked
             )
             VerticalMargin(Dimension.marginNormal)
         }
@@ -262,7 +255,7 @@ private fun LoginScreenContent(
 }
 
 @Composable
-private fun InfoIconButton(modifier: Modifier) {
+private fun InfoIconButton(modifier: Modifier = Modifier) {
     Icon(
         modifier = modifier,
         painter = painterResource(R.drawable.ic_info),
@@ -272,41 +265,51 @@ private fun InfoIconButton(modifier: Modifier) {
 }
 
 @Composable
-private fun LogoIcon(modifier: Modifier) {
-    Icon(
-        modifier = modifier,
-        painter = painterResource(R.drawable.ic_logo),
-        contentDescription = null,
-        tint = MaterialTheme.colorScheme.primary
-    )
-}
-
-@Composable
-private fun NameTextField(
-    errorMessage: String?,
-    onTextChanged: (String) -> Unit
+private fun ColumnScope.LoginForm(
+    isNextButtonEnabled: Boolean,
+    nameErrorMessage: String?,
+    passwordErrorMessage: String?,
+    onNameInputChanged: (String) -> Unit,
+    onPasswordInputChanged: (String) -> Unit,
+    onHelpClicked: () -> Unit,
+    onNextButtonClicked: () -> Unit,
+    onScanQrButtonClick: () -> Unit
 ) {
     FormTextField(
         label = Label.loginEventNameLabel,
         imeAction = ImeAction.Next,
-        isError = errorMessage != null,
-        errorMessage = errorMessage,
-        onTextChanged = { text -> onTextChanged(text) }
+        isError = nameErrorMessage != null,
+        errorMessage = nameErrorMessage,
+        onTextChanged = { text -> onNameInputChanged(text) }
     )
-}
-
-@Composable
-private fun PasswordTextField(
-    errorMessage: String?,
-    onTextChanged: (String) -> Unit
-) {
+    VerticalMargin(Dimension.marginExtraSmall)
     FormTextField(
         label = Label.loginEventPasswordLabel,
         imeAction = ImeAction.Done,
-        isError = errorMessage != null,
-        errorMessage = errorMessage,
+        isError = passwordErrorMessage != null,
+        errorMessage = passwordErrorMessage,
         transformation = PasswordVisualTransformation(),
-        onTextChanged = { text -> onTextChanged(text) }
+        onTextChanged = { text -> onPasswordInputChanged(text) }
+    )
+    VerticalMargin(Dimension.marginNormal)
+    HelpLabel(
+        modifier = Modifier
+            .align(Alignment.Start)
+            .noRippleClickable { onHelpClicked() }
+    )
+    VerticalMargin(Dimension.marginLarge)
+    FilledButton(
+        text = Label.next,
+        enabled = isNextButtonEnabled,
+        onClick = onNextButtonClicked
+    )
+    VerticalMargin(Dimension.marginLarge)
+    Spacer(modifier = Modifier.weight(Dimension.weightFull))
+    PlainIconButton(
+        text = Label.loginScanQrButtonLabel,
+        icon = R.drawable.ic_qr,
+        color = MaterialTheme.colorScheme.primary,
+        onClick = onScanQrButtonClick
     )
 }
 
@@ -317,61 +320,41 @@ private fun HelpLabel(modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            modifier = Modifier.size(Dimension.iconSizeSmall),
+            modifier = Modifier.size(Dimension.iconSmall),
             painter = painterResource(R.drawable.ic_question),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurface
         )
         HorizontalMargin(Dimension.marginExtraSmall)
         Text(
-            text = Label.loginHelpLabel,
+            text = Label.loginHelpText,
             style = MaterialTheme.typography.bodySmall
         )
     }
 }
 
 @Composable
-private fun ButtonNext(
-    isEnabled: Boolean,
-    onClick: () -> Unit
-) {
-    FilledButton(
-        text = Label.next,
-        enabled = isEnabled,
-        onClick = onClick
-    )
-}
-
-@Composable
-private fun ButtonScanQr(
-    onClick: () -> Unit
-) {
-    PlainIconButton(
-        text = Label.loginScanQrButtonLabel,
-        icon = R.drawable.ic_qr,
-        color = MaterialTheme.colorScheme.primary,
-        onClick = onClick
-    )
-}
-
-@Composable
 private fun HelpBottomSheetContent() {
-    val bottomPadding = WindowInsets.navigationBars
-        .only(WindowInsetsSides.Bottom)
-        .asPaddingValues()
-        .calculateBottomPadding()
-
     Text(
-        text = Label.loginHelpBottomSheetTitle,
+        text = Label.loginHelpBottomSheetTitleText,
         style = MaterialTheme.typography.titleMedium
     )
     VerticalMargin(Dimension.marginNormal)
     Text(
-        text = Label.loginHelpBottomSheetDescription,
+        text = Label.loginHelpBottomSheetDescriptionText,
         style = MaterialTheme.typography.bodyMedium
     )
-    VerticalMargin(bottomPadding + Dimension.marginNormal)
+    VerticalMargin(Dimension.marginNormal)
 }
+
+private data class LoginActions(
+    val onNameInputChanged: (String) -> Unit,
+    val onPasswordInputChanged: (String) -> Unit,
+    val onHelpClicked: () -> Unit,
+    val onNextButtonClick: () -> Unit,
+    val onScanQrButtonClick: () -> Unit,
+    val onErrorDismissed: () -> Unit
+)
 
 @OptIn(ExperimentalMaterialApi::class)
 @Preview
@@ -388,12 +371,14 @@ private fun LoginScreenPreview() {
             passwordErrorMessage = null,
             isInternetPopupEnabled = false,
             sheetState = sheetState,
-            onNameInputChanged = {},
-            onPasswordInputChanged = {},
-            onHelpClicked = {},
-            onNextButtonClick = {},
-            onScanQrButtonClick = {},
-            onErrorDismissed = {}
+            actions = LoginActions(
+                onNameInputChanged = {},
+                onPasswordInputChanged = {},
+                onHelpClicked = {},
+                onNextButtonClick = {},
+                onScanQrButtonClick = {},
+                onErrorDismissed = {}
+            )
         )
     }
 }

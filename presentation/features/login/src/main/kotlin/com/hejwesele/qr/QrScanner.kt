@@ -97,12 +97,13 @@ private fun QrScannerScreen(
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         QrScannerContent(
+            modifier = Modifier.fillMaxSize(),
             isInternetPopupEnabled = isInternetPopupEnabled,
             onBack = onBack,
             onScanned = onScanned
         )
         if (isLoading) {
-            LoaderDialog(label = Label.loginLoadingLabel)
+            LoaderDialog(label = Label.loginLoadingText)
         }
         if (isError) {
             ErrorDialog(
@@ -119,12 +120,13 @@ private fun QrScannerScreen(
 )
 @Composable
 private fun QrScannerContent(
+    modifier: Modifier = Modifier,
     isInternetPopupEnabled: Boolean,
     onBack: () -> Unit,
     onScanned: (String) -> Unit
 ) {
     Scaffold { padding ->
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = modifier) {
             if (isInternetPopupEnabled) {
                 InternetConnectionPopup(statusBarSensitive = false)
             }
@@ -156,7 +158,7 @@ private fun BackIcon(
     Box(modifier = modifier) {
         Icon(
             modifier = Modifier
-                .size(Dimension.iconSizeNormal)
+                .size(Dimension.iconNormal)
                 .clickable { onClick() },
             contentDescription = null,
             painter = painterResource(R.drawable.ic_arrow_left),

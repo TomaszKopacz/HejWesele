@@ -16,7 +16,7 @@ task ktlint(type: JavaExec, group: "verification") {
     outputs.file("build/reports/ktlint-report.xml")
     outputs.cacheIf { true }
 
-    args "src/**/*.kt", "!src/test/**/*.kt", "!src/androidTest/**/*.kt",
+    args "src/**/*.kt", "!src/test/**/*.kt", "!src/androidTest/**/*.kt", "!src/main/**/Label.kt",
         "--editorconfig=${rootDir}/gradle/.editorconfig",
         "--reporter=checkstyle,output=build/reports/ktlint-report.xml",
         "--reporter=plain"

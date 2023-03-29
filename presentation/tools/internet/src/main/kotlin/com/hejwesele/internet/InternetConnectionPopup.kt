@@ -41,6 +41,7 @@ private const val PopupDelay = 2_000L
 @ExperimentalCoroutinesApi
 @Composable
 fun InternetConnectionPopup(
+    modifier: Modifier = Modifier,
     viewModel: InternetConnectionViewModel = hiltViewModel(),
     statusBarSensitive: Boolean = true
 ) {
@@ -61,7 +62,7 @@ fun InternetConnectionPopup(
         .asPaddingValues()
         .calculateTopPadding()
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth()) {
         AnimatedVisibility(
             visible = isPopupVisible,
             enter = expandVertically(),
@@ -80,6 +81,7 @@ fun InternetConnectionPopup(
 
 @Composable
 private fun InternetConnectionStatusBox(
+    modifier: Modifier = Modifier,
     isConnected: Boolean,
     topPadding: Dp
 ) {
@@ -88,10 +90,10 @@ private fun InternetConnectionStatusBox(
         if (isConnected) colorScheme.tertiaryContainer else colorScheme.errorContainer
     )
     val textColor = if (isConnected) colorScheme.onTertiaryContainer else colorScheme.onErrorContainer
-    val message = if (isConnected) Label.networkReconnectedMessage else Label.networkDisconnectedMessage
+    val message = if (isConnected) Label.networkReconnectedText else Label.networkDisconnectedText
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .background(backgroundColor)
             .fillMaxWidth()
             .padding(

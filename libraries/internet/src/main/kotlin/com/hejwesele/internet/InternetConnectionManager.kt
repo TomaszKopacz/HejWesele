@@ -4,8 +4,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import android.net.NetworkRequest
-import com.hejwesele.android.osinfo.OsInfo
 import com.hejwesele.internet.InternetConnectionState.AVAILABLE
 import com.hejwesele.internet.InternetConnectionState.UNAVAILABLE
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -16,8 +14,7 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class InternetConnectionManager @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val osInfo: OsInfo
+    @ApplicationContext private val context: Context
 ) {
     private val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
@@ -27,14 +24,7 @@ class InternetConnectionManager @Inject constructor(
         with(connectivityManager) {
             val callback = networkCallback { connectionState -> trySend(connectionState) }
 
-            if (osInfo.isNOrHigher) {
-                registerDefaultNetworkCallback(callback)
-            } else {
-                val networkRequest = NetworkRequest.Builder()
-                    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                    .build()
-                registerNetworkCallback(networkRequest, callback)
-            }
+            registerDefaultNetworkCallback(callback)
 
             trySend(getCurrentInternetConnectionState())
 

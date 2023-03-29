@@ -1,17 +1,24 @@
 package com.hejwesele.android.components
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.hejwesele.android.components.PlainButtonSize.LARGE
@@ -62,7 +69,7 @@ fun PlainIconButton(
             painter = painterResource(icon),
             contentDescription = null,
             tint = color,
-            modifier = Modifier.size(Dimension.iconSizeNormal)
+            modifier = Modifier.size(Dimension.iconNormal)
         )
         HorizontalMargin(Dimension.marginSmall)
         Text(
@@ -92,7 +99,7 @@ fun FilledButton(
             disabledContentColor = color.disabled
         ),
         contentPadding = PaddingValues(
-            horizontal = Dimension.marginLarge3X,
+            horizontal = Dimension.marginOutsizeExtraLarge,
             vertical = Dimension.marginLarge
         ),
         shape = MaterialTheme.shapes.small,
@@ -104,6 +111,35 @@ fun FilledButton(
         )
     }
 }
+
+@Composable
+fun FloatingButton(
+    modifier: Modifier = Modifier,
+    icon: ImageVector,
+    enabled: Boolean,
+    action: () -> Unit
+) {
+    val iconColor = MaterialTheme.colorScheme.onTertiaryContainer
+
+    Surface(
+        modifier = modifier
+            .shadow(
+                elevation = Dimension.elevationSmall,
+                shape = MaterialTheme.shapes.large
+            )
+            .clickable(enabled = enabled) { action() },
+        color = MaterialTheme.colorScheme.tertiaryContainer,
+        shape = MaterialTheme.shapes.large
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = if (enabled) iconColor else iconColor.disabled,
+            modifier = Modifier.padding(Dimension.marginNormal)
+        )
+    }
+}
+
 enum class PlainButtonSize {
     SMALL, MEDIUM, LARGE
 }
@@ -140,6 +176,18 @@ private fun FilledButtonPreview() {
         FilledButton(
             text = "NEXT",
             onClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun FloatingButtonPreview() {
+    AppTheme(darkTheme = false) {
+        FloatingButton(
+            icon = Icons.Default.Add,
+            enabled = true,
+            action = {}
         )
     }
 }

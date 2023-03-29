@@ -77,15 +77,15 @@ private fun QrScannerEntryPoint(
                 previewView
             }
         )
-        SquareWindowOverlay()
+        SquareWindowOverlay(modifier = Modifier.fillMaxSize())
     }
 }
 
 @Composable
-private fun SquareWindowOverlay() {
+private fun SquareWindowOverlay(modifier: Modifier = Modifier) {
     val outlineColor = MaterialTheme.colorScheme.outline
 
-    Canvas(modifier = Modifier.fillMaxSize()) {
+    Canvas(modifier = modifier) {
         val canvasWidth = size.width
         val canvasHeight = size.height
         val margin = Dimension.marginLarge.toPx()

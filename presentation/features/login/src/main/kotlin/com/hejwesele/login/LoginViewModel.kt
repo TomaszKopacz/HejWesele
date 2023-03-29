@@ -3,7 +3,6 @@ package com.hejwesele.login
 import android.Manifest
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
-import com.hejwesele.android.osinfo.OsInfo
 import com.hejwesele.android.theme.Label
 import com.hejwesele.encryption.base64
 import com.hejwesele.encryption.bytes
@@ -27,7 +26,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class LoginViewModel @Inject constructor(
-    private val osInfo: OsInfo,
     private val permissionsHandler: PermissionsHandler,
     private val loginEvent: LoginEvent
 ) : StateViewModel<LoginUiState>(LoginUiState.DEFAULT) {
@@ -35,11 +33,11 @@ internal class LoginViewModel @Inject constructor(
     private var state = State()
 
     private val eventNameValidator = Validator(
-        StringNotEmpty(error = Label.loginEventNameEmptyErrorLabel)
+        StringNotEmpty(error = Label.loginEventNameEmptyErrorText)
     )
 
     private val eventPasswordValidator = Validator(
-        StringNotEmpty(error = Label.loginEventPasswordEmptyErrorLabel)
+        StringNotEmpty(error = Label.loginEventPasswordEmptyErrorText)
     )
 
     fun onNameInputChanged(text: String) {
@@ -77,11 +75,43 @@ internal class LoginViewModel @Inject constructor(
             loginEvent(
                 name = state.eventNameInput,
                 password = state.eventPasswordInput.encodePassword(),
-                onServiceError = { sendGeneralErrorState() },
-                onEventNotFound = { sendEventNotFoundState() },
-                onPasswordInvalid = { sendPasswordInvalidState() },
-                onSaveEventFailed = { sendEventSavingErrorState() },
-                onDone = { sendSuccessState() }
+                onServiceError = {
+                    updateState { copy(isLoading = false, isError = true) }
+                },
+                onEventNotFound = {
+                    updateState {
+                        copy(
+                            isLoading = false,
+                            isError = false,
+                            eventNameError = Throwable(Label.loginEventNotFoundErrorText),
+                            eventPasswordError = null
+                        )
+                    }
+                },
+                onPasswordInvalid = {
+                    updateState {
+                        copy(
+                            isLoading = false,
+                            isError = false,
+                            eventNameError = null,
+                            eventPasswordError = Throwable(Label.loginIncorrectPasswordErrorText)
+                        )
+                    }
+                },
+                onSaveEventFailed = {
+                    updateState { copy(isLoading = false, isError = true) }
+                },
+                onDone = {
+                    updateState {
+                        copy(
+                            openEvent = triggered,
+                            isLoading = false,
+                            isError = false,
+                            eventNameError = null,
+                            eventPasswordError = null
+                        )
+                    }
+                }
             )
         }
     }
@@ -156,59 +186,7 @@ internal class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun sendGeneralErrorState() {
-        updateState {
-            copy(
-                isLoading = false,
-                isError = true
-            )
-        }
-    }
-
-    private fun sendEventNotFoundState() {
-        updateState {
-            copy(
-                isLoading = false,
-                isError = false,
-                eventNameError = Throwable(Label.loginEventNotFoundErrorLabel),
-                eventPasswordError = null
-            )
-        }
-    }
-
-    private fun sendPasswordInvalidState() {
-        updateState {
-            copy(
-                isLoading = false,
-                isError = false,
-                eventNameError = null,
-                eventPasswordError = Throwable(Label.loginIncorrectPasswordErrorLabel)
-            )
-        }
-    }
-
-    private fun sendEventSavingErrorState() {
-        updateState {
-            copy(
-                isLoading = false,
-                isError = true
-            )
-        }
-    }
-
-    private fun sendSuccessState() {
-        updateState {
-            copy(
-                openEvent = triggered,
-                isLoading = false,
-                isError = false,
-                eventNameError = null,
-                eventPasswordError = null
-            )
-        }
-    }
-
-    private fun String.encodePassword() = bytes().sha256().base64(osInfo).string()
+    private fun String.encodePassword() = bytes().sha256().base64().string()
 
     private data class State(
         val eventNameInput: String = "",
@@ -231,6 +209,7 @@ internal data class LoginUiState(
     val eventPasswordError: Throwable?,
     val isFormValid: Boolean
 ) {
+
     companion object {
         val DEFAULT = LoginUiState(
             showHelp = consumed,

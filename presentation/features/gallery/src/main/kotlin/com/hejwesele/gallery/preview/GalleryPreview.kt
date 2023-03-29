@@ -8,7 +8,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -161,7 +160,9 @@ private fun GalleryPreviewScreen(
                     InternetConnectionPopup()
                 }
                 GalleryPreviewContent(
-                    padding = padding,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = padding.calculateBottomPadding()),
                     photoUrls = photoUrls,
                     selectedPhotoIndex = selectedPhotoIndex,
                     isSavingPhoto = isSavingPhoto,
@@ -179,7 +180,7 @@ private fun GalleryPreviewScreen(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun GalleryPreviewContent(
-    padding: PaddingValues,
+    modifier: Modifier = Modifier,
     photoUrls: List<String>,
     selectedPhotoIndex: Int,
     isSavingPhoto: Boolean,
@@ -187,19 +188,16 @@ private fun GalleryPreviewContent(
     onSave: (String) -> Unit
 ) {
     val pagerState = rememberPagerState(initialPage = selectedPhotoIndex)
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = padding.calculateBottomPadding())
-    ) {
+    Column(modifier = modifier) {
         Actions(
+            modifier = Modifier
+                .padding(Dimension.marginSmall)
+                .fillMaxWidth(),
             onBack = onBack,
             onSave = { onSave(photoUrls[pagerState.currentPage]) }
         )
         PhotosCarousel(
-            modifier = Modifier
-                .weight(1.0f)
-                .padding(bottom = padding.calculateBottomPadding()),
+            modifier = Modifier.weight(1.0f),
             state = pagerState,
             photoUrls = photoUrls,
             savingPhoto = isSavingPhoto
@@ -209,13 +207,12 @@ private fun GalleryPreviewContent(
 
 @Composable
 private fun Actions(
+    modifier: Modifier = Modifier,
     onBack: () -> Unit,
     onSave: () -> Unit
 ) {
     Row(
-        modifier = Modifier
-            .padding(Dimension.marginSmall)
-            .fillMaxWidth(),
+        modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Icon(
@@ -223,7 +220,7 @@ private fun Actions(
             contentDescription = null,
             tint = md_theme_dark_onBackground,
             modifier = Modifier
-                .size(Dimension.iconSizeNormal)
+                .size(Dimension.iconNormal)
                 .clickable { onBack() }
         )
         Icon(
@@ -231,7 +228,7 @@ private fun Actions(
             contentDescription = null,
             tint = md_theme_dark_onBackground,
             modifier = Modifier
-                .size(Dimension.iconSizeNormal)
+                .size(Dimension.iconNormal)
                 .clickable { onSave() }
         )
     }
@@ -240,7 +237,7 @@ private fun Actions(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun PhotosCarousel(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     state: PagerState,
     photoUrls: List<String>,
     savingPhoto: Boolean
