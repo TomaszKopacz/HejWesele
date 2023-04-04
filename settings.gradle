@@ -40,11 +40,13 @@ include ":presentation:ui:theme"
 include ":services:events"
 include ":services:galleries"
 include ":services:invitations"
+include ":services:regulations"
 include ":services:settings"
 
 include ":repositories:events"
 include ":repositories:galleries"
 include ":repositories:invitations"
+include ":repositories:regulations"
 include ":repositories:settings"
 
 include ":libraries:analytics"

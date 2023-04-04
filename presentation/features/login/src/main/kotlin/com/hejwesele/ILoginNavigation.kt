@@ -5,5 +5,7 @@ interface ILoginNavigation {
 
     fun openQrScanner()
 
+    fun openSettings()
+
     fun navigateUp()
 }

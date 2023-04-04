@@ -33,10 +33,11 @@ fun ErrorView(
     modifier: Modifier = Modifier,
     title: String = Label.errorTitleText,
     description: String = Label.errorDescriptionText,
-    onRetry: () -> Unit
+    onRetry: (() -> Unit)? = null
 ) {
     ScrollableColumn(
-        modifier = modifier.background(MaterialTheme.colorScheme.background)
+        modifier = modifier.background(MaterialTheme.colorScheme.background),
+        arrangement = Arrangement.Center
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -73,7 +74,7 @@ fun ErrorView(
                 PlainButton(
                     text = Label.retry,
                     color = MaterialTheme.colorScheme.error,
-                    onClick = onRetry,
+                    onClick = { onRetry?.invoke() },
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
             }
@@ -85,10 +86,7 @@ fun ErrorView(
 @Composable
 private fun ErrorViewPreview() {
     AppTheme(darkTheme = false) {
-        ErrorView(
-            modifier = Modifier.fillMaxSize(),
-            onRetry = {}
-        )
+        ErrorView(modifier = Modifier.fillMaxSize())
     }
 }
 

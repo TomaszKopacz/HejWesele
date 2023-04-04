@@ -99,9 +99,10 @@ private fun LoginEntryPoint(
     val actions = LoginActions(
         onNameInputChanged = { text -> viewModel.onNameInputChanged(text) },
         onPasswordInputChanged = { text -> viewModel.onPasswordInputChanged(text) },
+        onInfoClicked = { viewModel.onSettingsRequested() },
         onHelpClicked = { viewModel.onHelpRequested() },
-        onNextButtonClick = { viewModel.onSubmit() },
-        onScanQrButtonClick = { viewModel.onScanQrClicked() },
+        onNextButtonClicked = { viewModel.onSubmit() },
+        onScanQrButtonClicked = { viewModel.onScanQrClicked() },
         onErrorDismissed = { viewModel.onErrorDismissed() }
     )
 
@@ -130,6 +131,11 @@ private fun LoginEventHandler(
     viewModel: LoginViewModel,
     navigation: ILoginNavigation
 ) {
+    EventEffect(
+        event = uiState.openSettings,
+        onConsumed = { viewModel.onSettingsOpened() },
+        action = { navigation.openSettings() }
+    )
     EventEffect(
         event = uiState.showHelp,
         onConsumed = { viewModel.onHelpShown() },
@@ -176,11 +182,7 @@ private fun LoginScreen(
             nameErrorMessage = nameErrorMessage,
             passwordErrorMessage = passwordErrorMessage,
             isInternetPopupEnabled = isInternetPopupEnabled,
-            onNameInputChanged = actions.onNameInputChanged,
-            onPasswordInputChanged = actions.onPasswordInputChanged,
-            onHelpClicked = actions.onHelpClicked,
-            onNextButtonClicked = actions.onNextButtonClick,
-            onScanQrButtonClicked = actions.onScanQrButtonClick
+            actions = actions
         )
         if (isError) {
             ErrorDialog(onDismiss = actions.onErrorDismissed)
@@ -199,11 +201,7 @@ private fun LoginScreenContent(
     nameErrorMessage: String?,
     passwordErrorMessage: String?,
     isInternetPopupEnabled: Boolean,
-    onNameInputChanged: (String) -> Unit,
-    onPasswordInputChanged: (String) -> Unit,
-    onHelpClicked: () -> Unit,
-    onNextButtonClicked: () -> Unit,
-    onScanQrButtonClicked: () -> Unit
+    actions: LoginActions
 ) {
     val bottomPadding = WindowInsets.navigationBars
         .only(WindowInsetsSides.Bottom)
@@ -228,7 +226,7 @@ private fun LoginScreenContent(
                 modifier = Modifier
                     .align(Alignment.End)
                     .size(Dimension.iconNormal)
-                    .noRippleClickable(onClick = {})
+                    .noRippleClickable(onClick = { actions.onInfoClicked() })
             )
             VerticalMargin(Dimension.marginOutsizeLarge)
             Icon(
@@ -243,11 +241,11 @@ private fun LoginScreenContent(
                 isNextButtonEnabled = isNextButtonEnabled,
                 nameErrorMessage = nameErrorMessage,
                 passwordErrorMessage = passwordErrorMessage,
-                onNameInputChanged = onNameInputChanged,
-                onPasswordInputChanged = onPasswordInputChanged,
-                onHelpClicked = onHelpClicked,
-                onNextButtonClicked = onNextButtonClicked,
-                onScanQrButtonClick = onScanQrButtonClicked
+                onNameInputChanged = actions.onNameInputChanged,
+                onPasswordInputChanged = actions.onPasswordInputChanged,
+                onHelpClicked = actions.onHelpClicked,
+                onNextButtonClicked = actions.onNextButtonClicked,
+                onScanQrButtonClick = actions.onScanQrButtonClicked
             )
             VerticalMargin(Dimension.marginNormal)
         }
@@ -350,9 +348,10 @@ private fun HelpBottomSheetContent() {
 private data class LoginActions(
     val onNameInputChanged: (String) -> Unit,
     val onPasswordInputChanged: (String) -> Unit,
+    val onInfoClicked: () -> Unit,
     val onHelpClicked: () -> Unit,
-    val onNextButtonClick: () -> Unit,
-    val onScanQrButtonClick: () -> Unit,
+    val onNextButtonClicked: () -> Unit,
+    val onScanQrButtonClicked: () -> Unit,
     val onErrorDismissed: () -> Unit
 )
 
@@ -374,9 +373,10 @@ private fun LoginScreenPreview() {
             actions = LoginActions(
                 onNameInputChanged = {},
                 onPasswordInputChanged = {},
+                onInfoClicked = {},
                 onHelpClicked = {},
-                onNextButtonClick = {},
-                onScanQrButtonClick = {},
+                onNextButtonClicked = {},
+                onScanQrButtonClicked = {},
                 onErrorDismissed = {}
             )
         )

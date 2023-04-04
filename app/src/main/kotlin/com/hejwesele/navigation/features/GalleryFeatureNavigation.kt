@@ -8,7 +8,6 @@ import com.hejwesele.gallery.destinations.PhotoConfirmationDestination
 import com.hejwesele.navigation.CommonNavigation
 import com.hejwesele.navigation.ICommonNavigation
 import com.hejwesele.navigation.MainNavGraph
-import com.hejwesele.navigation.SettingsNavGraph
 import com.ramcosta.composedestinations.dynamic.within
 import com.ramcosta.composedestinations.navigation.navigate
 
@@ -32,9 +31,5 @@ class GalleryFeatureNavigation(
                 selectedPhotoIndex = selectedPhotoIndex
             ) within MainNavGraph
         )
-    }
-
-    override fun openSettings() {
-        navController.navigate(SettingsNavGraph)
     }
 }

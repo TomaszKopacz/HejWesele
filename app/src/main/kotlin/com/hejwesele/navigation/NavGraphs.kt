@@ -6,7 +6,7 @@ import com.hejwesele.gallery.destinations.GalleryPreviewDestination
 import com.hejwesele.gallery.destinations.PhotoConfirmationDestination
 import com.hejwesele.main.destinations.MainDestination
 import com.hejwesele.settings.destinations.SettingsOverviewDestination
-import com.hejwesele.settings.destinations.SettingsTermsAndConditionsDestination
+import com.hejwesele.settings.destinations.TermsAndConditionsDestination
 import com.ramcosta.composedestinations.dynamic.routedIn
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.NavGraphSpec
@@ -44,9 +44,9 @@ internal object MainNavGraph : NavGraphSpec {
 
 internal object SettingsNavGraph : NavGraphSpec {
     override val route: String = "settingsNavGraph"
-    override val startRoute: Route = SettingsOverviewDestination routedIn this
+    override val startRoute: Route = TermsAndConditionsDestination routedIn this
     override val destinationsByRoute = listOf<DestinationSpec<*>>(
         SettingsOverviewDestination,
-        SettingsTermsAndConditionsDestination
+        TermsAndConditionsDestination
     ).routedIn(this).associateBy { it.route }
 }

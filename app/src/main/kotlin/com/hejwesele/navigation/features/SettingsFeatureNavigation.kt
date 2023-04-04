@@ -5,7 +5,7 @@ import com.hejwesele.navigation.CommonNavigation
 import com.hejwesele.navigation.ICommonNavigation
 import com.hejwesele.navigation.SettingsNavGraph
 import com.hejwesele.settings.ISettingsFeatureNavigation
-import com.hejwesele.settings.destinations.SettingsTermsAndConditionsDestination
+import com.hejwesele.settings.destinations.TermsAndConditionsDestination
 import com.ramcosta.composedestinations.dynamic.within
 import com.ramcosta.composedestinations.navigation.navigate
 
@@ -14,6 +14,6 @@ class SettingsFeatureNavigation(
 ) : ISettingsFeatureNavigation, ICommonNavigation by CommonNavigation(navController) {
 
     override fun openTermsAndConditions() {
-        navController.navigate(SettingsTermsAndConditionsDestination within SettingsNavGraph)
+        navController.navigate(TermsAndConditionsDestination within SettingsNavGraph)
     }
 }

@@ -6,7 +6,6 @@ plugins {
     alias libs.plugins.googleServices
     alias libs.plugins.firebase.appDistribution
     alias libs.plugins.firebase.crashlytics
-//    alias libs.plugins.firebase.perf
     alias libs.plugins.playPublisher
     alias libs.plugins.licensee
     alias libs.plugins.ksp
@@ -125,6 +124,7 @@ dependencies {
     implementation projects.services.events
     implementation projects.services.galleries
     implementation projects.services.invitations
+    implementation projects.services.regulations
     implementation projects.services.settings
 
     implementation projects.repositories.events

@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 @Composable
 fun ScrollableColumn(
     modifier: Modifier = Modifier,
+    alignment: Alignment.Horizontal = Alignment.CenterHorizontally,
+    arrangement: Arrangement.Vertical = Arrangement.Top,
     content: @Composable (ColumnScope.() -> Unit)
 ) {
     Box(modifier = modifier) {
@@ -31,8 +33,8 @@ fun ScrollableColumn(
                         state = rememberScrollState(),
                         enabled = true
                     ),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = alignment,
+                verticalArrangement = arrangement,
                 content = content
             )
         }

@@ -7,6 +7,7 @@ import com.hejwesele.navigation.CommonNavigation
 import com.hejwesele.navigation.ICommonNavigation
 import com.hejwesele.navigation.LoginNavGraph
 import com.hejwesele.navigation.MainNavGraph
+import com.hejwesele.navigation.SettingsNavGraph
 import com.ramcosta.composedestinations.dynamic.within
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.navigation.popUpTo
@@ -19,6 +20,10 @@ class LoginFeatureNavigation(
         navController.navigate(MainNavGraph) {
             popUpTo(LoginNavGraph) { inclusive = true }
         }
+    }
+
+    override fun openSettings() {
+        navController.navigate(SettingsNavGraph)
     }
 
     override fun openQrScanner() {

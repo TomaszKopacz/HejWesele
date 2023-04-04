@@ -60,6 +60,12 @@ internal class LoginViewModel @Inject constructor(
         )
     }
 
+    fun onSettingsRequested() {
+        viewModelScope.launch {
+            updateState { copy(openSettings = triggered) }
+        }
+    }
+
     fun onHelpRequested() {
         viewModelScope.launch {
             updateState { copy(showHelp = triggered) }
@@ -143,6 +149,10 @@ internal class LoginViewModel @Inject constructor(
         }
     }
 
+    fun onSettingsOpened() {
+        updateState { copy(openSettings = consumed) }
+    }
+
     fun onHelpShown() {
         updateState { copy(showHelp = consumed) }
     }
@@ -199,6 +209,7 @@ internal class LoginViewModel @Inject constructor(
 }
 
 internal data class LoginUiState(
+    val openSettings: StateEvent,
     val showHelp: StateEvent,
     val openEvent: StateEvent,
     val requestCameraPermission: StateEventWithContent<String>,
@@ -212,6 +223,7 @@ internal data class LoginUiState(
 
     companion object {
         val DEFAULT = LoginUiState(
+            openSettings = consumed,
             showHelp = consumed,
             openEvent = consumed,
             requestCameraPermission = consumed(),
