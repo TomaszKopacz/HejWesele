@@ -13,4 +13,8 @@ class RegulationsRepository @Inject constructor(
     suspend fun getTermsAndConditions() = withContext(Dispatchers.IO) {
         remoteSource.getTermsAndConditions()
     }
+
+    suspend fun getPrivacyPolicy() = withContext(Dispatchers.IO) {
+        remoteSource.getPrivacyPolicy()
+    }
 }

@@ -1,4 +1,4 @@
-package com.hejwesele.settings.terms
+package com.hejwesele.settings.termsandconditions
 
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel

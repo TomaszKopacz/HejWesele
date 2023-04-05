@@ -5,6 +5,7 @@ import com.hejwesele.destinations.QrScannerDestination
 import com.hejwesele.gallery.destinations.GalleryPreviewDestination
 import com.hejwesele.gallery.destinations.PhotoConfirmationDestination
 import com.hejwesele.main.destinations.MainDestination
+import com.hejwesele.settings.destinations.PrivacyPolicyDestination
 import com.hejwesele.settings.destinations.SettingsOverviewDestination
 import com.hejwesele.settings.destinations.TermsAndConditionsDestination
 import com.ramcosta.composedestinations.dynamic.routedIn
@@ -47,6 +48,7 @@ internal object SettingsNavGraph : NavGraphSpec {
     override val startRoute: Route = TermsAndConditionsDestination routedIn this
     override val destinationsByRoute = listOf<DestinationSpec<*>>(
         SettingsOverviewDestination,
-        TermsAndConditionsDestination
+        TermsAndConditionsDestination,
+        PrivacyPolicyDestination
     ).routedIn(this).associateBy { it.route }
 }

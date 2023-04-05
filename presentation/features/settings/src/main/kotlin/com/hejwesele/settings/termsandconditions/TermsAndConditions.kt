@@ -1,4 +1,4 @@
-package com.hejwesele.settings.terms
+package com.hejwesele.settings.termsandconditions
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi

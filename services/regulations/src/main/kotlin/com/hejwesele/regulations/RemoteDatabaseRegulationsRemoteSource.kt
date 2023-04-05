@@ -16,12 +16,22 @@ class RemoteDatabaseRegulationsRemoteSource @Inject constructor(
 
     companion object {
         private const val REGULATIONS_PATH = "regulations/"
-        private const val TERMS_AND_CONDITIONS_PATH = "T&C/"
+        private const val TERMS_AND_CONDITIONS_PATH = "terms_and_conditions/"
+        private const val PRIVACY_POLICY_PATH = "privacy_policy/"
     }
 
     override suspend fun getTermsAndConditions(): Result<List<RegulationPoint>> = withContext(Dispatchers.IO) {
         database.readAll(
             path = REGULATIONS_PATH + TERMS_AND_CONDITIONS_PATH,
+            type = RegulationPointDto::class
+        ).mapCatching { termsDtoList ->
+            termsDtoList.map { dto -> dto.mapModel() }
+        }
+    }
+
+    override suspend fun getPrivacyPolicy(): Result<List<RegulationPoint>> = withContext(Dispatchers.IO) {
+        database.readAll(
+            path = REGULATIONS_PATH + PRIVACY_POLICY_PATH,
             type = RegulationPointDto::class
         ).mapCatching { termsDtoList ->
             termsDtoList.map { dto -> dto.mapModel() }
