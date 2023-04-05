@@ -8,6 +8,7 @@ object Dimension {
     val marginSmall = 12.dp
     val marginNormal = 16.dp
     val marginLarge = 24.dp
+    val marginExtraLarge = 36.dp
     val marginLarge_1_4 = 6.dp
     val marginLarge_3_4 = 18.dp
     val marginOutsizeLarge = 48.dp

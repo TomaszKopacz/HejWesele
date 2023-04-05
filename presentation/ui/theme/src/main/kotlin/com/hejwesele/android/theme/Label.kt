@@ -27,6 +27,11 @@ object Label {
     const val loginIncorrectPasswordErrorText = "Niepoprawne hasło"
     const val loginLoadingText = "Logowanie..."
 
+    // Settings
+    const val settingsTitleLabel = "Ustawienia"
+    const val settingsTermsAndConditionsLabel = "Regulamin"
+    const val settingsPrivacyPolicyLabel = "Polityka prywatności"
+
     // Home
     const val homeNoInvitationTilesText = "Aktualnie nie ma tutaj żadnych informacji do wyświetlenia, może pojawią się za chwilkę :)"
     const val homeIntentMapsLabel = "Mapy Google"

@@ -4,6 +4,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +22,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,7 +31,6 @@ import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.Loader
 import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.theme.Dimension
-import com.hejwesele.extensions.noRippleClickable
 import com.hejwesele.internet.InternetConnectionPopup
 import com.hejwesele.regulations.model.RegulationPoint
 import com.hejwesele.settings.ISettingsFeatureNavigation
@@ -142,8 +143,8 @@ private fun TermsAndConditionsContent(
         LazyColumn(
             modifier = modifier
                 .padding(
-                    start = Dimension.marginNormal,
-                    end = Dimension.marginNormal
+                    start = Dimension.marginLarge,
+                    end = Dimension.marginLarge
                 )
         ) {
             item {
@@ -153,14 +154,15 @@ private fun TermsAndConditionsContent(
                 Icon(
                     modifier = Modifier
                         .size(Dimension.iconNormal)
-                        .noRippleClickable { onBackClicked() },
+                        .clip(MaterialTheme.shapes.small)
+                        .clickable { onBackClicked() },
                     contentDescription = null,
                     painter = painterResource(R.drawable.ic_arrow_left),
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
             item {
-                VerticalMargin(Dimension.marginNormal)
+                VerticalMargin(Dimension.marginLarge)
             }
             regulations.forEach { regulationPoint ->
                 item {

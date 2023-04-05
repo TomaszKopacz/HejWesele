@@ -45,7 +45,7 @@ internal object MainNavGraph : NavGraphSpec {
 
 internal object SettingsNavGraph : NavGraphSpec {
     override val route: String = "settingsNavGraph"
-    override val startRoute: Route = TermsAndConditionsDestination routedIn this
+    override val startRoute: Route = SettingsOverviewDestination routedIn this
     override val destinationsByRoute = listOf<DestinationSpec<*>>(
         SettingsOverviewDestination,
         TermsAndConditionsDestination,

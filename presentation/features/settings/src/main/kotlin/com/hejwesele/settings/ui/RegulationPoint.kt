@@ -48,9 +48,9 @@ private fun getTextStyle(
     regulationPointType: RegulationPointType,
     typography: Typography
 ) = when (regulationPointType) {
-    RegulationPointType.TITLE -> typography.displaySmall
-    RegulationPointType.PARAGRAPH -> typography.titleMedium
-    else -> typography.bodyMedium
+    RegulationPointType.TITLE -> typography.headlineLarge
+    RegulationPointType.PARAGRAPH -> typography.titleSmall
+    else -> typography.bodySmall
 }
 
 private fun getSymbol(regulationPointType: RegulationPointType) = when (regulationPointType) {
@@ -72,6 +72,6 @@ private fun getIndent(prefix: String, level: Int) = if (prefix.isEmpty()) {
 
 private fun getSpace(regulationPointType: RegulationPointType) = when (regulationPointType) {
     RegulationPointType.TITLE -> Dimension.marginLarge
-    RegulationPointType.PARAGRAPH -> Dimension.marginNormal
+    RegulationPointType.PARAGRAPH -> Dimension.marginSmall
     else -> Dimension.marginSmall
 }
