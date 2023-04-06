@@ -5,8 +5,11 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,12 +27,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.HorizontalMargin
 import com.hejwesele.android.components.VerticalMargin
+import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
+import com.hejwesele.extensions.disabled
 import com.hejwesele.internet.InternetConnectionPopup
 import com.hejwesele.settings.ISettingsFeatureNavigation
 import com.hejwesele.settings.R
@@ -64,6 +70,8 @@ private fun SettingsOverviewEntryPoint(
     )
 
     SettingsOverviewScreen(
+        contactEmail = uiState.contactEmail,
+        appVersion = uiState.appVersion,
         internetPopupEnabled = true,
         onBackClicked = { viewModel.onBack() },
         onTermsAndConditionClicked = { viewModel.onTermsAndConditionsRequested() },
@@ -101,6 +109,8 @@ private fun SettingsOverviewEventHandler(
 )
 @Composable
 private fun SettingsOverviewScreen(
+    contactEmail: String,
+    appVersion: String,
     internetPopupEnabled: Boolean,
     onBackClicked: () -> Unit,
     onTermsAndConditionClicked: () -> Unit,
@@ -115,41 +125,76 @@ private fun SettingsOverviewScreen(
             if (internetPopupEnabled) {
                 InternetConnectionPopup(statusBarSensitive = false)
             }
-            Column(
+            SettingsOverviewContent(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .weight(1.0f)
-                    .padding(horizontal = Dimension.marginLarge)
-            ) {
-                VerticalMargin(padding.calculateTopPadding())
-                Icon(
-                    modifier = Modifier
-                        .size(Dimension.iconNormal)
-                        .clip(MaterialTheme.shapes.small)
-                        .clickable { onBackClicked() },
-                    contentDescription = null,
-                    painter = painterResource(R.drawable.ic_arrow_left),
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
-                VerticalMargin(Dimension.marginLarge)
-                Text(
-                    text = Label.settingsTitleLabel,
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                VerticalMargin(Dimension.marginExtraLarge)
-                SettingsItem(
-                    iconResId = R.drawable.ic_law,
-                    label = Label.settingsTermsAndConditionsLabel,
-                    onClick = onTermsAndConditionClicked
-                )
-                SettingsItem(
-                    iconResId = R.drawable.ic_privacy,
-                    label = Label.settingsPrivacyPolicyLabel,
-                    onClick = onPrivacyPolicyClicked
-                )
-                VerticalMargin(Dimension.marginLarge)
-            }
+                    .padding(horizontal = Dimension.marginLarge),
+                padding = padding,
+                contactEmail = contactEmail,
+                appVersion = appVersion,
+                onBackClicked = onBackClicked,
+                onTermsAndConditionClicked = onTermsAndConditionClicked,
+                onPrivacyPolicyClicked = onPrivacyPolicyClicked
+            )
         }
+    }
+}
+
+@Composable
+private fun SettingsOverviewContent(
+    modifier: Modifier = Modifier,
+    padding: PaddingValues,
+    contactEmail: String,
+    appVersion: String,
+    onBackClicked: () -> Unit,
+    onTermsAndConditionClicked: () -> Unit,
+    onPrivacyPolicyClicked: () -> Unit
+) {
+    Column(modifier = modifier) {
+        VerticalMargin(padding.calculateTopPadding())
+        Icon(
+            modifier = Modifier
+                .size(Dimension.iconNormal)
+                .clip(MaterialTheme.shapes.small)
+                .clickable { onBackClicked() },
+            contentDescription = null,
+            painter = painterResource(R.drawable.ic_arrow_left),
+            tint = MaterialTheme.colorScheme.onSurface
+        )
+        VerticalMargin(Dimension.marginLarge)
+        Text(
+            text = Label.settingsTitleLabel,
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        VerticalMargin(Dimension.marginExtraLarge)
+        SettingsItem(
+            iconResId = R.drawable.ic_law,
+            label = Label.settingsTermsAndConditionsLabel,
+            onClick = onTermsAndConditionClicked
+        )
+        SettingsItem(
+            iconResId = R.drawable.ic_privacy,
+            label = Label.settingsPrivacyPolicyLabel,
+            onClick = onPrivacyPolicyClicked
+        )
+        VerticalMargin(Dimension.marginLarge)
+        Spacer(modifier = Modifier.weight(1.0f))
+        Text(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            text = "${Label.settingsContactLabelText} $contactEmail",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurface.disabled
+        )
+        VerticalMargin(Dimension.marginExtraSmall)
+        Text(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            text = "${Label.settingsAppVersionLabelText} $appVersion",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurface.disabled
+        )
+        VerticalMargin(padding.calculateBottomPadding() + Dimension.marginNormal)
     }
 }
 
@@ -185,5 +230,20 @@ private fun SettingsItem(
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun SettingsOverviewScreenPreview() {
+    AppTheme(darkTheme = false) {
+        SettingsOverviewScreen(
+            contactEmail = "fake.name@gmail.com",
+            appVersion = "2.10.4 (1234)",
+            internetPopupEnabled = false,
+            onBackClicked = {},
+            onTermsAndConditionClicked = {},
+            onPrivacyPolicyClicked = {}
+        )
     }
 }

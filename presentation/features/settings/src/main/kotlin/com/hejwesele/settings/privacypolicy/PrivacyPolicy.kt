@@ -25,14 +25,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.Loader
 import com.hejwesele.android.components.VerticalMargin
+import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.internet.InternetConnectionPopup
 import com.hejwesele.regulations.model.RegulationPoint
+import com.hejwesele.regulations.model.RegulationPointType.LETTER_POINT
+import com.hejwesele.regulations.model.RegulationPointType.NUMBER_POINT
+import com.hejwesele.regulations.model.RegulationPointType.PARAGRAPH
+import com.hejwesele.regulations.model.RegulationPointType.TITLE
 import com.hejwesele.settings.ISettingsFeatureNavigation
 import com.hejwesele.settings.R
 import com.hejwesele.settings.ui.RegulationItem
@@ -178,3 +184,50 @@ private fun PrivacyPolicyContent(
         }
     }
 }
+
+@Preview
+@Composable
+private fun PrivacyPolicyScreenPreview() {
+    AppTheme(darkTheme = false) {
+        PrivacyPolicyScreen(
+            isLoading = false,
+            isError = false,
+            internetPopupEnabled = false,
+            regulations = previewRegulations,
+            onBackCLicked = {}
+        )
+    }
+}
+
+private val previewRegulations = listOf(
+    RegulationPoint(
+        type = TITLE,
+        level = 0,
+        order = null,
+        text = "Title"
+    ),
+    RegulationPoint(
+        type = PARAGRAPH,
+        level = 0,
+        order = "1",
+        text = "Paragraph"
+    ),
+    RegulationPoint(
+        type = NUMBER_POINT,
+        level = 1,
+        order = "1",
+        text = "Definitions"
+    ),
+    RegulationPoint(
+        type = LETTER_POINT,
+        level = 2,
+        order = "a",
+        text = "Application"
+    ),
+    RegulationPoint(
+        type = LETTER_POINT,
+        level = 2,
+        order = "b",
+        text = "User"
+    )
+)

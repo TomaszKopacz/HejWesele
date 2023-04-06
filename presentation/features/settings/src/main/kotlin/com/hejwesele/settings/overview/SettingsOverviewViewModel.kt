@@ -2,6 +2,8 @@ package com.hejwesele.settings.overview
 
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
+import com.hejwesele.settings.usecase.GetAppVersion
+import com.hejwesele.settings.usecase.GetContactEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent
 import de.palm.composestateevents.consumed
@@ -10,8 +12,21 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class SettingsOverviewViewModel @Inject constructor() :
-    StateViewModel<SettingsOverviewUiState>(SettingsOverviewUiState.DEFAULT) {
+internal class SettingsOverviewViewModel @Inject constructor(
+    private val getContactEmail: GetContactEmail,
+    private val getAppVersion: GetAppVersion
+) : StateViewModel<SettingsOverviewUiState>(SettingsOverviewUiState.DEFAULT) {
+
+    init {
+        viewModelScope.launch {
+            updateState {
+                copy(
+                    contactEmail = getContactEmail(),
+                    appVersion = getAppVersion()
+                )
+            }
+        }
+    }
 
     fun onBack() {
         viewModelScope.launch {
@@ -53,13 +68,17 @@ internal class SettingsOverviewViewModel @Inject constructor() :
 internal data class SettingsOverviewUiState(
     val navigateUp: StateEvent,
     val openTermsAndConditions: StateEvent,
-    val openPrivacyPolicy: StateEvent
+    val openPrivacyPolicy: StateEvent,
+    val contactEmail: String,
+    val appVersion: String
 ) {
     companion object {
         val DEFAULT = SettingsOverviewUiState(
             navigateUp = consumed,
             openTermsAndConditions = consumed,
-            openPrivacyPolicy = consumed
+            openPrivacyPolicy = consumed,
+            contactEmail = "",
+            appVersion = ""
         )
     }
 }

@@ -31,6 +31,9 @@ object Label {
     const val settingsTitleLabel = "Ustawienia"
     const val settingsTermsAndConditionsLabel = "Regulamin"
     const val settingsPrivacyPolicyLabel = "Polityka prywatności"
+    const val settingsContactLabelText = "Kontakt:"
+    const val settingsContactEmailText = "tomasz.kopacz.g@gmail.com"
+    const val settingsAppVersionLabelText = "Wersja aplikacji:"
 
     // Home
     const val homeNoInvitationTilesText = "Aktualnie nie ma tutaj żadnych informacji do wyświetlenia, może pojawią się za chwilkę :)"
