@@ -124,7 +124,7 @@ dependencies {
     implementation projects.services.events
     implementation projects.services.galleries
     implementation projects.services.invitations
-    implementation projects.services.regulations
+    implementation projects.services.legals
     implementation projects.services.settings
 
     implementation projects.repositories.events

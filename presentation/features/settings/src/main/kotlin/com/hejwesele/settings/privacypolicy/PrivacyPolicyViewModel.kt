@@ -2,7 +2,7 @@ package com.hejwesele.settings.privacypolicy
 
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
-import com.hejwesele.regulations.model.RegulationPoint
+import com.hejwesele.legaldocument.LegalPoint
 import com.hejwesele.settings.usecase.GetPrivacyPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent
@@ -22,12 +22,12 @@ internal class PrivacyPolicyViewModel @Inject constructor(
             updateState { copy(isLoading = true) }
 
             getPrivacyPolicy()
-                .onSuccess { regulations ->
+                .onSuccess { legalPoints ->
                     updateState {
                         copy(
                             isLoading = false,
                             isError = false,
-                            regulations = regulations
+                            legalPoints = legalPoints
                         )
                     }
                 }
@@ -36,7 +36,7 @@ internal class PrivacyPolicyViewModel @Inject constructor(
                         copy(
                             isLoading = false,
                             isError = true,
-                            regulations = emptyList()
+                            legalPoints = emptyList()
                         )
                     }
                 }
@@ -60,14 +60,14 @@ internal data class PrivacyPolicyUiState(
     val navigateUp: StateEvent,
     val isLoading: Boolean,
     val isError: Boolean,
-    val regulations: List<RegulationPoint>
+    val legalPoints: List<LegalPoint>
 ) {
     companion object {
         val DEFAULT = PrivacyPolicyUiState(
             navigateUp = consumed,
             isLoading = false,
             isError = false,
-            regulations = emptyList()
+            legalPoints = emptyList()
         )
     }
 }

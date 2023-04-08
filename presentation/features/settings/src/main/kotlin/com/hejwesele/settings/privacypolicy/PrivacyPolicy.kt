@@ -34,14 +34,14 @@ import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.internet.InternetConnectionPopup
-import com.hejwesele.regulations.model.RegulationPoint
-import com.hejwesele.regulations.model.RegulationPointType.LETTER_POINT
-import com.hejwesele.regulations.model.RegulationPointType.NUMBER_POINT
-import com.hejwesele.regulations.model.RegulationPointType.PARAGRAPH
-import com.hejwesele.regulations.model.RegulationPointType.TITLE
+import com.hejwesele.legaldocument.LegalPoint
+import com.hejwesele.legaldocument.LegalPointType.LETTER_POINT
+import com.hejwesele.legaldocument.LegalPointType.NUMBER_POINT
+import com.hejwesele.legaldocument.LegalPointType.PARAGRAPH
+import com.hejwesele.legaldocument.LegalPointType.TITLE
 import com.hejwesele.settings.ISettingsFeatureNavigation
 import com.hejwesele.settings.R
-import com.hejwesele.settings.ui.RegulationItem
+import com.hejwesele.settings.ui.LegalPointItem
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -76,7 +76,7 @@ private fun PrivacyPolicyEntryPoint(
         isLoading = uiState.isLoading,
         isError = uiState.isError,
         internetPopupEnabled = true,
-        regulations = uiState.regulations,
+        legalPoints = uiState.legalPoints,
         onBackCLicked = { viewModel.onBack() }
     )
 }
@@ -104,7 +104,7 @@ private fun PrivacyPolicyScreen(
     isLoading: Boolean,
     isError: Boolean,
     internetPopupEnabled: Boolean,
-    regulations: List<RegulationPoint>,
+    legalPoints: List<LegalPoint>,
     onBackCLicked: () -> Unit
 ) {
     Scaffold { padding ->
@@ -118,13 +118,13 @@ private fun PrivacyPolicyScreen(
                     .background(MaterialTheme.colorScheme.surface)
             ) {
                 when {
-                    regulations.isNotEmpty() ->
+                    legalPoints.isNotEmpty() ->
                         PrivacyPolicyContent(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .background(color = MaterialTheme.colorScheme.surface),
                             padding = padding,
-                            regulations = regulations,
+                            legalPoints = legalPoints,
                             onBackClicked = onBackCLicked
                         )
                     isLoading -> Loader()
@@ -140,7 +140,7 @@ private fun PrivacyPolicyScreen(
 private fun PrivacyPolicyContent(
     modifier: Modifier = Modifier,
     padding: PaddingValues,
-    regulations: List<RegulationPoint>,
+    legalPoints: List<LegalPoint>,
     onBackClicked: () -> Unit
 ) {
     val typography = MaterialTheme.typography
@@ -170,10 +170,10 @@ private fun PrivacyPolicyContent(
             item {
                 VerticalMargin(Dimension.marginNormal)
             }
-            regulations.forEach { regulationPoint ->
+            legalPoints.forEach { legalPoint ->
                 item {
-                    RegulationItem(
-                        regulationPoint = regulationPoint,
+                    LegalPointItem(
+                        legalPoint = legalPoint,
                         typography = typography
                     )
                 }
@@ -193,40 +193,40 @@ private fun PrivacyPolicyScreenPreview() {
             isLoading = false,
             isError = false,
             internetPopupEnabled = false,
-            regulations = previewRegulations,
+            legalPoints = previewLegalPoints,
             onBackCLicked = {}
         )
     }
 }
 
-private val previewRegulations = listOf(
-    RegulationPoint(
+private val previewLegalPoints = listOf(
+    LegalPoint(
         type = TITLE,
-        level = 0,
+        level = "0",
         order = null,
         text = "Title"
     ),
-    RegulationPoint(
+    LegalPoint(
         type = PARAGRAPH,
-        level = 0,
+        level = "0",
         order = "1",
         text = "Paragraph"
     ),
-    RegulationPoint(
+    LegalPoint(
         type = NUMBER_POINT,
-        level = 1,
+        level = "1",
         order = "1",
         text = "Definitions"
     ),
-    RegulationPoint(
+    LegalPoint(
         type = LETTER_POINT,
-        level = 2,
+        level = "2",
         order = "a",
         text = "Application"
     ),
-    RegulationPoint(
+    LegalPoint(
         type = LETTER_POINT,
-        level = 2,
+        level = "2",
         order = "b",
         text = "User"
     )

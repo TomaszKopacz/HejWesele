@@ -1,4 +1,4 @@
-package com.hejwesele.regulations
+package com.hejwesele.legals
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -6,11 +6,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class RegulationsRepository @Inject constructor(
-    private val remoteSource: RegulationsRemoteSource
+class LegalDocumentsRepository @Inject constructor(
+    private val remoteSource: LegalDocumentsRemoteSource
 ) {
 
-    suspend fun getTermsAndConditions() = withContext(Dispatchers.IO) {
+    suspend fun getTermsAndConditionsDocument() = withContext(Dispatchers.IO) {
         remoteSource.getTermsAndConditions()
     }
 

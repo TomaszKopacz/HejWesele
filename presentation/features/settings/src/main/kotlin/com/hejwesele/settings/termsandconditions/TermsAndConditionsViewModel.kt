@@ -2,7 +2,7 @@ package com.hejwesele.settings.termsandconditions
 
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateViewModel
-import com.hejwesele.regulations.model.RegulationPoint
+import com.hejwesele.legaldocument.LegalPoint
 import com.hejwesele.settings.usecase.GetTermsAndConditions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent
@@ -22,12 +22,12 @@ internal class TermsAndConditionsViewModel @Inject constructor(
             updateState { copy(isLoading = true) }
 
             getTermsAndConditions()
-                .onSuccess { regulations ->
+                .onSuccess { points ->
                     updateState {
                         copy(
                             isLoading = false,
                             isError = false,
-                            regulations = regulations
+                            points = points
                         )
                     }
                 }
@@ -36,7 +36,7 @@ internal class TermsAndConditionsViewModel @Inject constructor(
                         copy(
                             isLoading = false,
                             isError = true,
-                            regulations = emptyList()
+                            points = emptyList()
                         )
                     }
                 }
@@ -60,14 +60,14 @@ internal data class TermsAndConditionsUiState(
     val navigateUp: StateEvent,
     val isLoading: Boolean,
     val isError: Boolean,
-    val regulations: List<RegulationPoint>
+    val points: List<LegalPoint>
 ) {
     companion object {
         val DEFAULT = TermsAndConditionsUiState(
             navigateUp = consumed,
             isLoading = false,
             isError = false,
-            regulations = emptyList()
+            points = emptyList()
         )
     }
 }

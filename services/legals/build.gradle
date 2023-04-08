@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace "com.hejwesele.regulations"
+    namespace "com.hejwesele.legals"
     buildTypes {
         qa {
             matchingFallbacks = ["release"]
@@ -19,7 +19,7 @@ dependencies {
     implementation projects.libraries.remotedatabase
     implementation projects.libraries.result
 
-    implementation projects.repositories.regulations
+    implementation projects.repositories.legals
 
     implementation libs.hilt.android
     kapt libs.hilt.compiler

@@ -34,11 +34,11 @@ import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.internet.InternetConnectionPopup
-import com.hejwesele.regulations.model.RegulationPoint
-import com.hejwesele.regulations.model.RegulationPointType
+import com.hejwesele.legaldocument.LegalPoint
+import com.hejwesele.legaldocument.LegalPointType
 import com.hejwesele.settings.ISettingsFeatureNavigation
 import com.hejwesele.settings.R
-import com.hejwesele.settings.ui.RegulationItem
+import com.hejwesele.settings.ui.LegalPointItem
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -73,7 +73,7 @@ private fun TermsAndConditionsEntryPoint(
         isLoading = uiState.isLoading,
         isError = uiState.isError,
         internetPopupEnabled = true,
-        regulations = uiState.regulations,
+        legalPoints = uiState.points,
         onBackCLicked = { viewModel.onBack() }
     )
 }
@@ -101,7 +101,7 @@ private fun TermsAndConditionsScreen(
     isLoading: Boolean,
     isError: Boolean,
     internetPopupEnabled: Boolean,
-    regulations: List<RegulationPoint>,
+    legalPoints: List<LegalPoint>,
     onBackCLicked: () -> Unit
 ) {
     Scaffold { padding ->
@@ -115,13 +115,13 @@ private fun TermsAndConditionsScreen(
                     .background(MaterialTheme.colorScheme.surface)
             ) {
                 when {
-                    regulations.isNotEmpty() ->
+                    legalPoints.isNotEmpty() ->
                         TermsAndConditionsContent(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .background(color = MaterialTheme.colorScheme.surface),
                             padding = padding,
-                            regulations = regulations,
+                            legalPoints = legalPoints,
                             onBackClicked = onBackCLicked
                         )
                     isLoading -> Loader()
@@ -137,7 +137,7 @@ private fun TermsAndConditionsScreen(
 private fun TermsAndConditionsContent(
     modifier: Modifier = Modifier,
     padding: PaddingValues,
-    regulations: List<RegulationPoint>,
+    legalPoints: List<LegalPoint>,
     onBackClicked: () -> Unit
 ) {
     val typography = MaterialTheme.typography
@@ -167,10 +167,10 @@ private fun TermsAndConditionsContent(
             item {
                 VerticalMargin(Dimension.marginLarge)
             }
-            regulations.forEach { regulationPoint ->
+            legalPoints.forEach { legalPoint ->
                 item {
-                    RegulationItem(
-                        regulationPoint = regulationPoint,
+                    LegalPointItem(
+                        legalPoint = legalPoint,
                         typography = typography
                     )
                 }
@@ -190,40 +190,40 @@ private fun TermsAndConditionsScreenPreview() {
             isLoading = false,
             isError = false,
             internetPopupEnabled = false,
-            regulations = previewRegulations,
+            legalPoints = previewLegalPoints,
             onBackCLicked = {}
         )
     }
 }
 
-private val previewRegulations = listOf(
-    RegulationPoint(
-        type = RegulationPointType.TITLE,
-        level = 0,
-        order = null,
+private val previewLegalPoints = listOf(
+    LegalPoint(
+        type = LegalPointType.TITLE,
+        level = "0",
+        order = "null",
         text = "Title"
     ),
-    RegulationPoint(
-        type = RegulationPointType.PARAGRAPH,
-        level = 0,
+    LegalPoint(
+        type = LegalPointType.PARAGRAPH,
+        level = "0",
         order = "1",
         text = "Paragraph"
     ),
-    RegulationPoint(
-        type = RegulationPointType.NUMBER_POINT,
-        level = 1,
+    LegalPoint(
+        type = LegalPointType.NUMBER_POINT,
+        level = "1",
         order = "1",
         text = "Definitions"
     ),
-    RegulationPoint(
-        type = RegulationPointType.LETTER_POINT,
-        level = 2,
+    LegalPoint(
+        type = LegalPointType.LETTER_POINT,
+        level = "2",
         order = "a",
         text = "Application"
     ),
-    RegulationPoint(
-        type = RegulationPointType.LETTER_POINT,
-        level = 2,
+    LegalPoint(
+        type = LegalPointType.LETTER_POINT,
+        level = "2",
         order = "b",
         text = "User"
     )
