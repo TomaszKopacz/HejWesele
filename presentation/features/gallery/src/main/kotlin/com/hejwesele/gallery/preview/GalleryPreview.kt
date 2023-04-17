@@ -26,11 +26,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.SubcomposeAsyncImage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -38,6 +36,7 @@ import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.Loader
 import com.hejwesele.android.components.LoaderDialog
+import com.hejwesele.android.components.RectangleImage
 import com.hejwesele.android.components.ScreenOrientationLocker
 import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
@@ -247,11 +246,11 @@ private fun PhotosCarousel(
         state = state,
         count = photoUrls.count()
     ) { page ->
-        SubcomposeAsyncImage(
-            model = photoUrls[page],
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth,
-            modifier = Modifier.fillMaxWidth()
+        val url = photoUrls[page]
+
+        RectangleImage(
+            modifier = Modifier.fillMaxWidth(),
+            url = url
         )
         if (savingPhoto) {
             LoaderDialog(label = Label.gallerySavingPhotoInProgressText)

@@ -18,7 +18,8 @@ class QrReader @Inject constructor() {
         image: Image,
         rotation: Int,
         onRead: (String) -> Unit,
-        onFail: () -> Unit
+        onFail: () -> Unit,
+        onComplete: () -> Unit
     ) {
         val input = InputImage.fromMediaImage(image, rotation)
         scanner.process(input)
@@ -29,6 +30,9 @@ class QrReader @Inject constructor() {
             }
             .addOnFailureListener {
                 onFail()
+            }
+            .addOnCompleteListener {
+                onComplete()
             }
     }
 }

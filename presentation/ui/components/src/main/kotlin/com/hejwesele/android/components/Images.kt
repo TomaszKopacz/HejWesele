@@ -13,14 +13,32 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.SubcomposeAsyncImage
 import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
+import com.hejwesele.imageloader.CachedImage
+
+@Composable
+fun RectangleImage(
+    modifier: Modifier = Modifier,
+    url: String,
+    loader: @Composable () -> Unit = { Loader() },
+    fallback: @Composable () -> Unit = { Loader() }
+) {
+    CachedImage(
+        modifier = modifier,
+        url = url,
+        loader = { loader() },
+        fallback = { fallback() },
+        contentScale = ContentScale.FillWidth
+    )
+}
 
 @Composable
 fun CircleImage(
     modifier: Modifier,
-    url: String
+    url: String,
+    loader: @Composable () -> Unit = { Loader() },
+    fallback: @Composable () -> Unit = { Loader() }
 ) {
     Surface(
         modifier = modifier
@@ -33,11 +51,42 @@ fun CircleImage(
             ),
         shape = CircleShape
     ) {
-        SubcomposeAsyncImage(
-            model = url,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
+        CachedImage(
+            modifier = Modifier.fillMaxSize(),
+            url = url,
+            loader = { loader() },
+            fallback = { fallback() }
+        )
+    }
+}
+
+@Composable
+fun RoundedCornerImage(
+    modifier: Modifier,
+    url: String,
+    loader: @Composable () -> Unit = { Loader() },
+    fallback: @Composable () -> Unit = { Loader() }
+) {
+    Surface(
+        shape = MaterialTheme.shapes.large,
+        modifier = modifier
+    ) {
+        CachedImage(
+            modifier = Modifier.fillMaxSize(),
+            url = url,
+            loader = { loader() },
+            fallback = { fallback() }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun RectangleImagePreview() {
+    AppTheme(darkTheme = false) {
+        RectangleImage(
+            modifier = Modifier.size(100.dp),
+            url = "fake_url"
         )
     }
 }
@@ -47,26 +96,8 @@ fun CircleImage(
 private fun CircleImagePreview() {
     AppTheme(darkTheme = false) {
         CircleImage(
-            url = "fake_url",
-            modifier = Modifier.size(100.dp)
-        )
-    }
-}
-
-@Composable
-fun RoundedCornerImage(
-    modifier: Modifier,
-    url: String
-) {
-    Surface(
-        shape = MaterialTheme.shapes.large,
-        modifier = modifier
-    ) {
-        SubcomposeAsyncImage(
-            model = url,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.size(100.dp),
+            url = "fake_url"
         )
     }
 }
@@ -76,8 +107,8 @@ fun RoundedCornerImage(
 private fun RoundedCornerImagePreview() {
     AppTheme(darkTheme = false) {
         RoundedCornerImage(
-            url = "fake_url",
-            modifier = Modifier.size(100.dp)
+            modifier = Modifier.size(100.dp),
+            url = "fake_url"
         )
     }
 }

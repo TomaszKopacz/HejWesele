@@ -4,6 +4,7 @@ import android.app.Application
 import com.hejwesele.android.analytics.Analytics
 import com.hejwesele.android.crashlytics.Crashlytics
 import com.hejwesele.android.thememanager.ThemeManager
+import com.hejwesele.imageloader.ImageLoader
 import dagger.hilt.android.HiltAndroidApp
 import dagger.hilt.android.migration.CustomInject
 import dagger.hilt.android.migration.CustomInjection
@@ -35,5 +36,7 @@ class App : Application() {
         crashlytics.enable()
 
         themeManager.applyTheme()
+
+        ImageLoader.install(this)
     }
 }

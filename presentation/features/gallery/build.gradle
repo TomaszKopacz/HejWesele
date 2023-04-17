@@ -47,7 +47,6 @@ dependencies {
     implementation libs.androidx.lifecycle.viewmodel.ktx
     implementation libs.accompanist.pager
     implementation libs.accompanist.systemuicontroller
-    implementation libs.coil.compose
     implementation libs.stateevents.compose
 
     debugImplementation libs.androidx.compose.tooling

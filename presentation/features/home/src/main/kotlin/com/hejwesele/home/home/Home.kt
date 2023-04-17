@@ -70,12 +70,13 @@ import kotlinx.coroutines.launch
 
 @Suppress("UnusedPrivateMember")
 @Composable
-fun Home(navigation: IHomeNavigation) = HomeEntryPoint()
+fun Home(navigation: IHomeNavigation) = HomeEntryPoint(navigation = navigation)
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun HomeEntryPoint(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    navigation: IHomeNavigation
 ) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
@@ -131,8 +132,12 @@ private fun HomeEntryPoint(
         internetPopupEnabled = true
     )
 
-    BackHandler(sheetState.isVisible) {
+    BackHandler(enabled = sheetState.isVisible) {
         coroutineScope.launch { sheetState.hide() }
+    }
+
+    BackHandler(enabled = !sheetState.isVisible) {
+        coroutineScope.launch { navigation.finishApplication() }
     }
 }
 
@@ -348,10 +353,12 @@ private fun InvitationTileAvatars(
         ) {
             avatars.forEachIndexed { index, url ->
                 CircleImage(
-                    url = url,
                     modifier = Modifier
                         .size(Dimension.imageSmall)
-                        .offset(-Dimension.marginSmall.times(index))
+                        .offset(-Dimension.marginSmall.times(index)),
+                    url = url,
+                    loader = {},
+                    fallback = {}
                 )
             }
         }

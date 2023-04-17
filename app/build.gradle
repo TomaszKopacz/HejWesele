@@ -133,6 +133,7 @@ dependencies {
     implementation projects.libraries.analytics
     implementation projects.libraries.appinfo
     implementation projects.libraries.crashlytics
+    implementation projects.libraries.imageloader
     implementation projects.libraries.mvvm
 
     implementation libs.androidx.compose.foundation

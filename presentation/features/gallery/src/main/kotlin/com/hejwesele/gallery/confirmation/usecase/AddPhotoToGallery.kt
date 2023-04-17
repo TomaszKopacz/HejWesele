@@ -1,7 +1,7 @@
 package com.hejwesele.gallery.confirmation.usecase
 
 import android.graphics.Bitmap
-import android.graphics.Bitmap.CompressFormat.PNG
+import android.graphics.Bitmap.CompressFormat.JPEG
 import com.hejwesele.galleries.GalleriesRepository
 import com.hejwesele.result.extensions.flatMap
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +21,7 @@ class AddPhotoToGallery @Inject constructor(
             location = GALLERY_LOCATION,
             folder = galleryId,
             image = photo,
-            format = PNG
+            format = JPEG
         ).flatMap { photoUrl ->
             addPhotoUrlToGallery(galleryId, photoUrl)
         }

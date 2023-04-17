@@ -26,7 +26,9 @@ class UploadImage @Inject constructor(
         val path = "$location/$folder/$name$extension"
         val stream = ByteArrayOutputStream()
 
-        image.compress(format, COMPRESS_QUALITY_PERCENT, stream)
+        val reducedImage = Bitmap.createScaledBitmap(image, IMAGE_RESOLUTION, IMAGE_RESOLUTION, false)
+
+        reducedImage.compress(format, COMPRESS_QUALITY_PERCENT, stream)
         val bytes = stream.toByteArray()
 
         repository.uploadImage(path = path, bytes = bytes)
@@ -39,6 +41,7 @@ class UploadImage @Inject constructor(
     }
 
     companion object {
-        private const val COMPRESS_QUALITY_PERCENT = 100
+        private const val IMAGE_RESOLUTION = 1080
+        private const val COMPRESS_QUALITY_PERCENT = 80
     }
 }

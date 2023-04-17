@@ -22,7 +22,8 @@ internal class QrCodeAnalyser @Inject constructor(
                 image = image,
                 rotation = rotation,
                 onRead = { text -> onSuccess?.invoke(text) },
-                onFail = { onFailure?.invoke() }
+                onFail = { onFailure?.invoke() },
+                onComplete = { imageProxy.close() }
             )
         }
 

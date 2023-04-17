@@ -14,6 +14,7 @@ android {
 }
 
 dependencies {
+    implementation projects.libraries.imageloader
     implementation projects.libraries.internet
 
     implementation projects.presentation.ui.extensions
@@ -26,7 +27,6 @@ dependencies {
     implementation libs.androidx.compose.material
     implementation libs.androidx.compose.material3
     implementation libs.androidx.compose.tooling.preview
-    implementation libs.coil.compose
     implementation libs.imagecropper.compose
 
     debugImplementation libs.androidx.compose.tooling
