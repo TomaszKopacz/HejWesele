@@ -42,8 +42,8 @@ internal fun AppNavigation(
             navGraph = getRootGraph(it),
             engine = rememberAnimatedNavHostEngine(
                 rootDefaultAnimations = RootNavGraphDefaultAnimations(
-                    enterTransition = { Transitions.fadeIn },
-                    exitTransition = { Transitions.fadeOut }
+                    enterTransition = { Transitions.slideInHorizontally },
+                    exitTransition = { Transitions.slideOutHorizontally }
                 )
             ),
             navController = navController,

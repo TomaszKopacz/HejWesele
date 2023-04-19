@@ -8,6 +8,7 @@ import com.hejwesele.navigation.ICommonNavigation
 import com.hejwesele.navigation.LoginNavGraph
 import com.hejwesele.navigation.MainNavGraph
 import com.hejwesele.navigation.SettingsNavGraph
+import com.hejwesele.settings.destinations.TermsAndConditionsDestination
 import com.ramcosta.composedestinations.dynamic.within
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.navigation.popUpTo
@@ -24,6 +25,10 @@ class LoginFeatureNavigation(
 
     override fun openSettings() {
         navController.navigate(SettingsNavGraph)
+    }
+
+    override fun openTermsAndConditions() {
+        navController.navigate(TermsAndConditionsDestination within SettingsNavGraph)
     }
 
     override fun openQrScanner() {

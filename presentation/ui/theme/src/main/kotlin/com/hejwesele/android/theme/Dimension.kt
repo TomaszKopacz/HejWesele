@@ -3,6 +3,8 @@ package com.hejwesele.android.theme
 import androidx.compose.ui.unit.dp
 
 object Dimension {
+    val zero = 0.dp
+
     val marginExtraSmall2X = 4.dp
     val marginExtraSmall = 8.dp
     val marginSmall = 12.dp
@@ -32,6 +34,8 @@ object Dimension {
     val iconOutsizeExtraLarge = 72.dp
 
     val imageSmall = 48.dp
+
+    val checkboxSize = 24.dp
 
     val gridPaddingThin = 2.dp
 

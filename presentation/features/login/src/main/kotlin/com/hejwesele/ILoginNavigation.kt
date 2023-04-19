@@ -7,5 +7,7 @@ interface ILoginNavigation {
 
     fun openSettings()
 
+    fun openTermsAndConditions()
+
     fun navigateUp()
 }

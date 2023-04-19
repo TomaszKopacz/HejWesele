@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -22,6 +23,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -44,6 +46,7 @@ import com.hejwesele.android.components.ErrorDialog
 import com.hejwesele.android.components.FilledButton
 import com.hejwesele.android.components.FormTextField
 import com.hejwesele.android.components.HorizontalMargin
+import com.hejwesele.android.components.HyperlinkText
 import com.hejwesele.android.components.LoaderDialog
 import com.hejwesele.android.components.PlainIconButton
 import com.hejwesele.android.components.VerticalMargin
@@ -96,11 +99,22 @@ private fun LoginEntryPoint(
         navigation = navigation
     )
 
+    val formData = LoginFormData(
+        isNextButtonEnabled = uiState.isFormValid,
+        nameText = uiState.eventNameInput,
+        passwordText = uiState.eventPasswordInput,
+        nameErrorMessage = uiState.eventNameError?.message,
+        passwordErrorMessage = uiState.eventPasswordError?.message,
+        termsAndConditionsChecked = uiState.termsAndConditionsAccepted
+    )
+
     val actions = LoginActions(
         onNameInputChanged = { text -> viewModel.onNameInputChanged(text) },
         onPasswordInputChanged = { text -> viewModel.onPasswordInputChanged(text) },
         onInfoClicked = { viewModel.onSettingsRequested() },
         onHelpClicked = { viewModel.onHelpRequested() },
+        onTermsAndConditionsCheckedChanged = { viewModel.onTermsAndConditionsCheckedChanged(it) },
+        onTermsAndConditionsLinkClicked = { viewModel.onTermsAndConditionsRequested() },
         onNextButtonClicked = { viewModel.onSubmit() },
         onScanQrButtonClicked = { viewModel.onScanQrClicked() },
         onErrorDismissed = { viewModel.onErrorDismissed() }
@@ -109,9 +123,7 @@ private fun LoginEntryPoint(
     LoginScreen(
         isLoading = uiState.isLoading,
         isError = uiState.isError,
-        isNextButtonEnabled = uiState.isFormValid,
-        nameErrorMessage = uiState.eventNameError?.message,
-        passwordErrorMessage = uiState.eventPasswordError?.message,
+        formData = formData,
         isInternetPopupEnabled = true,
         sheetState = sheetState,
         actions = actions
@@ -142,6 +154,11 @@ private fun LoginEventHandler(
         action = { sheetState.show() }
     )
     EventEffect(
+        event = uiState.openTermsAndConditions,
+        onConsumed = { viewModel.onTermsAndConditionsOpened() },
+        action = { navigation.openTermsAndConditions() }
+    )
+    EventEffect(
         event = uiState.openEvent,
         onConsumed = { viewModel.onEventOpened() },
         action = { navigation.openEvent() }
@@ -163,9 +180,7 @@ private fun LoginEventHandler(
 private fun LoginScreen(
     isLoading: Boolean,
     isError: Boolean,
-    isNextButtonEnabled: Boolean,
-    nameErrorMessage: String?,
-    passwordErrorMessage: String?,
+    formData: LoginFormData,
     isInternetPopupEnabled: Boolean,
     sheetState: ModalBottomSheetState,
     actions: LoginActions
@@ -178,11 +193,9 @@ private fun LoginScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface),
-            isNextButtonEnabled = isNextButtonEnabled,
-            nameErrorMessage = nameErrorMessage,
-            passwordErrorMessage = passwordErrorMessage,
-            isInternetPopupEnabled = isInternetPopupEnabled,
-            actions = actions
+            formData = formData,
+            actions = actions,
+            isInternetPopupEnabled = isInternetPopupEnabled
         )
         if (isError) {
             ErrorDialog(onDismiss = actions.onErrorDismissed)
@@ -197,11 +210,9 @@ private fun LoginScreen(
 @Composable
 private fun LoginScreenContent(
     modifier: Modifier = Modifier,
-    isNextButtonEnabled: Boolean,
-    nameErrorMessage: String?,
-    passwordErrorMessage: String?,
-    isInternetPopupEnabled: Boolean,
-    actions: LoginActions
+    formData: LoginFormData,
+    actions: LoginActions,
+    isInternetPopupEnabled: Boolean
 ) {
     val bottomPadding = WindowInsets.navigationBars
         .only(WindowInsetsSides.Bottom)
@@ -238,14 +249,8 @@ private fun LoginScreenContent(
             VerticalMargin(Dimension.marginLarge)
             Spacer(modifier = Modifier.weight(Dimension.weightHalf))
             LoginForm(
-                isNextButtonEnabled = isNextButtonEnabled,
-                nameErrorMessage = nameErrorMessage,
-                passwordErrorMessage = passwordErrorMessage,
-                onNameInputChanged = actions.onNameInputChanged,
-                onPasswordInputChanged = actions.onPasswordInputChanged,
-                onHelpClicked = actions.onHelpClicked,
-                onNextButtonClicked = actions.onNextButtonClicked,
-                onScanQrButtonClick = actions.onScanQrButtonClicked
+                formData = formData,
+                actions = actions
             )
             VerticalMargin(Dimension.marginNormal)
         }
@@ -264,42 +269,45 @@ private fun InfoIconButton(modifier: Modifier = Modifier) {
 
 @Composable
 private fun ColumnScope.LoginForm(
-    isNextButtonEnabled: Boolean,
-    nameErrorMessage: String?,
-    passwordErrorMessage: String?,
-    onNameInputChanged: (String) -> Unit,
-    onPasswordInputChanged: (String) -> Unit,
-    onHelpClicked: () -> Unit,
-    onNextButtonClicked: () -> Unit,
-    onScanQrButtonClick: () -> Unit
+    formData: LoginFormData,
+    actions: LoginActions
 ) {
     FormTextField(
         label = Label.loginEventNameLabel,
+        text = formData.nameText,
         imeAction = ImeAction.Next,
-        isError = nameErrorMessage != null,
-        errorMessage = nameErrorMessage,
-        onTextChanged = { text -> onNameInputChanged(text) }
+        isError = formData.nameErrorMessage != null,
+        errorMessage = formData.nameErrorMessage,
+        onTextChanged = { text -> actions.onNameInputChanged(text) }
     )
     VerticalMargin(Dimension.marginExtraSmall)
     FormTextField(
         label = Label.loginEventPasswordLabel,
+        text = formData.passwordText,
         imeAction = ImeAction.Done,
-        isError = passwordErrorMessage != null,
-        errorMessage = passwordErrorMessage,
+        isError = formData.passwordErrorMessage != null,
+        errorMessage = formData.passwordErrorMessage,
         transformation = PasswordVisualTransformation(),
-        onTextChanged = { text -> onPasswordInputChanged(text) }
+        onTextChanged = { text -> actions.onPasswordInputChanged(text) }
     )
     VerticalMargin(Dimension.marginNormal)
     HelpLabel(
         modifier = Modifier
             .align(Alignment.Start)
-            .noRippleClickable { onHelpClicked() }
+            .noRippleClickable { actions.onHelpClicked() }
+    )
+    VerticalMargin(Dimension.marginNormal)
+    TermsAndConditionsCheckbox(
+        modifier = Modifier.fillMaxWidth(),
+        checked = formData.termsAndConditionsChecked,
+        onCheckedChanged = { actions.onTermsAndConditionsCheckedChanged(it) },
+        onLinkClicked = actions.onTermsAndConditionsLinkClicked
     )
     VerticalMargin(Dimension.marginLarge)
     FilledButton(
         text = Label.next,
-        enabled = isNextButtonEnabled,
-        onClick = onNextButtonClicked
+        enabled = formData.isNextButtonEnabled,
+        onClick = actions.onNextButtonClicked
     )
     VerticalMargin(Dimension.marginLarge)
     Spacer(modifier = Modifier.weight(Dimension.weightFull))
@@ -307,7 +315,7 @@ private fun ColumnScope.LoginForm(
         text = Label.loginScanQrButtonLabel,
         icon = R.drawable.ic_qr,
         color = MaterialTheme.colorScheme.primary,
-        onClick = onScanQrButtonClick
+        onClick = actions.onScanQrButtonClicked
     )
 }
 
@@ -345,11 +353,53 @@ private fun HelpBottomSheetContent() {
     VerticalMargin(Dimension.marginNormal)
 }
 
+@Composable
+private fun TermsAndConditionsCheckbox(
+    modifier: Modifier = Modifier,
+    checked: Boolean,
+    onCheckedChanged: (Boolean) -> Unit,
+    onLinkClicked: () -> Unit
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Checkbox(
+            modifier = Modifier
+                .padding(Dimension.zero)
+                .size(Dimension.checkboxSize),
+            checked = checked,
+            onCheckedChange = { onCheckedChanged(it) }
+        )
+        HorizontalMargin(Dimension.marginSmall)
+        HyperlinkText(
+            modifier = Modifier.weight(1.0f),
+            text = Label.loginTermsAndConditionsPromptText,
+            links = mapOf(
+                Label.loginTermsAndConditionsClickableText to onLinkClicked
+            ),
+            style = MaterialTheme.typography.bodySmall,
+            linkStyle = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.outline)
+        )
+    }
+}
+
+private data class LoginFormData(
+    val isNextButtonEnabled: Boolean,
+    val nameText: String,
+    val passwordText: String,
+    val nameErrorMessage: String?,
+    val passwordErrorMessage: String?,
+    val termsAndConditionsChecked: Boolean
+)
+
 private data class LoginActions(
     val onNameInputChanged: (String) -> Unit,
     val onPasswordInputChanged: (String) -> Unit,
     val onInfoClicked: () -> Unit,
     val onHelpClicked: () -> Unit,
+    val onTermsAndConditionsCheckedChanged: (Boolean) -> Unit,
+    val onTermsAndConditionsLinkClicked: () -> Unit,
     val onNextButtonClicked: () -> Unit,
     val onScanQrButtonClicked: () -> Unit,
     val onErrorDismissed: () -> Unit
@@ -365,9 +415,14 @@ private fun LoginScreenPreview() {
         LoginScreen(
             isLoading = false,
             isError = false,
-            isNextButtonEnabled = true,
-            nameErrorMessage = null,
-            passwordErrorMessage = null,
+            formData = LoginFormData(
+                isNextButtonEnabled = true,
+                nameText = "Wedding123",
+                passwordText = "password",
+                nameErrorMessage = null,
+                passwordErrorMessage = null,
+                termsAndConditionsChecked = true
+            ),
             isInternetPopupEnabled = false,
             sheetState = sheetState,
             actions = LoginActions(
@@ -375,6 +430,8 @@ private fun LoginScreenPreview() {
                 onPasswordInputChanged = {},
                 onInfoClicked = {},
                 onHelpClicked = {},
+                onTermsAndConditionsCheckedChanged = {},
+                onTermsAndConditionsLinkClicked = {},
                 onNextButtonClicked = {},
                 onScanQrButtonClicked = {},
                 onErrorDismissed = {}

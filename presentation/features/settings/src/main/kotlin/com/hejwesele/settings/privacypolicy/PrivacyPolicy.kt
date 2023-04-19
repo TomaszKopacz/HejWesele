@@ -154,7 +154,7 @@ private fun PrivacyPolicyContent(
                 )
         ) {
             item {
-                VerticalMargin(padding.calculateTopPadding())
+                VerticalMargin(padding.calculateTopPadding() + Dimension.marginNormal)
             }
             item {
                 Icon(

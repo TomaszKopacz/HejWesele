@@ -10,9 +10,9 @@ import com.hejwesele.encryption.sha256
 import com.hejwesele.encryption.string
 import com.hejwesele.permissions.PermissionsHandler
 import com.hejwesele.usecase.LoginEvent
+import com.hejwesele.validation.CheckboxChecked
 import com.hejwesele.validation.StringNotEmpty
 import com.hejwesele.validation.ValidationResult.Invalid
-import com.hejwesele.validation.ValidationResult.Valid
 import com.hejwesele.validation.Validator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent
@@ -40,13 +40,33 @@ internal class LoginViewModel @Inject constructor(
         StringNotEmpty(error = Label.loginEventPasswordEmptyErrorText)
     )
 
+    private val termsAndConditionsValidator = Validator(
+        CheckboxChecked(error = Label.loginTermsAndConditionsNotAcceptedErrorText)
+    )
+
     fun onNameInputChanged(text: String) {
         state = state.copy(eventNameInput = text)
         validateInput(
             input = text,
             validator = eventNameValidator,
-            onValid = { updateState { copy(eventNameError = null, isFormValid = isFormValid()) } },
-            onInvalid = { error -> updateState { copy(eventNameError = Throwable(error), isFormValid = false) } }
+            onValid = {
+                updateState {
+                    copy(
+                        eventNameInput = text,
+                        eventNameError = null,
+                        isFormValid = isFormValid()
+                    )
+                }
+            },
+            onInvalid = { error ->
+                updateState {
+                    copy(
+                        eventNameInput = text,
+                        eventNameError = Throwable(error),
+                        isFormValid = false
+                    )
+                }
+            }
         )
     }
 
@@ -55,8 +75,24 @@ internal class LoginViewModel @Inject constructor(
         validateInput(
             input = text,
             validator = eventPasswordValidator,
-            onValid = { updateState { copy(eventPasswordError = null, isFormValid = isFormValid()) } },
-            onInvalid = { error -> updateState { copy(eventPasswordError = Throwable(error), isFormValid = false) } }
+            onValid = {
+                updateState {
+                    copy(
+                        eventPasswordInput = text,
+                        eventPasswordError = null,
+                        isFormValid = isFormValid()
+                    )
+                }
+            },
+            onInvalid = { error ->
+                updateState {
+                    copy(
+                        eventPasswordInput = text,
+                        eventPasswordError = Throwable(error),
+                        isFormValid = false
+                    )
+                }
+            }
         )
     }
 
@@ -69,6 +105,21 @@ internal class LoginViewModel @Inject constructor(
     fun onHelpRequested() {
         viewModelScope.launch {
             updateState { copy(showHelp = triggered) }
+        }
+    }
+
+    fun onTermsAndConditionsCheckedChanged(checked: Boolean) {
+        state = state.copy(termsAndConditionsAccepted = checked)
+        viewModelScope.launch {
+            updateState {
+                copy(termsAndConditionsAccepted = checked, isFormValid = isFormValid())
+            }
+        }
+    }
+
+    fun onTermsAndConditionsRequested() {
+        viewModelScope.launch {
+            updateState { copy(openTermsAndConditions = triggered) }
         }
     }
 
@@ -157,6 +208,10 @@ internal class LoginViewModel @Inject constructor(
         updateState { copy(showHelp = consumed) }
     }
 
+    fun onTermsAndConditionsOpened() {
+        updateState { copy(openTermsAndConditions = consumed) }
+    }
+
     fun onEventOpened() {
         viewModelScope.launch {
             updateState { copy(openEvent = consumed) }
@@ -178,8 +233,9 @@ internal class LoginViewModel @Inject constructor(
     private fun isFormValid(): Boolean = with(state) {
         val nameInputResult = eventNameValidator.validate(eventNameInput)
         val passwordInputResult = eventPasswordValidator.validate(eventPasswordInput)
+        val termsAndConditionsResult = termsAndConditionsValidator.validate(termsAndConditionsAccepted)
 
-        nameInputResult + passwordInputResult is Valid
+        (nameInputResult + passwordInputResult + termsAndConditionsResult).isValid
     }
 
     private fun validateInput(
@@ -200,7 +256,8 @@ internal class LoginViewModel @Inject constructor(
 
     private data class State(
         val eventNameInput: String = "",
-        val eventPasswordInput: String = ""
+        val eventPasswordInput: String = "",
+        val termsAndConditionsAccepted: Boolean = false
     )
 
     companion object {
@@ -211,13 +268,17 @@ internal class LoginViewModel @Inject constructor(
 internal data class LoginUiState(
     val openSettings: StateEvent,
     val showHelp: StateEvent,
+    val openTermsAndConditions: StateEvent,
     val openEvent: StateEvent,
     val requestCameraPermission: StateEventWithContent<String>,
     val openQrScanner: StateEvent,
     val isLoading: Boolean,
     val isError: Boolean,
+    val eventNameInput: String,
+    val eventPasswordInput: String,
     val eventNameError: Throwable?,
     val eventPasswordError: Throwable?,
+    val termsAndConditionsAccepted: Boolean,
     val isFormValid: Boolean
 ) {
 
@@ -225,13 +286,17 @@ internal data class LoginUiState(
         val DEFAULT = LoginUiState(
             openSettings = consumed,
             showHelp = consumed,
+            openTermsAndConditions = consumed,
             openEvent = consumed,
             requestCameraPermission = consumed(),
             openQrScanner = consumed,
             isLoading = false,
             isError = false,
+            eventNameInput = "",
+            eventPasswordInput = "",
             eventNameError = null,
             eventPasswordError = null,
+            termsAndConditionsAccepted = false,
             isFormValid = false
         )
     }

@@ -152,7 +152,7 @@ private fun SettingsOverviewContent(
     onPrivacyPolicyClicked: () -> Unit
 ) {
     Column(modifier = modifier) {
-        VerticalMargin(padding.calculateTopPadding())
+        VerticalMargin(padding.calculateTopPadding() + Dimension.marginNormal)
         Icon(
             modifier = Modifier
                 .size(Dimension.iconNormal)

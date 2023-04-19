@@ -151,7 +151,7 @@ private fun TermsAndConditionsContent(
                 )
         ) {
             item {
-                VerticalMargin(padding.calculateTopPadding())
+                VerticalMargin(padding.calculateTopPadding() + Dimension.marginNormal)
             }
             item {
                 Icon(

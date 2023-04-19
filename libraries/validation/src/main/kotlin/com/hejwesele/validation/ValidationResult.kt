@@ -1,8 +1,8 @@
 package com.hejwesele.validation
 
-sealed class ValidationResult<T> {
-    class Valid<T> : ValidationResult<T>()
-    class Invalid<T>(vararg val rules: Rule<T>) : ValidationResult<T>()
+sealed class ValidationResult {
+    object Valid : ValidationResult()
+    class Invalid(vararg val rules: Rule<*>) : ValidationResult()
 
     val isValid: Boolean
         get() = this is Valid
@@ -10,9 +10,9 @@ sealed class ValidationResult<T> {
     val isInvalid: Boolean
         get() = this is Invalid
 
-    operator fun plus(other: ValidationResult<T>): ValidationResult<T> {
+    operator fun plus(other: ValidationResult): ValidationResult {
         return if (this is Valid && other is Valid) {
-            Valid()
+            Valid
         } else {
             val formerRules = (this as? Invalid)?.rules?.toList() ?: emptyList()
             val latterRules = (other as? Invalid)?.rules?.toList() ?: emptyList()
