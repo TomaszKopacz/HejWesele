@@ -25,12 +25,6 @@ internal class QrScannerViewModel @Inject constructor(
         }
     }
 
-    fun onErrorDismissed() {
-        viewModelScope.launch {
-            updateState { copy(isError = false) }
-        }
-    }
-
     fun onQrScanned(text: String) {
         viewModelScope.launch(Dispatchers.Default) {
             updateState { copy(isLoading = true) }
@@ -53,9 +47,51 @@ internal class QrScannerViewModel @Inject constructor(
         }
     }
 
+    fun onTermsAndConditionsRequested() {
+        viewModelScope.launch {
+            updateState { copy(openTermsAndConditions = triggered) }
+        }
+    }
+
+    fun onTermsAndConditionsPromptAccepted() {
+        viewModelScope.launch {
+            updateState { copy(openEvent = triggered) }
+        }
+    }
+
+    fun onTermsAndConditionsPromptDeclined() {
+        viewModelScope.launch {
+            updateState { copy(hideTermsAndConditionsPrompt = triggered) }
+        }
+    }
+
+    fun onErrorDismissed() {
+        viewModelScope.launch {
+            updateState { copy(isError = false) }
+        }
+    }
+
     fun onNavigatedUp() {
         viewModelScope.launch {
             updateState { copy(navigateUp = consumed) }
+        }
+    }
+
+    fun onTermsAndConditionsOpened() {
+        viewModelScope.launch {
+            updateState { copy(openTermsAndConditions = consumed) }
+        }
+    }
+
+    fun onTermsAndConditionsPromptShown() {
+        viewModelScope.launch {
+            updateState { copy(showTermsAndConditionsPrompt = consumed) }
+        }
+    }
+
+    fun onTermsAndConditionsPromptHidden() {
+        viewModelScope.launch {
+            updateState { copy(hideTermsAndConditionsPrompt = consumed) }
         }
     }
 
@@ -77,7 +113,7 @@ internal class QrScannerViewModel @Inject constructor(
     private fun sendSuccessState() {
         updateState {
             copy(
-                openEvent = triggered,
+                showTermsAndConditionsPrompt = triggered,
                 isLoading = false,
                 isError = false
             )
@@ -91,6 +127,9 @@ internal class QrScannerViewModel @Inject constructor(
 
 internal data class QrScannerUiState(
     val navigateUp: StateEvent,
+    val openTermsAndConditions: StateEvent,
+    val showTermsAndConditionsPrompt: StateEvent,
+    val hideTermsAndConditionsPrompt: StateEvent,
     val openEvent: StateEvent,
     val isLoading: Boolean,
     val isError: Boolean
@@ -98,6 +137,9 @@ internal data class QrScannerUiState(
     companion object {
         val DEFAULT = QrScannerUiState(
             navigateUp = consumed,
+            openTermsAndConditions = consumed,
+            showTermsAndConditionsPrompt = consumed,
+            hideTermsAndConditionsPrompt = consumed,
             openEvent = consumed,
             isLoading = false,
             isError = false

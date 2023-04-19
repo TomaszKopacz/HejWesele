@@ -20,7 +20,7 @@ object Label {
     const val loginHelpText = "Gdzie mogę znaleźć nazwę i hasło?"
     const val loginHelpBottomSheetTitleText = "Gdzie można znaleźć nazwę wydarzenia i hasło?"
     const val loginHelpBottomSheetDescriptionText = "Nazwa wydarzenia i hasło powinny zostać dołączone do Twojego zaproszenia ślubnego. Jeśli ich tam nie ma lub zaproszenie zgubiło się, skontaktuj się z organizatorem wydarzenia."
-    const val loginTermsAndConditionsPromptText = "Zapoznałem się oraz akceptuję Regulamin."
+    const val loginTermsAndConditionsPromptText = "Zapoznałem/-am się oraz akceptuję Regulamin."
     const val loginTermsAndConditionsClickableText = "Regulamin"
     const val loginScanQrButtonLabel = "SKANUJ QR"
     const val loginEventNameEmptyErrorText = "Nazwa nie może być pusta"
@@ -28,6 +28,9 @@ object Label {
     const val loginEventPasswordEmptyErrorText = "Hasło nie może być puste"
     const val loginIncorrectPasswordErrorText = "Niepoprawne hasło"
     const val loginTermsAndConditionsNotAcceptedErrorText = "Musisz zaakceptować regulamin aplikacji"
+    const val loginScanQrTermsAndConditionsPromptTitleText = "Akceptacja regulaminu"
+    const val loginScanQrTermsAndConditionsPromptText = "Przechodząc dalej oświadczam, że zapoznałem/-am się i akceptuję Regulamin aplikacji."
+    const val loginScanQrTermsAndConditionsAcceptText = "Akceptuję"
     const val loginLoadingText = "Logowanie..."
 
     // Settings
