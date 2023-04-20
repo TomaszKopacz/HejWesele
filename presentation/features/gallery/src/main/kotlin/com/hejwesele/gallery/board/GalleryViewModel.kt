@@ -1,8 +1,8 @@
 package com.hejwesele.gallery.board
 
 import androidx.lifecycle.viewModelScope
-import com.hejwesele.android.components.DismissiveError
-import com.hejwesele.android.components.PermanentError
+import com.hejwesele.android.components.AlertData
+import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.android.theme.Label
 import com.hejwesele.events.GetEventSettings
@@ -80,8 +80,8 @@ internal class GalleryViewModel @Inject constructor(
     fun onImageCropError() {
         updateState {
             copy(
-                dismissiveError = DismissiveError.Default.copy(
-                    onDismiss = ::onImageCropErrorDismissed
+                alertData = AlertData.Default.copy(
+                    onDismiss = ::onImageCropAlertDismissed
                 )
             )
         }
@@ -143,7 +143,7 @@ internal class GalleryViewModel @Inject constructor(
                                     galleryHintEnabled = galleryHintEnabled,
                                     externalGalleryEnabled = galleryLinkPresent,
                                     photos = ArrayList(photos.reversed()),
-                                    permanentError = null
+                                    errorData = null
                                 )
                             }
                         }
@@ -151,7 +151,7 @@ internal class GalleryViewModel @Inject constructor(
                             updateState {
                                 copy(
                                     isLoading = false,
-                                    permanentError = PermanentError.Default
+                                    errorData = ErrorData.Default
                                 )
                             }
                         }
@@ -164,7 +164,7 @@ internal class GalleryViewModel @Inject constructor(
                     galleryHintEnabled = false,
                     externalGalleryEnabled = false,
                     photos = arrayListOf(),
-                    permanentError = null
+                    errorData = null
                 )
             }
         }
@@ -174,21 +174,21 @@ internal class GalleryViewModel @Inject constructor(
         updateState {
             copy(
                 isLoading = false,
-                dismissiveError = DismissiveError.Default.copy(
+                alertData = AlertData.Default.copy(
                     title = Label.errorDescriptionEventNotFoundText,
-                    onDismiss = ::onEventNotFoundErrorDismissed
+                    onDismiss = ::onEventNotFoundAlertDismissed
                 )
             )
         }
     }
 
-    private fun onEventNotFoundErrorDismissed() {
-        updateState { copy(dismissiveError = null) }
+    private fun onEventNotFoundAlertDismissed() {
+        updateState { copy(alertData = null) }
         updateEvents { copy(openLogin = triggered) }
     }
 
-    private fun onImageCropErrorDismissed() {
-        updateState { copy(dismissiveError = null) }
+    private fun onImageCropAlertDismissed() {
+        updateState { copy(alertData = null) }
     }
 
     private data class State(
@@ -206,8 +206,8 @@ internal data class GalleryUiState(
     val galleryHintEnabled: Boolean,
     val externalGalleryEnabled: Boolean,
     val photos: ArrayList<String>,
-    val permanentError: PermanentError?,
-    val dismissiveError: DismissiveError?
+    val errorData: ErrorData?,
+    val alertData: AlertData?
 ) {
     companion object {
         val Default = GalleryUiState(
@@ -217,8 +217,8 @@ internal data class GalleryUiState(
             galleryHintEnabled = true,
             externalGalleryEnabled = false,
             photos = arrayListOf(),
-            permanentError = null,
-            dismissiveError = null
+            errorData = null,
+            alertData = null
         )
     }
 }

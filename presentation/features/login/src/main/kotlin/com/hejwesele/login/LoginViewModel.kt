@@ -2,7 +2,7 @@ package com.hejwesele.login
 
 import android.Manifest
 import androidx.lifecycle.viewModelScope
-import com.hejwesele.android.components.DismissiveError
+import com.hejwesele.android.components.AlertData
 import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.android.theme.Label
 import com.hejwesele.encryption.base64
@@ -228,8 +228,8 @@ internal class LoginViewModel @Inject constructor(
         updateState {
             copy(
                 isLoading = false,
-                loginError = DismissiveError.Default.copy(
-                    onDismiss = ::onErrorDismissed
+                loginError = AlertData.Default.copy(
+                    onDismiss = ::onAlertDismissed
                 )
             )
         }
@@ -269,7 +269,7 @@ internal class LoginViewModel @Inject constructor(
         updateEvents { copy(openEvent = triggered) }
     }
 
-    private fun onErrorDismissed() {
+    private fun onAlertDismissed() {
         viewModelScope.launch {
             updateState { copy(loginError = null) }
         }
@@ -296,7 +296,7 @@ internal data class LoginUiState(
     val eventPasswordError: Throwable?,
     val termsAndConditionsAccepted: Boolean,
     val isFormValid: Boolean,
-    val loginError: DismissiveError?
+    val loginError: AlertData?
 ) {
 
     companion object {

@@ -3,7 +3,7 @@ package com.hejwesele.gallery.confirmation
 import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.hejwesele.android.components.DismissiveError
+import com.hejwesele.android.components.AlertData
 import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.android.theme.Label
 import com.hejwesele.bitmap.BitmapProvider
@@ -80,7 +80,7 @@ internal class PhotoConfirmationViewModel @Inject constructor(
                     copy(
                         isUploadingPhoto = false,
                         uploadingMessage = null,
-                        dismissiveError = DismissiveError.Default.copy(onDismiss = ::onErrorDismissed)
+                        alertData = AlertData.Default.copy(onDismiss = ::onAlertDismissed)
                     )
                 }
             }
@@ -105,9 +105,9 @@ internal class PhotoConfirmationViewModel @Inject constructor(
         }
     }
 
-    private fun onErrorDismissed() {
+    private fun onAlertDismissed() {
         viewModelScope.launch {
-            updateState { copy(dismissiveError = null) }
+            updateState { copy(alertData = null) }
         }
     }
 
@@ -122,7 +122,7 @@ internal data class PhotoConfirmationUiState(
     val photo: Bitmap?,
     val isUploadingPhoto: Boolean,
     val uploadingMessage: String?,
-    val dismissiveError: DismissiveError?
+    val alertData: AlertData?
 ) {
     companion object {
         val Default = PhotoConfirmationUiState(
@@ -130,7 +130,7 @@ internal data class PhotoConfirmationUiState(
             photo = null,
             isUploadingPhoto = false,
             uploadingMessage = null,
-            dismissiveError = null
+            alertData = null
         )
     }
 }

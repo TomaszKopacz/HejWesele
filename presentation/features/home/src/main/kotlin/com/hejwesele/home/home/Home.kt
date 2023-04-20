@@ -46,12 +46,12 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.CircleImage
-import com.hejwesele.android.components.DismissiveError
-import com.hejwesele.android.components.ErrorDialog
+import com.hejwesele.android.components.AlertData
+import com.hejwesele.android.components.AlertDialog
 import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.HorizontalMargin
 import com.hejwesele.android.components.Loader
-import com.hejwesele.android.components.PermanentError
+import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.components.TextPlaceholder
 import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.components.layouts.BottomSheetScaffold
@@ -109,8 +109,8 @@ private fun HomeEntryPoint(
         isEnabled = uiState.enabled,
         tiles = uiState.tiles,
         intents = uiState.intents,
-        permanentError = uiState.permanentError,
-        dismissiveError = uiState.dismissiveError,
+        errorData = uiState.errorData,
+        alertData = uiState.alertData,
         internetPopupEnabled = true
     )
 
@@ -200,7 +200,7 @@ private fun HomeScreen(
         when {
             data.isLoading -> Loader()
             !data.isEnabled -> TextPlaceholder(text = Label.homeDisabledMessageText)
-            data.permanentError != null -> ErrorView(modifier = Modifier.fillMaxSize())
+            data.errorData != null -> ErrorView(modifier = Modifier.fillMaxSize())
             else -> HomeContent(
                 modifier = Modifier
                     .fillMaxSize()
@@ -209,8 +209,8 @@ private fun HomeScreen(
                 onTileClicked = actions.onTileClicked
             )
         }
-        if (data.dismissiveError != null) {
-            ErrorDialog(error = data.dismissiveError)
+        if (data.alertData != null) {
+            AlertDialog(data = data.alertData)
         }
         if (data.internetPopupEnabled) {
             InternetConnectionPopup()
@@ -469,8 +469,8 @@ private data class HomeData(
     val tiles: List<InvitationTileUiModel>,
     val intents: List<IntentUiModel>,
     val internetPopupEnabled: Boolean,
-    val permanentError: PermanentError?,
-    val dismissiveError: DismissiveError?
+    val errorData: ErrorData?,
+    val alertData: AlertData?
 ) {
     companion object {
         val Preview = HomeData(
@@ -484,8 +484,8 @@ private data class HomeData(
                 HomePreviewData.intent1,
                 HomePreviewData.intent2
             ),
-            permanentError = null,
-            dismissiveError = null,
+            errorData = null,
+            alertData = null,
             internetPopupEnabled = false
         )
     }

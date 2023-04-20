@@ -42,8 +42,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.ILoginNavigation
-import com.hejwesele.android.components.DismissiveError
-import com.hejwesele.android.components.ErrorDialog
+import com.hejwesele.android.components.AlertData
+import com.hejwesele.android.components.AlertDialog
 import com.hejwesele.android.components.FilledButton
 import com.hejwesele.android.components.FormTextField
 import com.hejwesele.android.components.HorizontalMargin
@@ -204,7 +204,7 @@ private fun LoginScreen(
             isInternetPopupEnabled = data.isInternetPopupEnabled
         )
         if (data.loginError != null) {
-            ErrorDialog(error = data.loginError)
+            AlertDialog(data = data.loginError)
         }
         if (data.isLoading) {
             LoaderDialog(label = Label.loginLoadingText)
@@ -394,7 +394,7 @@ private data class LoginData(
     val isLoading: Boolean,
     val formData: LoginFormData,
     val isInternetPopupEnabled: Boolean,
-    val loginError: DismissiveError?
+    val loginError: AlertData?
 ) {
     companion object {
         val Preview = LoginData(

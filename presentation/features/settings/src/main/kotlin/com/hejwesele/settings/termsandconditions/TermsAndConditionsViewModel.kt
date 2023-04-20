@@ -1,7 +1,7 @@
 package com.hejwesele.settings.termsandconditions
 
 import androidx.lifecycle.viewModelScope
-import com.hejwesele.android.components.PermanentError
+import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.legaldocument.LegalPoint
 import com.hejwesele.settings.usecase.GetTermsAndConditions
@@ -31,7 +31,7 @@ internal class TermsAndConditionsViewModel @Inject constructor(
                         copy(
                             isLoading = false,
                             legalPoints = points,
-                            permanentError = null
+                            error = null
                         )
                     }
                 }
@@ -40,7 +40,7 @@ internal class TermsAndConditionsViewModel @Inject constructor(
                         copy(
                             isLoading = false,
                             legalPoints = emptyList(),
-                            permanentError = PermanentError.Default
+                            error = ErrorData.Default
                         )
                     }
                 }
@@ -63,13 +63,13 @@ internal class TermsAndConditionsViewModel @Inject constructor(
 internal data class TermsAndConditionsUiState(
     val isLoading: Boolean,
     val legalPoints: List<LegalPoint>,
-    val permanentError: PermanentError?
+    val error: ErrorData?
 ) {
     companion object {
         val Default = TermsAndConditionsUiState(
             isLoading = false,
             legalPoints = emptyList(),
-            permanentError = null
+            error = null
         )
     }
 }

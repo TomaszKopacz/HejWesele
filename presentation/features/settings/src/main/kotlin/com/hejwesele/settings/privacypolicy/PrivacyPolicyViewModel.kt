@@ -1,7 +1,7 @@
 package com.hejwesele.settings.privacypolicy
 
 import androidx.lifecycle.viewModelScope
-import com.hejwesele.android.components.PermanentError
+import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.legaldocument.LegalPoint
 import com.hejwesele.settings.usecase.GetPrivacyPolicy
@@ -28,7 +28,7 @@ internal class PrivacyPolicyViewModel @Inject constructor(
                         copy(
                             isLoading = false,
                             legalPoints = legalPoints,
-                            permanentError = null
+                            error = null
                         )
                     }
                 }
@@ -37,7 +37,7 @@ internal class PrivacyPolicyViewModel @Inject constructor(
                         copy(
                             isLoading = false,
                             legalPoints = emptyList(),
-                            permanentError = PermanentError.Default
+                            error = ErrorData.Default
                         )
                     }
                 }
@@ -60,13 +60,13 @@ internal class PrivacyPolicyViewModel @Inject constructor(
 internal data class PrivacyPolicyUiState(
     val isLoading: Boolean,
     val legalPoints: List<LegalPoint>,
-    val permanentError: PermanentError?
+    val error: ErrorData?
 ) {
     companion object {
         val Default = PrivacyPolicyUiState(
             isLoading = false,
             legalPoints = emptyList(),
-            permanentError = null
+            error = null
         )
     }
 }

@@ -32,8 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.ILoginNavigation
-import com.hejwesele.android.components.DismissiveError
-import com.hejwesele.android.components.ErrorDialog
+import com.hejwesele.android.components.AlertData
+import com.hejwesele.android.components.AlertDialog
 import com.hejwesele.android.components.HyperlinkText
 import com.hejwesele.android.components.LoaderDialog
 import com.hejwesele.android.components.PlainButton
@@ -90,7 +90,7 @@ private fun QrScannerEntryPoint(
         QrScannerData(
             isLoading = isLoading,
             isInternetPopupEnabled = true,
-            dismissiveError = dismissiveError
+            alertData = alertData
         )
     }
 
@@ -177,8 +177,8 @@ private fun QrScannerScreen(
             if (data.isLoading) {
                 LoaderDialog(label = Label.loginLoadingText)
             }
-            if (data.dismissiveError != null) {
-                ErrorDialog(error = data.dismissiveError)
+            if (data.alertData != null) {
+                AlertDialog(data = data.alertData)
             }
         }
     }
@@ -277,13 +277,13 @@ private fun TermsAndConditionsBottomSheetContent(
 private data class QrScannerData(
     val isLoading: Boolean,
     val isInternetPopupEnabled: Boolean,
-    val dismissiveError: DismissiveError?
+    val alertData: AlertData?
 ) {
     companion object {
         val Preview = QrScannerData(
             isLoading = false,
             isInternetPopupEnabled = false,
-            dismissiveError = null
+            alertData = null
         )
     }
 }

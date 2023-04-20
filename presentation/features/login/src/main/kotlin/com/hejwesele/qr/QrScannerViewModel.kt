@@ -1,7 +1,7 @@
 package com.hejwesele.qr
 
 import androidx.lifecycle.viewModelScope
-import com.hejwesele.android.components.DismissiveError
+import com.hejwesele.android.components.AlertData
 import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.usecase.LogIn
 import com.hejwesele.usecase.ParseEventQr
@@ -100,19 +100,19 @@ internal class QrScannerViewModel @Inject constructor(
         updateState {
             copy(
                 isLoading = false,
-                dismissiveError = DismissiveError.Default.copy(onDismiss = ::onErrorDismissed)
+                alertData = AlertData.Default.copy(onDismiss = ::onAlertDismissed)
             )
         }
     }
 
     private fun sendSuccessState() {
-        updateState { copy(isLoading = false, dismissiveError = null) }
+        updateState { copy(isLoading = false, alertData = null) }
         updateEvents { copy(showTermsAndConditionsPrompt = triggered) }
     }
 
-    private fun onErrorDismissed() {
+    private fun onAlertDismissed() {
         viewModelScope.launch {
-            updateState { copy(dismissiveError = null) }
+            updateState { copy(alertData = null) }
         }
     }
 
@@ -123,12 +123,12 @@ internal class QrScannerViewModel @Inject constructor(
 
 internal data class QrScannerUiState(
     val isLoading: Boolean,
-    val dismissiveError: DismissiveError?
+    val alertData: AlertData?
 ) {
     companion object {
         val Default = QrScannerUiState(
             isLoading = false,
-            dismissiveError = null
+            alertData = null
         )
     }
 }

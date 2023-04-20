@@ -33,8 +33,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.hejwesele.android.components.DismissiveError
-import com.hejwesele.android.components.ErrorDialog
+import com.hejwesele.android.components.AlertData
+import com.hejwesele.android.components.AlertDialog
 import com.hejwesele.android.components.Loader
 import com.hejwesele.android.components.LoaderDialog
 import com.hejwesele.android.components.PlainButton
@@ -96,7 +96,7 @@ private fun PhotoConfirmationEntryPoint(
             isUploadingPhoto = isUploadingPhoto,
             uploadingMessage = uploadingMessage,
             internetPopupEnabled = true,
-            dismissiveError = dismissiveError
+            alertData = alertData
         )
     }
 
@@ -189,7 +189,7 @@ private fun PhotoConfirmationScreen(
                 when {
                     data.isLoading -> Loader()
                     data.isUploadingPhoto -> LoaderDialog(label = data.uploadingMessage)
-                    data.dismissiveError != null -> ErrorDialog(error = data.dismissiveError)
+                    data.alertData != null -> AlertDialog(data = data.alertData)
                 }
             }
         }
@@ -287,7 +287,7 @@ private data class PhotoConfirmationData(
     val isUploadingPhoto: Boolean,
     val uploadingMessage: String?,
     val internetPopupEnabled: Boolean,
-    val dismissiveError: DismissiveError?
+    val alertData: AlertData?
 ) {
     companion object {
         @Suppress("MagicNumber")
@@ -297,7 +297,7 @@ private data class PhotoConfirmationData(
             isUploadingPhoto = false,
             uploadingMessage = null,
             internetPopupEnabled = false,
-            dismissiveError = null
+            alertData = null
         )
     }
 }

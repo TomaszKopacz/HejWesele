@@ -30,7 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.Loader
-import com.hejwesele.android.components.PermanentError
+import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
@@ -79,7 +79,7 @@ private fun PrivacyPolicyEntryPoint(
             isLoading = isLoading,
             legalPoints = legalPoints,
             internetPopupEnabled = true,
-            permanentError = permanentError
+            error = error
         )
     }
 
@@ -139,7 +139,7 @@ private fun PrivacyPolicyScreen(
                             onBackClicked = actions.onBackClicked
                         )
                     data.isLoading -> Loader()
-                    data.permanentError != null -> ErrorView(error = data.permanentError)
+                    data.error != null -> ErrorView(data = data.error)
                 }
             }
         }
@@ -200,14 +200,14 @@ private data class PrivacyPolicyData(
     val isLoading: Boolean,
     val legalPoints: List<LegalPoint>,
     val internetPopupEnabled: Boolean,
-    val permanentError: PermanentError?
+    val error: ErrorData?
 ) {
     companion object {
         val Preview = PrivacyPolicyData(
             isLoading = false,
             internetPopupEnabled = false,
             legalPoints = previewLegalPoints,
-            permanentError = null
+            error = null
         )
     }
 }

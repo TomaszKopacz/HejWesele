@@ -1,8 +1,8 @@
 package com.hejwesele.home.home
 
 import androidx.lifecycle.viewModelScope
-import com.hejwesele.android.components.DismissiveError
-import com.hejwesele.android.components.PermanentError
+import com.hejwesele.android.components.AlertData
+import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.android.theme.Label
 import com.hejwesele.events.GetEventSettings
@@ -104,9 +104,9 @@ internal class HomeViewModel @Inject constructor(
         updateState {
             copy(
                 isLoading = false,
-                dismissiveError = DismissiveError.Default.copy(
+                alertData = AlertData.Default.copy(
                     title = Label.errorDescriptionEventNotFoundText,
-                    onDismiss = ::onEventNotFoundErrorDismissed
+                    onDismiss = ::onEventNotFoundAlertDismissed
                 )
             )
         }
@@ -120,12 +120,12 @@ internal class HomeViewModel @Inject constructor(
                 }
             }
             .onFailure {
-                updateState { copy(isLoading = false, permanentError = PermanentError.Default) }
+                updateState { copy(isLoading = false, errorData = ErrorData.Default) }
             }
     }
 
-    private fun onEventNotFoundErrorDismissed() {
-        updateState { copy(dismissiveError = null) }
+    private fun onEventNotFoundAlertDismissed() {
+        updateState { copy(alertData = null) }
         updateEvents { copy(openLogin = triggered) }
     }
 
@@ -174,8 +174,8 @@ internal data class HomeUiState(
     val isLoading: Boolean,
     val tiles: List<InvitationTileUiModel>,
     val intents: List<IntentUiModel>,
-    val permanentError: PermanentError?,
-    val dismissiveError: DismissiveError?
+    val errorData: ErrorData?,
+    val alertData: AlertData?
 ) {
     companion object {
         val Default = HomeUiState(
@@ -183,8 +183,8 @@ internal data class HomeUiState(
             enabled = true,
             tiles = emptyList(),
             intents = emptyList(),
-            permanentError = null,
-            dismissiveError = null
+            errorData = null,
+            alertData = null
         )
     }
 }

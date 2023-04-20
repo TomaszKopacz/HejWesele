@@ -28,13 +28,13 @@ import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.components.R
 
-data class PermanentError(
+data class ErrorData(
     val title: String,
     val description: String,
     val onRetry: () -> Unit
 ) {
     companion object {
-        val Default = PermanentError(
+        val Default = ErrorData(
             title = Label.errorTitleText,
             description = Label.errorDescriptionText,
             onRetry = {}
@@ -42,13 +42,13 @@ data class PermanentError(
     }
 }
 
-data class DismissiveError(
+data class AlertData(
     val title: String,
     val description: String,
     val onDismiss: () -> Unit
 ) {
     companion object {
-        val Default = DismissiveError(
+        val Default = AlertData(
             title = Label.errorTitleText,
             description = Label.errorDescriptionText,
             onDismiss = {}
@@ -59,7 +59,7 @@ data class DismissiveError(
 @Composable
 fun ErrorView(
     modifier: Modifier = Modifier,
-    error: PermanentError = PermanentError.Default
+    data: ErrorData = ErrorData.Default
 ) {
     ScrollableColumn(
         modifier = modifier.background(MaterialTheme.colorScheme.background),
@@ -82,7 +82,7 @@ fun ErrorView(
                         .aspectRatio(1.0f)
                 )
                 Text(
-                    text = error.title,
+                    text = data.title,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center,
@@ -90,7 +90,7 @@ fun ErrorView(
                 )
                 VerticalMargin(Dimension.marginNormal)
                 Text(
-                    text = error.description,
+                    text = data.description,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onErrorContainer,
                     textAlign = TextAlign.Center,
@@ -100,7 +100,7 @@ fun ErrorView(
                 PlainButton(
                     text = Label.retry,
                     color = MaterialTheme.colorScheme.error,
-                    onClick = { error.onRetry() },
+                    onClick = { data.onRetry() },
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
             }
@@ -109,12 +109,12 @@ fun ErrorView(
 }
 
 @Composable
-fun ErrorDialog(
+fun AlertDialog(
     modifier: Modifier = Modifier,
-    error: DismissiveError = DismissiveError.Default
+    data: AlertData = AlertData.Default
 ) {
     Dialog(
-        onDismissRequest = error.onDismiss
+        onDismissRequest = data.onDismiss
     ) {
         Surface(
             modifier = modifier,
@@ -135,7 +135,7 @@ fun ErrorDialog(
                         .aspectRatio(1.0f)
                 )
                 Text(
-                    text = error.title,
+                    text = data.title,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center,
@@ -143,7 +143,7 @@ fun ErrorDialog(
                 )
                 VerticalMargin(Dimension.marginNormal)
                 Text(
-                    text = error.description,
+                    text = data.description,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onErrorContainer,
                     textAlign = TextAlign.Center,
@@ -155,7 +155,7 @@ fun ErrorDialog(
                     text = Label.ok,
                     color = MaterialTheme.colorScheme.error,
                     size = PlainButtonSize.LARGE,
-                    onClick = error.onDismiss
+                    onClick = data.onDismiss
                 )
                 VerticalMargin(Dimension.marginNormal)
             }
@@ -175,6 +175,6 @@ private fun ErrorViewPreview() {
 @Composable
 private fun ErrorDialogPreview() {
     AppTheme(darkTheme = false) {
-        ErrorDialog()
+        AlertDialog()
     }
 }

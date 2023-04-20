@@ -36,13 +36,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.ContinuousLottieAnimation
-import com.hejwesele.android.components.DismissiveError
-import com.hejwesele.android.components.ErrorDialog
+import com.hejwesele.android.components.AlertData
+import com.hejwesele.android.components.AlertDialog
 import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.FloatingButton
 import com.hejwesele.android.components.HintTile
 import com.hejwesele.android.components.Loader
-import com.hejwesele.android.components.PermanentError
+import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.components.RoundedCornerImage
 import com.hejwesele.android.components.TextPlaceholder
 import com.hejwesele.android.components.VerticalMargin
@@ -109,8 +109,8 @@ private fun GalleryEntryPoint(
             galleryHintVisible = galleryHintEnabled,
             galleryLinkVisible = externalGalleryEnabled,
             photos = photos,
-            permanentError = permanentError,
-            dismissiveError = dismissiveError
+            errorData = errorData,
+            alertData = alertData
         )
     }
 
@@ -201,7 +201,7 @@ private fun GalleryBoardScreen(
             }
             when {
                 data.isLoading -> Loader()
-                data.contentData.permanentError != null -> ErrorView(modifier = Modifier.fillMaxSize())
+                data.contentData.errorData != null -> ErrorView(modifier = Modifier.fillMaxSize())
                 else -> {
                     GalleryBody(
                         modifier = Modifier.fillMaxSize(),
@@ -247,8 +247,8 @@ private fun GalleryBody(
                 enabled = data.contentActive,
                 action = { actions.onAddClicked() }
             )
-            if (data.dismissiveError != null) {
-                ErrorDialog(error = data.dismissiveError)
+            if (data.alertData != null) {
+                AlertDialog(data = data.alertData)
             }
         } else {
             TextPlaceholder(text = Label.galleryDisabledMessageText)
@@ -436,8 +436,8 @@ private data class GalleryContentData(
     val galleryHintVisible: Boolean,
     val galleryLinkVisible: Boolean,
     val photos: List<String>,
-    val permanentError: PermanentError?,
-    val dismissiveError: DismissiveError?
+    val errorData: ErrorData?,
+    val alertData: AlertData?
 ) {
     companion object {
         val Preview = GalleryContentData(
@@ -445,8 +445,8 @@ private data class GalleryContentData(
             galleryHintVisible = true,
             galleryLinkVisible = true,
             photos = List(50) { "fake photo url" },
-            permanentError = null,
-            dismissiveError = null
+            errorData = null,
+            alertData = null
         )
     }
 }
