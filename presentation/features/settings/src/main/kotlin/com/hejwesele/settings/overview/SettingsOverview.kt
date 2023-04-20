@@ -62,41 +62,54 @@ private fun SettingsOverviewEntryPoint(
     }
 
     val uiState by viewModel.states.collectAsState()
+    val uiEvents by viewModel.events.collectAsState()
 
     SettingsOverviewEventHandler(
-        uiState = uiState,
+        events = uiEvents,
         viewModel = viewModel,
         navigation = navigation
     )
 
+    val data = with(uiState) {
+        SettingsOverviewData(
+            contactEmail = uiState.contactEmail,
+            appVersion = uiState.appVersion,
+            internetPopupEnabled = true
+        )
+    }
+
+    val actions = with(viewModel) {
+        SettingsOverviewActions(
+            onBackClicked = { viewModel.onBack() },
+            onTermsAndConditionClicked = { viewModel.onTermsAndConditionsRequested() },
+            onPrivacyPolicyClicked = { viewModel.onPrivacyPolicyRequested() }
+        )
+    }
+
     SettingsOverviewScreen(
-        contactEmail = uiState.contactEmail,
-        appVersion = uiState.appVersion,
-        internetPopupEnabled = true,
-        onBackClicked = { viewModel.onBack() },
-        onTermsAndConditionClicked = { viewModel.onTermsAndConditionsRequested() },
-        onPrivacyPolicyClicked = { viewModel.onPrivacyPolicyRequested() }
+        data = data,
+        actions = actions
     )
 }
 
 @Composable
 private fun SettingsOverviewEventHandler(
-    uiState: SettingsOverviewUiState,
+    events: SettingsOverviewUiEvents,
     viewModel: SettingsOverviewViewModel,
     navigation: ISettingsFeatureNavigation
 ) {
     EventEffect(
-        event = uiState.navigateUp,
+        event = events.navigateUp,
         onConsumed = { viewModel.onNavigatedUp() },
         action = { navigation.navigateUp() }
     )
     EventEffect(
-        event = uiState.openTermsAndConditions,
+        event = events.openTermsAndConditions,
         onConsumed = { viewModel.onTermsAndConditionsOpened() },
         action = { navigation.openTermsAndConditions() }
     )
     EventEffect(
-        event = uiState.openPrivacyPolicy,
+        event = events.openPrivacyPolicy,
         onConsumed = { viewModel.onDataPrivacyOpened() },
         action = { navigation.openPrivacyPolicy() }
     )
@@ -109,12 +122,8 @@ private fun SettingsOverviewEventHandler(
 )
 @Composable
 private fun SettingsOverviewScreen(
-    contactEmail: String,
-    appVersion: String,
-    internetPopupEnabled: Boolean,
-    onBackClicked: () -> Unit,
-    onTermsAndConditionClicked: () -> Unit,
-    onPrivacyPolicyClicked: () -> Unit
+    data: SettingsOverviewData,
+    actions: SettingsOverviewActions
 ) {
     Scaffold { padding ->
         Column(
@@ -122,7 +131,7 @@ private fun SettingsOverviewScreen(
                 .fillMaxSize()
                 .background(color = MaterialTheme.colorScheme.surface)
         ) {
-            if (internetPopupEnabled) {
+            if (data.internetPopupEnabled) {
                 InternetConnectionPopup(statusBarSensitive = false)
             }
             SettingsOverviewContent(
@@ -131,11 +140,11 @@ private fun SettingsOverviewScreen(
                     .weight(1.0f)
                     .padding(horizontal = Dimension.marginLarge),
                 padding = padding,
-                contactEmail = contactEmail,
-                appVersion = appVersion,
-                onBackClicked = onBackClicked,
-                onTermsAndConditionClicked = onTermsAndConditionClicked,
-                onPrivacyPolicyClicked = onPrivacyPolicyClicked
+                contactEmail = data.contactEmail,
+                appVersion = data.appVersion,
+                onBackClicked = actions.onBackClicked,
+                onTermsAndConditionClicked = actions.onTermsAndConditionClicked,
+                onPrivacyPolicyClicked = actions.onPrivacyPolicyClicked
             )
         }
     }
@@ -233,17 +242,41 @@ private fun SettingsItem(
     }
 }
 
+private data class SettingsOverviewData(
+    val contactEmail: String,
+    val appVersion: String,
+    val internetPopupEnabled: Boolean
+) {
+    companion object {
+        val Preview = SettingsOverviewData(
+            contactEmail = "fake.name@gmail.com",
+            appVersion = "2.10.4 (1234)",
+            internetPopupEnabled = false
+        )
+    }
+}
+
+private data class SettingsOverviewActions(
+    val onBackClicked: () -> Unit,
+    val onTermsAndConditionClicked: () -> Unit,
+    val onPrivacyPolicyClicked: () -> Unit
+) {
+    companion object {
+        val Preview = SettingsOverviewActions(
+            onBackClicked = {},
+            onTermsAndConditionClicked = {},
+            onPrivacyPolicyClicked = {}
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun SettingsOverviewScreenPreview() {
     AppTheme(darkTheme = false) {
         SettingsOverviewScreen(
-            contactEmail = "fake.name@gmail.com",
-            appVersion = "2.10.4 (1234)",
-            internetPopupEnabled = false,
-            onBackClicked = {},
-            onTermsAndConditionClicked = {},
-            onPrivacyPolicyClicked = {}
+            data = SettingsOverviewData.Preview,
+            actions = SettingsOverviewActions.Preview
         )
     }
 }

@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.Loader
+import com.hejwesele.android.components.PermanentError
 import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
@@ -65,30 +66,43 @@ private fun PrivacyPolicyEntryPoint(
     }
 
     val uiState by viewModel.states.collectAsState()
+    val uiEvents by viewModel.events.collectAsState()
 
     PrivacyPolicyEventHandler(
-        uiState = uiState,
+        events = uiEvents,
         viewModel = viewModel,
         navigation = navigation
     )
 
+    val data = with(uiState) {
+        PrivacyPolicyData(
+            isLoading = isLoading,
+            legalPoints = legalPoints,
+            internetPopupEnabled = true,
+            permanentError = permanentError
+        )
+    }
+
+    val actions = with(viewModel) {
+        PrivacyPolicyActions(
+            onBackClicked = { onBack() }
+        )
+    }
+
     PrivacyPolicyScreen(
-        isLoading = uiState.isLoading,
-        isError = uiState.isError,
-        internetPopupEnabled = true,
-        legalPoints = uiState.legalPoints,
-        onBackCLicked = { viewModel.onBack() }
+        data = data,
+        actions = actions
     )
 }
 
 @Composable
 private fun PrivacyPolicyEventHandler(
-    uiState: PrivacyPolicyUiState,
+    events: PrivacyPolicyUiEvents,
     viewModel: PrivacyPolicyViewModel,
     navigation: ISettingsFeatureNavigation
 ) {
     EventEffect(
-        event = uiState.navigateUp,
+        event = events.navigateUp,
         onConsumed = { viewModel.onNavigatedUp() },
         action = { navigation.navigateUp() }
     )
@@ -101,15 +115,12 @@ private fun PrivacyPolicyEventHandler(
 )
 @Composable
 private fun PrivacyPolicyScreen(
-    isLoading: Boolean,
-    isError: Boolean,
-    internetPopupEnabled: Boolean,
-    legalPoints: List<LegalPoint>,
-    onBackCLicked: () -> Unit
+    data: PrivacyPolicyData,
+    actions: PrivacyPolicyActions
 ) {
     Scaffold { padding ->
         Column(modifier = Modifier.fillMaxSize()) {
-            if (internetPopupEnabled) {
+            if (data.internetPopupEnabled) {
                 InternetConnectionPopup(statusBarSensitive = false)
             }
             Box(
@@ -118,17 +129,17 @@ private fun PrivacyPolicyScreen(
                     .background(MaterialTheme.colorScheme.surface)
             ) {
                 when {
-                    legalPoints.isNotEmpty() ->
+                    data.legalPoints.isNotEmpty() ->
                         PrivacyPolicyContent(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .background(color = MaterialTheme.colorScheme.surface),
                             padding = padding,
-                            legalPoints = legalPoints,
-                            onBackClicked = onBackCLicked
+                            legalPoints = data.legalPoints,
+                            onBackClicked = actions.onBackClicked
                         )
-                    isLoading -> Loader()
-                    isError -> ErrorView()
+                    data.isLoading -> Loader()
+                    data.permanentError != null -> ErrorView(error = data.permanentError)
                 }
             }
         }
@@ -185,16 +196,28 @@ private fun PrivacyPolicyContent(
     }
 }
 
-@Preview
-@Composable
-private fun PrivacyPolicyScreenPreview() {
-    AppTheme(darkTheme = false) {
-        PrivacyPolicyScreen(
+private data class PrivacyPolicyData(
+    val isLoading: Boolean,
+    val legalPoints: List<LegalPoint>,
+    val internetPopupEnabled: Boolean,
+    val permanentError: PermanentError?
+) {
+    companion object {
+        val Preview = PrivacyPolicyData(
             isLoading = false,
-            isError = false,
             internetPopupEnabled = false,
             legalPoints = previewLegalPoints,
-            onBackCLicked = {}
+            permanentError = null
+        )
+    }
+}
+
+private data class PrivacyPolicyActions(
+    val onBackClicked: () -> Unit
+) {
+    companion object {
+        val Preview = PrivacyPolicyActions(
+            onBackClicked = {}
         )
     }
 }
@@ -231,3 +254,14 @@ private val previewLegalPoints = listOf(
         text = "User"
     )
 )
+
+@Preview
+@Composable
+private fun PrivacyPolicyScreenPreview() {
+    AppTheme(darkTheme = false) {
+        PrivacyPolicyScreen(
+            data = PrivacyPolicyData.Preview,
+            actions = PrivacyPolicyActions.Preview
+        )
+    }
+}

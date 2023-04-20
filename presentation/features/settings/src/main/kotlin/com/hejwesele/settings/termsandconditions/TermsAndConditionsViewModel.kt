@@ -1,7 +1,8 @@
 package com.hejwesele.settings.termsandconditions
 
 import androidx.lifecycle.viewModelScope
-import com.hejwesele.android.mvvm.StateViewModel
+import com.hejwesele.android.components.PermanentError
+import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.legaldocument.LegalPoint
 import com.hejwesele.settings.usecase.GetTermsAndConditions
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,10 @@ import javax.inject.Inject
 @HiltViewModel
 internal class TermsAndConditionsViewModel @Inject constructor(
     private val getTermsAndConditions: GetTermsAndConditions
-) : StateViewModel<TermsAndConditionsUiState>(TermsAndConditionsUiState.DEFAULT) {
+) : StateEventsViewModel<TermsAndConditionsUiState, TermsAndConditionsUiEvents>(
+    TermsAndConditionsUiState.Default,
+    TermsAndConditionsUiEvents.Default
+) {
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -26,8 +30,8 @@ internal class TermsAndConditionsViewModel @Inject constructor(
                     updateState {
                         copy(
                             isLoading = false,
-                            isError = false,
-                            points = points
+                            legalPoints = points,
+                            permanentError = null
                         )
                     }
                 }
@@ -35,8 +39,8 @@ internal class TermsAndConditionsViewModel @Inject constructor(
                     updateState {
                         copy(
                             isLoading = false,
-                            isError = true,
-                            points = emptyList()
+                            legalPoints = emptyList(),
+                            permanentError = PermanentError.Default
                         )
                     }
                 }
@@ -45,29 +49,37 @@ internal class TermsAndConditionsViewModel @Inject constructor(
 
     fun onBack() {
         viewModelScope.launch {
-            updateState { copy(navigateUp = triggered) }
+            updateEvents { copy(navigateUp = triggered) }
         }
     }
 
     fun onNavigatedUp() {
         viewModelScope.launch {
-            updateState { copy(navigateUp = consumed) }
+            updateEvents { copy(navigateUp = consumed) }
         }
     }
 }
 
 internal data class TermsAndConditionsUiState(
-    val navigateUp: StateEvent,
     val isLoading: Boolean,
-    val isError: Boolean,
-    val points: List<LegalPoint>
+    val legalPoints: List<LegalPoint>,
+    val permanentError: PermanentError?
 ) {
     companion object {
-        val DEFAULT = TermsAndConditionsUiState(
-            navigateUp = consumed,
+        val Default = TermsAndConditionsUiState(
             isLoading = false,
-            isError = false,
-            points = emptyList()
+            legalPoints = emptyList(),
+            permanentError = null
+        )
+    }
+}
+
+internal data class TermsAndConditionsUiEvents(
+    val navigateUp: StateEvent
+) {
+    companion object {
+        val Default = TermsAndConditionsUiEvents(
+            navigateUp = consumed
         )
     }
 }

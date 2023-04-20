@@ -1,7 +1,7 @@
 package com.hejwesele.settings.overview
 
 import androidx.lifecycle.viewModelScope
-import com.hejwesele.android.mvvm.StateViewModel
+import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.settings.usecase.GetAppVersion
 import com.hejwesele.settings.usecase.GetContactEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +15,10 @@ import javax.inject.Inject
 internal class SettingsOverviewViewModel @Inject constructor(
     private val getContactEmail: GetContactEmail,
     private val getAppVersion: GetAppVersion
-) : StateViewModel<SettingsOverviewUiState>(SettingsOverviewUiState.DEFAULT) {
+) : StateEventsViewModel<SettingsOverviewUiState, SettingsOverviewUiEvents>(
+    SettingsOverviewUiState.Default,
+    SettingsOverviewUiEvents.Default
+) {
 
     init {
         viewModelScope.launch {
@@ -30,55 +33,63 @@ internal class SettingsOverviewViewModel @Inject constructor(
 
     fun onBack() {
         viewModelScope.launch {
-            updateState { copy(navigateUp = triggered) }
+            updateEvents { copy(navigateUp = triggered) }
         }
     }
 
     fun onTermsAndConditionsRequested() {
         viewModelScope.launch {
-            updateState { copy(openTermsAndConditions = triggered) }
+            updateEvents { copy(openTermsAndConditions = triggered) }
         }
     }
 
     fun onPrivacyPolicyRequested() {
         viewModelScope.launch {
-            updateState { copy(openPrivacyPolicy = triggered) }
+            updateEvents { copy(openPrivacyPolicy = triggered) }
         }
     }
 
     fun onNavigatedUp() {
         viewModelScope.launch {
-            updateState { copy(navigateUp = consumed) }
+            updateEvents { copy(navigateUp = consumed) }
         }
     }
 
     fun onTermsAndConditionsOpened() {
         viewModelScope.launch {
-            updateState { copy(openTermsAndConditions = consumed) }
+            updateEvents { copy(openTermsAndConditions = consumed) }
         }
     }
 
     fun onDataPrivacyOpened() {
         viewModelScope.launch {
-            updateState { copy(openPrivacyPolicy = consumed) }
+            updateEvents { copy(openPrivacyPolicy = consumed) }
         }
     }
 }
 
 internal data class SettingsOverviewUiState(
-    val navigateUp: StateEvent,
-    val openTermsAndConditions: StateEvent,
-    val openPrivacyPolicy: StateEvent,
     val contactEmail: String,
     val appVersion: String
 ) {
     companion object {
-        val DEFAULT = SettingsOverviewUiState(
-            navigateUp = consumed,
-            openTermsAndConditions = consumed,
-            openPrivacyPolicy = consumed,
+        val Default = SettingsOverviewUiState(
             contactEmail = "",
             appVersion = ""
+        )
+    }
+}
+
+internal data class SettingsOverviewUiEvents(
+    val navigateUp: StateEvent,
+    val openTermsAndConditions: StateEvent,
+    val openPrivacyPolicy: StateEvent
+) {
+    companion object {
+        val Default = SettingsOverviewUiEvents(
+            navigateUp = consumed,
+            openTermsAndConditions = consumed,
+            openPrivacyPolicy = consumed
         )
     }
 }

@@ -1,7 +1,8 @@
 package com.hejwesele.settings.privacypolicy
 
 import androidx.lifecycle.viewModelScope
-import com.hejwesele.android.mvvm.StateViewModel
+import com.hejwesele.android.components.PermanentError
+import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.legaldocument.LegalPoint
 import com.hejwesele.settings.usecase.GetPrivacyPolicy
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class PrivacyPolicyViewModel @Inject constructor(
     private val getPrivacyPolicy: GetPrivacyPolicy
-) : StateViewModel<PrivacyPolicyUiState>(PrivacyPolicyUiState.DEFAULT) {
+) : StateEventsViewModel<PrivacyPolicyUiState, PrivacyPolicyUiEvents>(PrivacyPolicyUiState.Default, PrivacyPolicyUiEvents.Default) {
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -26,8 +27,8 @@ internal class PrivacyPolicyViewModel @Inject constructor(
                     updateState {
                         copy(
                             isLoading = false,
-                            isError = false,
-                            legalPoints = legalPoints
+                            legalPoints = legalPoints,
+                            permanentError = null
                         )
                     }
                 }
@@ -35,8 +36,8 @@ internal class PrivacyPolicyViewModel @Inject constructor(
                     updateState {
                         copy(
                             isLoading = false,
-                            isError = true,
-                            legalPoints = emptyList()
+                            legalPoints = emptyList(),
+                            permanentError = PermanentError.Default
                         )
                     }
                 }
@@ -45,29 +46,37 @@ internal class PrivacyPolicyViewModel @Inject constructor(
 
     fun onBack() {
         viewModelScope.launch {
-            updateState { copy(navigateUp = triggered) }
+            updateEvents { copy(navigateUp = triggered) }
         }
     }
 
     fun onNavigatedUp() {
         viewModelScope.launch {
-            updateState { copy(navigateUp = consumed) }
+            updateEvents { copy(navigateUp = consumed) }
         }
     }
 }
 
 internal data class PrivacyPolicyUiState(
-    val navigateUp: StateEvent,
     val isLoading: Boolean,
-    val isError: Boolean,
-    val legalPoints: List<LegalPoint>
+    val legalPoints: List<LegalPoint>,
+    val permanentError: PermanentError?
 ) {
     companion object {
-        val DEFAULT = PrivacyPolicyUiState(
-            navigateUp = consumed,
+        val Default = PrivacyPolicyUiState(
             isLoading = false,
-            isError = false,
-            legalPoints = emptyList()
+            legalPoints = emptyList(),
+            permanentError = null
+        )
+    }
+}
+
+internal data class PrivacyPolicyUiEvents(
+    val navigateUp: StateEvent
+) {
+    companion object {
+        val Default = PrivacyPolicyUiEvents(
+            navigateUp = consumed
         )
     }
 }

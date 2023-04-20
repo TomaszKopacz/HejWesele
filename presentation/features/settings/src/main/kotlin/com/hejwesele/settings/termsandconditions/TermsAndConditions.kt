@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.Loader
+import com.hejwesele.android.components.PermanentError
 import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
@@ -62,30 +63,43 @@ private fun TermsAndConditionsEntryPoint(
     }
 
     val uiState by viewModel.states.collectAsState()
+    val uiEvents by viewModel.events.collectAsState()
 
     TermsAndConditionsEventHandler(
-        uiState = uiState,
+        events = uiEvents,
         viewModel = viewModel,
         navigation = navigation
     )
 
+    val data = with(uiState) {
+        TermsAndConditionsData(
+            isLoading = isLoading,
+            legalPoints = legalPoints,
+            internetPopupEnabled = true,
+            permanentError = permanentError
+        )
+    }
+
+    val actions = with(viewModel) {
+        TermsAndConditionsActions(
+            onBackClicked = { onBack() }
+        )
+    }
+
     TermsAndConditionsScreen(
-        isLoading = uiState.isLoading,
-        isError = uiState.isError,
-        internetPopupEnabled = true,
-        legalPoints = uiState.points,
-        onBackCLicked = { viewModel.onBack() }
+        data = data,
+        actions = actions
     )
 }
 
 @Composable
 private fun TermsAndConditionsEventHandler(
-    uiState: TermsAndConditionsUiState,
+    events: TermsAndConditionsUiEvents,
     viewModel: TermsAndConditionsViewModel,
     navigation: ISettingsFeatureNavigation
 ) {
     EventEffect(
-        event = uiState.navigateUp,
+        event = events.navigateUp,
         onConsumed = { viewModel.onNavigatedUp() },
         action = { navigation.navigateUp() }
     )
@@ -98,15 +112,12 @@ private fun TermsAndConditionsEventHandler(
 )
 @Composable
 private fun TermsAndConditionsScreen(
-    isLoading: Boolean,
-    isError: Boolean,
-    internetPopupEnabled: Boolean,
-    legalPoints: List<LegalPoint>,
-    onBackCLicked: () -> Unit
+    data: TermsAndConditionsData,
+    actions: TermsAndConditionsActions
 ) {
     Scaffold { padding ->
         Column(modifier = Modifier.fillMaxSize()) {
-            if (internetPopupEnabled) {
+            if (data.internetPopupEnabled) {
                 InternetConnectionPopup(statusBarSensitive = false)
             }
             Box(
@@ -115,17 +126,17 @@ private fun TermsAndConditionsScreen(
                     .background(MaterialTheme.colorScheme.surface)
             ) {
                 when {
-                    legalPoints.isNotEmpty() ->
+                    data.legalPoints.isNotEmpty() ->
                         TermsAndConditionsContent(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .background(color = MaterialTheme.colorScheme.surface),
                             padding = padding,
-                            legalPoints = legalPoints,
-                            onBackClicked = onBackCLicked
+                            legalPoints = data.legalPoints,
+                            onBackClicked = actions.onBackClicked
                         )
-                    isLoading -> Loader()
-                    isError -> ErrorView()
+                    data.isLoading -> Loader()
+                    data.permanentError != null -> ErrorView(error = data.permanentError)
                 }
             }
         }
@@ -182,16 +193,28 @@ private fun TermsAndConditionsContent(
     }
 }
 
-@Preview
-@Composable
-private fun TermsAndConditionsScreenPreview() {
-    AppTheme(darkTheme = false) {
-        TermsAndConditionsScreen(
+private data class TermsAndConditionsData(
+    val isLoading: Boolean,
+    val legalPoints: List<LegalPoint>,
+    val internetPopupEnabled: Boolean,
+    val permanentError: PermanentError?
+) {
+    companion object {
+        val Preview = TermsAndConditionsData(
             isLoading = false,
-            isError = false,
             internetPopupEnabled = false,
             legalPoints = previewLegalPoints,
-            onBackCLicked = {}
+            permanentError = null
+        )
+    }
+}
+
+private data class TermsAndConditionsActions(
+    val onBackClicked: () -> Unit
+) {
+    companion object {
+        val Preview = TermsAndConditionsActions(
+            onBackClicked = {}
         )
     }
 }
@@ -228,3 +251,14 @@ private val previewLegalPoints = listOf(
         text = "User"
     )
 )
+
+@Preview
+@Composable
+private fun TermsAndConditionsScreenPreview() {
+    AppTheme(darkTheme = false) {
+        TermsAndConditionsScreen(
+            data = TermsAndConditionsData.Preview,
+            actions = TermsAndConditionsActions.Preview
+        )
+    }
+}
