@@ -2,7 +2,6 @@ package com.hejwesele.navigation.features
 
 import android.net.Uri
 import androidx.navigation.NavController
-import com.hejwesele.destinations.LoginDestination
 import com.hejwesele.gallery.IGalleryNavigation
 import com.hejwesele.gallery.destinations.GalleryPreviewDestination
 import com.hejwesele.gallery.destinations.PhotoConfirmationDestination

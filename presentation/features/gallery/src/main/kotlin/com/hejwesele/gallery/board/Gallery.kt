@@ -116,7 +116,7 @@ private fun GalleryEntryPoint(
             onHintDismissed = { viewModel.onGalleryHintDismissed() },
             onGalleryLinkClicked = { viewModel.onGalleryLinkClicked() },
             onPhotoClicked = { index -> navigation.openPreview(photos, index) },
-            onAddClicked = { viewModel.onAddPhotoClicked() },
+            onAddClicked = { viewModel.onAddPhotoClicked() }
         )
     }
 
@@ -124,10 +124,9 @@ private fun GalleryEntryPoint(
         isEnabled = uiState.isEnabled,
         isLoading = uiState.isLoading,
         isError = uiState.permanentError != null,
-        dismissiveError = uiState.dismissiveError,
         galleryData = galleryData,
         snackbarState = snackbarState,
-        internetPopupEnabled = true,
+        internetPopupEnabled = true
     )
 }
 
@@ -182,7 +181,6 @@ private fun GalleryBoardScreen(
     isEnabled: Boolean,
     isLoading: Boolean,
     isError: Boolean,
-    dismissiveError: DismissiveError?,
     galleryData: GalleryData,
     snackbarState: SnackbarHostState,
     internetPopupEnabled: Boolean
@@ -425,8 +423,7 @@ private fun GalleryBoardScreenPreview() {
             isError = false,
             galleryData = GalleryData.preview,
             snackbarState = snackbarState,
-            internetPopupEnabled = false,
-            dismissiveError = null
+            internetPopupEnabled = false
         )
     }
 }

@@ -43,6 +43,7 @@ object Label {
     const val settingsAppVersionLabelText = "Wersja aplikacji:"
 
     // Home
+    const val homeDisabledMessageText = "Dla tego wydarzenia wstepne informacje nie są dostępne."
     const val homeNoInvitationTilesText = "Aktualnie nie ma tutaj żadnych informacji do wyświetlenia, może pojawią się za chwilkę :)"
     const val homeIntentMapsLabel = "Mapy Google"
     const val homeIntentWebLabel = "Strona internetowa"

@@ -63,6 +63,7 @@ import com.hejwesele.extensions.addEmptyLines
 import com.hejwesele.extensions.openActivity
 import com.hejwesele.home.IHomeNavigation
 import com.hejwesele.home.R
+import com.hejwesele.home.home.model.Constants
 import com.hejwesele.home.home.model.IntentUiModel
 import com.hejwesele.home.home.model.InvitationTileUiModel
 import com.hejwesele.internet.InternetConnectionPopup
@@ -72,7 +73,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
-@Suppress("UnusedPrivateMember")
 @Composable
 fun Home(navigation: IHomeNavigation) = HomeEntryPoint(navigation = navigation)
 
@@ -90,68 +90,78 @@ private fun HomeEntryPoint(
     val coroutineScope = rememberCoroutineScope()
 
     val uiState by viewModel.states.collectAsState()
+    val uiEvents by viewModel.events.collectAsState()
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
 
     HomeEventHandler(
-        uiState = uiState,
-        sheetState = sheetState,
+        events = uiEvents,
         viewModel = viewModel,
         navigation = navigation,
+        sheetState = sheetState,
         coroutineScope = coroutineScope
     )
 
-    HomeScreen(
+    val homeData = HomeData(
         isLoading = uiState.isLoading,
+        isEnabled = uiState.enabled,
         tiles = uiState.tiles,
+        intents = uiState.intents,
+        permanentError = uiState.permanentError,
+        dismissiveError = uiState.dismissiveError,
+        internetPopupEnabled = true
+    )
+
+    val homeActions = HomeActions(
         onTileClicked = { invitation ->
             coroutineScope.launch {
                 viewModel.onTileClicked(invitation)
             }
         },
-        sheetState = sheetState,
-        intents = uiState.intents,
         onIntentSelected = { intent ->
             coroutineScope.launch {
                 viewModel.onTileIntentOptionSelected(intent)
             }
-        },
-        permanentError = uiState.permanentError,
-        dismissiveError = uiState.dismissiveError,
-        internetPopupEnabled = true
+        }
+    )
+
+    HomeScreen(
+        data = homeData,
+        actions = homeActions,
+        sheetState = sheetState
     )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun HomeEventHandler(
-    uiState: HomeUiState,
-    sheetState: ModalBottomSheetState,
+    events: HomeUiEvents,
     viewModel: HomeViewModel,
     navigation: IHomeNavigation,
+    sheetState: ModalBottomSheetState,
     coroutineScope: CoroutineScope
 ) {
     val context = LocalContext.current
 
     EventEffect(
-        event = uiState.showTileOptions,
+        event = events.showTileOptions,
         onConsumed = { viewModel.onTileOptionsShown() },
         action = { sheetState.show() }
     )
     EventEffect(
-        event = uiState.hideTileOptions,
+        event = events.hideTileOptions,
         onConsumed = { viewModel.onTileOptionsHidden() },
         action = { sheetState.hide() }
     )
     EventEffect(
-        event = uiState.openIntent,
+        event = events.openIntent,
         onConsumed = { viewModel.onIntentOpened() },
         action = { intent -> openActivity(context, intent.intentPackage, intent.url) }
     )
     EventEffect(
-        event = uiState.openLogin,
+        event = events.openLogin,
         onConsumed = { viewModel.onLoginOpened() },
         action = { navigation.openLogin() }
     )
@@ -170,15 +180,9 @@ private fun HomeEventHandler(
 )
 @Composable
 private fun HomeScreen(
-    isLoading: Boolean,
-    tiles: List<InvitationTileUiModel>,
-    onTileClicked: (InvitationTileUiModel) -> Unit,
-    sheetState: ModalBottomSheetState,
-    intents: List<IntentUiModel>,
-    onIntentSelected: (IntentUiModel) -> Unit,
-    permanentError: PermanentError?,
-    dismissiveError: DismissiveError?,
-    internetPopupEnabled: Boolean
+    data: HomeData,
+    actions: HomeActions,
+    sheetState: ModalBottomSheetState
 ) {
     BottomSheetScaffold(
         state = sheetState,
@@ -188,26 +192,27 @@ private fun HomeScreen(
         ),
         sheetContent = {
             InvitationBottomSheetContent(
-                intents = intents,
-                onIntentSelected = onIntentSelected
+                intents = data.intents,
+                onIntentSelected = actions.onIntentSelected
             )
         }
     ) {
         when {
-            isLoading -> Loader()
-            permanentError != null -> ErrorView(modifier = Modifier.fillMaxSize())
+            data.isLoading -> Loader()
+            !data.isEnabled -> TextPlaceholder(text = Label.homeDisabledMessageText)
+            data.permanentError != null -> ErrorView(modifier = Modifier.fillMaxSize())
             else -> HomeContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.surface),
-                tiles = tiles,
-                onTileClicked = onTileClicked
+                tiles = data.tiles,
+                onTileClicked = actions.onTileClicked
             )
         }
-        if (dismissiveError != null) {
-            ErrorDialog(error = dismissiveError)
+        if (data.dismissiveError != null) {
+            ErrorDialog(error = data.dismissiveError)
         }
-        if (internetPopupEnabled) {
+        if (data.internetPopupEnabled) {
             InternetConnectionPopup()
         }
     }
@@ -336,19 +341,17 @@ private fun InvitationTileTitle(
     }
 }
 
-@Suppress("MagicNumber")
 @Composable
 private fun InvitationTileDescription(
     modifier: Modifier = Modifier,
     text: String
 ) {
-    val linesCount = 4
     Text(
         modifier = modifier,
-        text = text.addEmptyLines(linesCount),
+        text = text.addEmptyLines(Constants.HomeTileLinesCount),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        maxLines = linesCount
+        maxLines = Constants.HomeTileLinesCount
     )
 }
 
@@ -460,28 +463,27 @@ private fun IntentItem(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
-@Preview
-@Composable
-internal fun HomeScreenPreview() {
-    val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Expanded
-    )
-
-    AppTheme(darkTheme = false) {
-        HomeScreen(
+private data class HomeData(
+    val isLoading: Boolean,
+    val isEnabled: Boolean,
+    val tiles: List<InvitationTileUiModel>,
+    val intents: List<IntentUiModel>,
+    val internetPopupEnabled: Boolean,
+    val permanentError: PermanentError?,
+    val dismissiveError: DismissiveError?
+) {
+    companion object {
+        val Preview = HomeData(
             isLoading = false,
+            isEnabled = true,
             tiles = listOf(
                 HomePreviewData.tile1,
                 HomePreviewData.tile2
             ),
-            onTileClicked = {},
-            sheetState = sheetState,
             intents = listOf(
                 HomePreviewData.intent1,
                 HomePreviewData.intent2
             ),
-            onIntentSelected = {},
             permanentError = null,
             dismissiveError = null,
             internetPopupEnabled = false
@@ -489,13 +491,14 @@ internal fun HomeScreenPreview() {
     }
 }
 
-@Preview
-@Composable
-private fun InvitationTilePreview() {
-    AppTheme(darkTheme = false) {
-        InvitationTile(
-            tile = HomePreviewData.tile2,
-            onTileClicked = {}
+private data class HomeActions(
+    val onTileClicked: (InvitationTileUiModel) -> Unit,
+    val onIntentSelected: (IntentUiModel) -> Unit
+) {
+    companion object {
+        val Preview = HomeActions(
+            onTileClicked = {},
+            onIntentSelected = {}
         )
     }
 }
@@ -536,4 +539,32 @@ private object HomePreviewData {
         intents = listOf(intent1, intent2),
         clickable = false
     )
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Preview
+@Composable
+private fun HomeScreenPreview() {
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Expanded
+    )
+
+    AppTheme(darkTheme = false) {
+        HomeScreen(
+            data = HomeData.Preview,
+            actions = HomeActions.Preview,
+            sheetState = sheetState
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun InvitationTilePreview() {
+    AppTheme(darkTheme = false) {
+        InvitationTile(
+            tile = HomePreviewData.tile2,
+            onTileClicked = {}
+        )
+    }
 }

@@ -5,9 +5,9 @@ import com.hejwesele.android.components.DismissiveError
 import com.hejwesele.android.components.PermanentError
 import com.hejwesele.android.mvvm.StateViewModel
 import com.hejwesele.android.theme.Label
-import com.hejwesele.gallery.board.usecase.DismissGalleryHint
 import com.hejwesele.events.GetEventSettings
 import com.hejwesele.events.model.EventSettings
+import com.hejwesele.gallery.board.usecase.DismissGalleryHint
 import com.hejwesele.gallery.board.usecase.ObserveGallery
 import com.hejwesele.intent.IntentData
 import com.hejwesele.intent.IntentPackage.GOOGLE_DRIVE_PACKAGE

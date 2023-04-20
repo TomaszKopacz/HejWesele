@@ -27,3 +27,32 @@ private class StateHandlerImpl<UiState>(defaultState: UiState) : StateHandler<Ui
 open class StateViewModel<UiState>(defaultState: UiState) :
     ViewModel(),
     StateHandler<UiState> by StateHandlerImpl(defaultState)
+
+interface StateEventsHandler<UiState, UiEvents> {
+    val states: StateFlow<UiState>
+    val events: StateFlow<UiEvents>
+    fun updateState(block: UiState.() -> UiState)
+
+    fun updateEvents(block: UiEvents.() -> UiEvents)
+}
+
+private class StateEventsHandlerImpl<UiState, UiEvents>(defaultState: UiState, defaultEvents: UiEvents) :
+    StateEventsHandler<UiState, UiEvents> {
+    private val _state = MutableStateFlow(defaultState)
+    private val _events = MutableStateFlow(defaultEvents)
+
+    override val states: StateFlow<UiState> = _state.asStateFlow()
+    override val events: StateFlow<UiEvents> = _events.asStateFlow()
+
+    override fun updateState(block: UiState.() -> UiState) {
+        _state.value = block(_state.value)
+    }
+
+    override fun updateEvents(block: UiEvents.() -> UiEvents) {
+        _events.value = block(_events.value)
+    }
+}
+
+open class StateEventsViewModel<UiState, UiEvents>(defaultState: UiState, defaultEvents: UiEvents) :
+    ViewModel(),
+    StateEventsHandler<UiState, UiEvents> by StateEventsHandlerImpl(defaultState, defaultEvents)

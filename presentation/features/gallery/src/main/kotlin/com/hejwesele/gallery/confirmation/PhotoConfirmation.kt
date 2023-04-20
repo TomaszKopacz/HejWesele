@@ -302,7 +302,7 @@ private fun PhotoConfirmationScreenPreview() {
                 onPhotoAccepted = {},
                 onPhotoDeclined = {},
                 onPhotoConfirmationAccepted = {},
-                onPhotoConfirmationDeclined = {},
+                onPhotoConfirmationDeclined = {}
             )
         )
     }

@@ -10,6 +10,6 @@ internal class ObserveInvitation @Inject constructor(
 ) {
 
     suspend operator fun invoke(invitationId: String) = withContext(Dispatchers.IO) {
-        repository.observeInvitation("-NNxXTrIHZwNNP1ZUlWP")
+        repository.observeInvitation(invitationId)
     }
 }
