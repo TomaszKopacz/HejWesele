@@ -2,8 +2,8 @@ package com.hejwesele.qr
 
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.components.DismissiveError
-import com.hejwesele.android.mvvm.StateViewModel
-import com.hejwesele.usecase.LoginEvent
+import com.hejwesele.android.mvvm.StateEventsViewModel
+import com.hejwesele.usecase.LogIn
 import com.hejwesele.usecase.ParseEventQr
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent
@@ -17,12 +17,12 @@ import javax.inject.Inject
 @HiltViewModel
 internal class QrScannerViewModel @Inject constructor(
     private val parseEventQr: ParseEventQr,
-    private val loginEvent: LoginEvent
-) : StateViewModel<QrScannerUiState>(QrScannerUiState.DEFAULT) {
+    private val logIn: LogIn
+) : StateEventsViewModel<QrScannerUiState, QrScannerUiEvents>(QrScannerUiState.Default, QrScannerUiEvents.Default) {
 
     fun onBackClicked() {
         viewModelScope.launch {
-            updateState { copy(navigateUp = triggered) }
+            updateEvents { copy(navigateUp = triggered) }
         }
     }
 
@@ -34,7 +34,7 @@ internal class QrScannerViewModel @Inject constructor(
 
             parseEventQr(text)
                 .onSuccess { credentials ->
-                    loginEvent(
+                    logIn(
                         name = credentials.name,
                         password = credentials.password,
                         onServiceError = { sendErrorState() },
@@ -50,49 +50,49 @@ internal class QrScannerViewModel @Inject constructor(
 
     fun onTermsAndConditionsRequested() {
         viewModelScope.launch {
-            updateState { copy(openTermsAndConditions = triggered) }
+            updateEvents { copy(openTermsAndConditions = triggered) }
         }
     }
 
     fun onTermsAndConditionsPromptAccepted() {
         viewModelScope.launch {
-            updateState { copy(openEvent = triggered) }
+            updateEvents { copy(openEvent = triggered) }
         }
     }
 
     fun onTermsAndConditionsPromptDeclined() {
         viewModelScope.launch {
-            updateState { copy(hideTermsAndConditionsPrompt = triggered) }
+            updateEvents { copy(hideTermsAndConditionsPrompt = triggered) }
         }
     }
 
     fun onNavigatedUp() {
         viewModelScope.launch {
-            updateState { copy(navigateUp = consumed) }
+            updateEvents { copy(navigateUp = consumed) }
         }
     }
 
     fun onTermsAndConditionsOpened() {
         viewModelScope.launch {
-            updateState { copy(openTermsAndConditions = consumed) }
+            updateEvents { copy(openTermsAndConditions = consumed) }
         }
     }
 
     fun onTermsAndConditionsPromptShown() {
         viewModelScope.launch {
-            updateState { copy(showTermsAndConditionsPrompt = consumed) }
+            updateEvents { copy(showTermsAndConditionsPrompt = consumed) }
         }
     }
 
     fun onTermsAndConditionsPromptHidden() {
         viewModelScope.launch {
-            updateState { copy(hideTermsAndConditionsPrompt = consumed) }
+            updateEvents { copy(hideTermsAndConditionsPrompt = consumed) }
         }
     }
 
     fun onEventOpened() {
         viewModelScope.launch {
-            updateState { copy(openEvent = consumed) }
+            updateEvents { copy(openEvent = consumed) }
         }
     }
 
@@ -106,13 +106,8 @@ internal class QrScannerViewModel @Inject constructor(
     }
 
     private fun sendSuccessState() {
-        updateState {
-            copy(
-                showTermsAndConditionsPrompt = triggered,
-                isLoading = false,
-                dismissiveError = null
-            )
-        }
+        updateState { copy(isLoading = false, dismissiveError = null) }
+        updateEvents { copy(showTermsAndConditionsPrompt = triggered) }
     }
 
     private fun onErrorDismissed() {
@@ -127,23 +122,31 @@ internal class QrScannerViewModel @Inject constructor(
 }
 
 internal data class QrScannerUiState(
-    val navigateUp: StateEvent,
-    val openTermsAndConditions: StateEvent,
-    val showTermsAndConditionsPrompt: StateEvent,
-    val hideTermsAndConditionsPrompt: StateEvent,
-    val openEvent: StateEvent,
     val isLoading: Boolean,
     val dismissiveError: DismissiveError?
 ) {
     companion object {
-        val DEFAULT = QrScannerUiState(
+        val Default = QrScannerUiState(
+            isLoading = false,
+            dismissiveError = null
+        )
+    }
+}
+
+internal data class QrScannerUiEvents(
+    val navigateUp: StateEvent,
+    val openTermsAndConditions: StateEvent,
+    val showTermsAndConditionsPrompt: StateEvent,
+    val hideTermsAndConditionsPrompt: StateEvent,
+    val openEvent: StateEvent
+) {
+    companion object {
+        val Default = QrScannerUiEvents(
             navigateUp = consumed,
             openTermsAndConditions = consumed,
             showTermsAndConditionsPrompt = consumed,
             hideTermsAndConditionsPrompt = consumed,
-            openEvent = consumed,
-            isLoading = false,
-            dismissiveError = null
+            openEvent = consumed
         )
     }
 }

@@ -42,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.ILoginNavigation
+import com.hejwesele.android.components.DismissiveError
 import com.hejwesele.android.components.ErrorDialog
 import com.hejwesele.android.components.FilledButton
 import com.hejwesele.android.components.FormTextField
@@ -59,6 +60,7 @@ import com.hejwesele.extensions.noRippleClickable
 import com.hejwesele.internet.InternetConnectionPopup
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
@@ -82,6 +84,7 @@ private fun LoginEntryPoint(
     val coroutineScope = rememberCoroutineScope()
 
     val uiState by viewModel.states.collectAsState()
+    val uiEvents by viewModel.events.collectAsState()
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
@@ -92,20 +95,30 @@ private fun LoginEntryPoint(
     }
 
     LoginEventHandler(
-        uiState = uiState,
+        events = uiEvents,
+        viewModel = viewModel,
+        navigation = navigation,
         sheetState = sheetState,
         cameraPermissionLauncher = cameraPermissionLauncher,
-        viewModel = viewModel,
-        navigation = navigation
+        coroutineScope = coroutineScope
     )
 
-    val formData = LoginFormData(
-        isNextButtonEnabled = uiState.isFormValid,
-        nameText = uiState.eventNameInput,
-        passwordText = uiState.eventPasswordInput,
-        nameErrorMessage = uiState.eventNameError?.message,
-        passwordErrorMessage = uiState.eventPasswordError?.message,
-        termsAndConditionsChecked = uiState.termsAndConditionsAccepted
+    val formData = with(uiState) {
+        LoginFormData(
+            isNextButtonEnabled = isFormValid,
+            nameText = eventNameInput,
+            passwordText = eventPasswordInput,
+            nameErrorMessage = eventNameError?.message,
+            passwordErrorMessage = eventPasswordError?.message,
+            termsAndConditionsChecked = termsAndConditionsAccepted
+        )
+    }
+
+    val data = LoginData(
+        isLoading = uiState.isLoading,
+        formData = formData,
+        isInternetPopupEnabled = true,
+        loginError = uiState.loginError
     )
 
     val actions = LoginActions(
@@ -120,14 +133,52 @@ private fun LoginEntryPoint(
     )
 
     LoginScreen(
-        isLoading = uiState.isLoading,
-        isError = uiState.isError,
-        formData = formData,
-        isInternetPopupEnabled = true,
-        sheetState = sheetState,
-        actions = actions
+        data = data,
+        actions = actions,
+        sheetState = sheetState
     )
+}
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun LoginEventHandler(
+    events: LoginUiEvents,
+    viewModel: LoginViewModel,
+    navigation: ILoginNavigation,
+    sheetState: ModalBottomSheetState,
+    cameraPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
+    coroutineScope: CoroutineScope
+) {
+    EventEffect(
+        event = events.openSettings,
+        onConsumed = { viewModel.onSettingsOpened() },
+        action = { navigation.openSettings() }
+    )
+    EventEffect(
+        event = events.showHelp,
+        onConsumed = { viewModel.onHelpShown() },
+        action = { sheetState.show() }
+    )
+    EventEffect(
+        event = events.openTermsAndConditions,
+        onConsumed = { viewModel.onTermsAndConditionsOpened() },
+        action = { navigation.openTermsAndConditions() }
+    )
+    EventEffect(
+        event = events.openEvent,
+        onConsumed = { viewModel.onEventOpened() },
+        action = { navigation.openEvent() }
+    )
+    EventEffect(
+        event = events.requestCameraPermission,
+        onConsumed = { viewModel.onCameraPermissionRequested() },
+        action = { permission -> cameraPermissionLauncher.launch(permission) }
+    )
+    EventEffect(
+        event = events.openQrScanner,
+        onConsumed = { viewModel.onQrScannerOpened() },
+        action = { navigation.openQrScanner() }
+    )
     BackHandler(sheetState.isVisible) {
         coroutineScope.launch { sheetState.hide() }
     }
@@ -135,54 +186,10 @@ private fun LoginEntryPoint(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun LoginEventHandler(
-    uiState: LoginUiState,
-    sheetState: ModalBottomSheetState,
-    cameraPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
-    viewModel: LoginViewModel,
-    navigation: ILoginNavigation
-) {
-    EventEffect(
-        event = uiState.openSettings,
-        onConsumed = { viewModel.onSettingsOpened() },
-        action = { navigation.openSettings() }
-    )
-    EventEffect(
-        event = uiState.showHelp,
-        onConsumed = { viewModel.onHelpShown() },
-        action = { sheetState.show() }
-    )
-    EventEffect(
-        event = uiState.openTermsAndConditions,
-        onConsumed = { viewModel.onTermsAndConditionsOpened() },
-        action = { navigation.openTermsAndConditions() }
-    )
-    EventEffect(
-        event = uiState.openEvent,
-        onConsumed = { viewModel.onEventOpened() },
-        action = { navigation.openEvent() }
-    )
-    EventEffect(
-        event = uiState.requestCameraPermission,
-        onConsumed = { viewModel.onCameraPermissionRequested() },
-        action = { permission -> cameraPermissionLauncher.launch(permission) }
-    )
-    EventEffect(
-        event = uiState.openQrScanner,
-        onConsumed = { viewModel.onQrScannerOpened() },
-        action = { navigation.openQrScanner() }
-    )
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
 private fun LoginScreen(
-    isLoading: Boolean,
-    isError: Boolean,
-    formData: LoginFormData,
-    isInternetPopupEnabled: Boolean,
-    sheetState: ModalBottomSheetState,
-    actions: LoginActions
+    data: LoginData,
+    actions: LoginActions,
+    sheetState: ModalBottomSheetState
 ) {
     BottomSheetScaffold(
         state = sheetState,
@@ -192,14 +199,14 @@ private fun LoginScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface),
-            formData = formData,
+            formData = data.formData,
             actions = actions,
-            isInternetPopupEnabled = isInternetPopupEnabled
+            isInternetPopupEnabled = data.isInternetPopupEnabled
         )
-        if (isError) {
-            ErrorDialog()
+        if (data.loginError != null) {
+            ErrorDialog(error = data.loginError)
         }
-        if (isLoading) {
+        if (data.isLoading) {
             LoaderDialog(label = Label.loginLoadingText)
         }
     }
@@ -383,6 +390,22 @@ private fun TermsAndConditionsCheckbox(
     }
 }
 
+private data class LoginData(
+    val isLoading: Boolean,
+    val formData: LoginFormData,
+    val isInternetPopupEnabled: Boolean,
+    val loginError: DismissiveError?
+) {
+    companion object {
+        val Preview = LoginData(
+            isLoading = false,
+            formData = LoginFormData.Preview,
+            isInternetPopupEnabled = false,
+            loginError = null
+        )
+    }
+}
+
 private data class LoginFormData(
     val isNextButtonEnabled: Boolean,
     val nameText: String,
@@ -390,7 +413,18 @@ private data class LoginFormData(
     val nameErrorMessage: String?,
     val passwordErrorMessage: String?,
     val termsAndConditionsChecked: Boolean
-)
+) {
+    companion object {
+        val Preview = LoginFormData(
+            isNextButtonEnabled = true,
+            nameText = "Wedding123",
+            passwordText = "password",
+            nameErrorMessage = null,
+            passwordErrorMessage = null,
+            termsAndConditionsChecked = true
+        )
+    }
+}
 
 private data class LoginActions(
     val onNameInputChanged: (String) -> Unit,
@@ -401,7 +435,20 @@ private data class LoginActions(
     val onTermsAndConditionsLinkClicked: () -> Unit,
     val onNextButtonClicked: () -> Unit,
     val onScanQrButtonClicked: () -> Unit
-)
+) {
+    companion object {
+        val Preview = LoginActions(
+            onNameInputChanged = {},
+            onPasswordInputChanged = {},
+            onInfoClicked = {},
+            onHelpClicked = {},
+            onTermsAndConditionsCheckedChanged = {},
+            onTermsAndConditionsLinkClicked = {},
+            onNextButtonClicked = {},
+            onScanQrButtonClicked = {}
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Preview
@@ -411,28 +458,9 @@ private fun LoginScreenPreview() {
 
     AppTheme(darkTheme = false) {
         LoginScreen(
-            isLoading = false,
-            isError = false,
-            formData = LoginFormData(
-                isNextButtonEnabled = true,
-                nameText = "Wedding123",
-                passwordText = "password",
-                nameErrorMessage = null,
-                passwordErrorMessage = null,
-                termsAndConditionsChecked = true
-            ),
-            isInternetPopupEnabled = false,
-            sheetState = sheetState,
-            actions = LoginActions(
-                onNameInputChanged = {},
-                onPasswordInputChanged = {},
-                onInfoClicked = {},
-                onHelpClicked = {},
-                onTermsAndConditionsCheckedChanged = {},
-                onTermsAndConditionsLinkClicked = {},
-                onNextButtonClicked = {},
-                onScanQrButtonClicked = {}
-            )
+            data = LoginData.Preview,
+            actions = LoginActions.Preview,
+            sheetState = sheetState
         )
     }
 }

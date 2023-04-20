@@ -2,14 +2,15 @@ package com.hejwesele.login
 
 import android.Manifest
 import androidx.lifecycle.viewModelScope
-import com.hejwesele.android.mvvm.StateViewModel
+import com.hejwesele.android.components.DismissiveError
+import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.android.theme.Label
 import com.hejwesele.encryption.base64
 import com.hejwesele.encryption.bytes
 import com.hejwesele.encryption.sha256
 import com.hejwesele.encryption.string
 import com.hejwesele.permissions.PermissionsHandler
-import com.hejwesele.usecase.LoginEvent
+import com.hejwesele.usecase.LogIn
 import com.hejwesele.validation.CheckboxChecked
 import com.hejwesele.validation.StringNotEmpty
 import com.hejwesele.validation.ValidationResult.Invalid
@@ -27,8 +28,8 @@ import javax.inject.Inject
 @HiltViewModel
 internal class LoginViewModel @Inject constructor(
     private val permissionsHandler: PermissionsHandler,
-    private val loginEvent: LoginEvent
-) : StateViewModel<LoginUiState>(LoginUiState.DEFAULT) {
+    private val logIn: LogIn
+) : StateEventsViewModel<LoginUiState, LoginUiEvents>(LoginUiState.Default, LoginUiEvents.Default) {
 
     private var state = State()
 
@@ -46,6 +47,7 @@ internal class LoginViewModel @Inject constructor(
 
     fun onNameInputChanged(text: String) {
         state = state.copy(eventNameInput = text)
+
         validateInput(
             input = text,
             validator = eventNameValidator,
@@ -98,13 +100,13 @@ internal class LoginViewModel @Inject constructor(
 
     fun onSettingsRequested() {
         viewModelScope.launch {
-            updateState { copy(openSettings = triggered) }
+            updateEvents { copy(openSettings = triggered) }
         }
     }
 
     fun onHelpRequested() {
         viewModelScope.launch {
-            updateState { copy(showHelp = triggered) }
+            updateEvents { copy(showHelp = triggered) }
         }
     }
 
@@ -119,7 +121,7 @@ internal class LoginViewModel @Inject constructor(
 
     fun onTermsAndConditionsRequested() {
         viewModelScope.launch {
-            updateState { copy(openTermsAndConditions = triggered) }
+            updateEvents { copy(openTermsAndConditions = triggered) }
         }
     }
 
@@ -129,45 +131,23 @@ internal class LoginViewModel @Inject constructor(
 
             delay(LOGIN_DELAY)
 
-            loginEvent(
+            logIn(
                 name = state.eventNameInput,
                 password = state.eventPasswordInput.encodePassword(),
                 onServiceError = {
-                    updateState { copy(isLoading = false, isError = true) }
+                    sendServiceError()
                 },
                 onEventNotFound = {
-                    updateState {
-                        copy(
-                            isLoading = false,
-                            isError = false,
-                            eventNameError = Throwable(Label.loginEventNotFoundErrorText),
-                            eventPasswordError = null
-                        )
-                    }
+                    sendEventNameError()
                 },
                 onPasswordInvalid = {
-                    updateState {
-                        copy(
-                            isLoading = false,
-                            isError = false,
-                            eventNameError = null,
-                            eventPasswordError = Throwable(Label.loginIncorrectPasswordErrorText)
-                        )
-                    }
+                    sendEventPasswordError()
                 },
                 onSaveEventFailed = {
-                    updateState { copy(isLoading = false, isError = true) }
+                    sendServiceError()
                 },
                 onDone = {
-                    updateState {
-                        copy(
-                            openEvent = triggered,
-                            isLoading = false,
-                            isError = false,
-                            eventNameError = null,
-                            eventPasswordError = null
-                        )
-                    }
+                    sendSuccess()
                 }
             )
         }
@@ -179,54 +159,46 @@ internal class LoginViewModel @Inject constructor(
             val permissionsGranted = permissionsHandler.checkPermission(permission)
 
             if (permissionsGranted) {
-                updateState { copy(openQrScanner = triggered) }
+                updateEvents { copy(openQrScanner = triggered) }
             } else {
-                updateState {
-                    copy(requestCameraPermission = triggered(permission))
-                }
+                updateEvents { copy(requestCameraPermission = triggered(permission)) }
             }
         }
     }
 
     fun onCameraPermissionResult(isGranted: Boolean) {
         if (isGranted) {
-            updateState { copy(openQrScanner = triggered) }
-        }
-    }
-
-    fun onErrorDismissed() {
-        viewModelScope.launch {
-            updateState { copy(isError = false) }
+            updateEvents { copy(openQrScanner = triggered) }
         }
     }
 
     fun onSettingsOpened() {
-        updateState { copy(openSettings = consumed) }
+        updateEvents { copy(openSettings = consumed) }
     }
 
     fun onHelpShown() {
-        updateState { copy(showHelp = consumed) }
+        updateEvents { copy(showHelp = consumed) }
     }
 
     fun onTermsAndConditionsOpened() {
-        updateState { copy(openTermsAndConditions = consumed) }
+        updateEvents { copy(openTermsAndConditions = consumed) }
     }
 
     fun onEventOpened() {
         viewModelScope.launch {
-            updateState { copy(openEvent = consumed) }
+            updateEvents { copy(openEvent = consumed) }
         }
     }
 
     fun onCameraPermissionRequested() {
         viewModelScope.launch {
-            updateState { copy(requestCameraPermission = consumed()) }
+            updateEvents { copy(requestCameraPermission = consumed()) }
         }
     }
 
     fun onQrScannerOpened() {
         viewModelScope.launch {
-            updateState { copy(openQrScanner = consumed) }
+            updateEvents { copy(openQrScanner = consumed) }
         }
     }
 
@@ -252,6 +224,57 @@ internal class LoginViewModel @Inject constructor(
         }
     }
 
+    private fun sendServiceError() {
+        updateState {
+            copy(
+                isLoading = false,
+                loginError = DismissiveError.Default.copy(
+                    onDismiss = ::onErrorDismissed
+                )
+            )
+        }
+    }
+
+    private fun sendEventNameError() {
+        updateState {
+            copy(
+                isLoading = false,
+                eventNameError = Throwable(Label.loginEventNotFoundErrorText),
+                eventPasswordError = null,
+                loginError = null
+            )
+        }
+    }
+
+    private fun sendEventPasswordError() {
+        updateState {
+            copy(
+                isLoading = false,
+                eventNameError = null,
+                eventPasswordError = Throwable(Label.loginIncorrectPasswordErrorText),
+                loginError = null
+            )
+        }
+    }
+
+    private fun sendSuccess() {
+        updateState {
+            copy(
+                isLoading = false,
+                eventNameError = null,
+                eventPasswordError = null,
+                loginError = null
+            )
+        }
+        updateEvents { copy(openEvent = triggered) }
+    }
+
+    private fun onErrorDismissed() {
+        viewModelScope.launch {
+            updateState { copy(loginError = null) }
+        }
+    }
+
     private fun String.encodePassword() = bytes().sha256().base64().string()
 
     private data class State(
@@ -266,38 +289,47 @@ internal class LoginViewModel @Inject constructor(
 }
 
 internal data class LoginUiState(
-    val openSettings: StateEvent,
-    val showHelp: StateEvent,
-    val openTermsAndConditions: StateEvent,
-    val openEvent: StateEvent,
-    val requestCameraPermission: StateEventWithContent<String>,
-    val openQrScanner: StateEvent,
     val isLoading: Boolean,
-    val isError: Boolean,
     val eventNameInput: String,
     val eventPasswordInput: String,
     val eventNameError: Throwable?,
     val eventPasswordError: Throwable?,
     val termsAndConditionsAccepted: Boolean,
-    val isFormValid: Boolean
+    val isFormValid: Boolean,
+    val loginError: DismissiveError?
 ) {
 
     companion object {
-        val DEFAULT = LoginUiState(
-            openSettings = consumed,
-            showHelp = consumed,
-            openTermsAndConditions = consumed,
-            openEvent = consumed,
-            requestCameraPermission = consumed(),
-            openQrScanner = consumed,
+        val Default = LoginUiState(
             isLoading = false,
-            isError = false,
             eventNameInput = "",
             eventPasswordInput = "",
             eventNameError = null,
             eventPasswordError = null,
             termsAndConditionsAccepted = false,
-            isFormValid = false
+            isFormValid = false,
+            loginError = null
+        )
+    }
+}
+
+internal data class LoginUiEvents(
+    val openSettings: StateEvent,
+    val showHelp: StateEvent,
+    val openTermsAndConditions: StateEvent,
+    val openEvent: StateEvent,
+    val requestCameraPermission: StateEventWithContent<String>,
+    val openQrScanner: StateEvent
+) {
+
+    companion object {
+        val Default = LoginUiEvents(
+            openSettings = consumed,
+            showHelp = consumed,
+            openTermsAndConditions = consumed,
+            openEvent = consumed,
+            requestCameraPermission = consumed(),
+            openQrScanner = consumed
         )
     }
 }

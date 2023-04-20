@@ -48,6 +48,7 @@ import com.hejwesele.login.R
 import com.hejwesele.qrscanner.QrScannerView
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
@@ -71,30 +72,79 @@ private fun QrScannerEntryPoint(
     val coroutineScope = rememberCoroutineScope()
 
     val uiState by viewModel.states.collectAsState()
+    val uiEvents by viewModel.events.collectAsState()
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
 
     QrScannerEventHandler(
-        uiState = uiState,
+        events = uiEvents,
         viewModel = viewModel,
+        navigation = navigation,
         sheetState = sheetState,
-        navigation = navigation
+        coroutineScope = coroutineScope
     )
+
+    val data = with(uiState) {
+        QrScannerData(
+            isLoading = isLoading,
+            isInternetPopupEnabled = true,
+            dismissiveError = dismissiveError
+        )
+    }
+
+    val actions = with(viewModel) {
+        QrScannerActions(
+            onBack = { onBackClicked() },
+            onScanned = { text -> onQrScanned(text) },
+            onTermsAndConditionsLinkClicked = { onTermsAndConditionsRequested() },
+            onTermsAndConditionsAccepted = { onTermsAndConditionsPromptAccepted() },
+            onTermsAndConditionsDeclined = { onTermsAndConditionsPromptDeclined() }
+        )
+    }
 
     QrScannerScreen(
-        isLoading = uiState.isLoading,
-        dismissiveError = uiState.dismissiveError,
-        sheetState = sheetState,
-        isInternetPopupEnabled = true,
-        onBack = { viewModel.onBackClicked() },
-        onScanned = { text -> viewModel.onQrScanned(text) },
-        onTermsAndConditionsLinkClicked = { viewModel.onTermsAndConditionsRequested() },
-        onTermsAndConditionsAccepted = { viewModel.onTermsAndConditionsPromptAccepted() },
-        onTermsAndConditionsDeclined = { viewModel.onTermsAndConditionsPromptDeclined() }
+        data = data,
+        actions = actions,
+        sheetState = sheetState
     )
+}
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun QrScannerEventHandler(
+    events: QrScannerUiEvents,
+    viewModel: QrScannerViewModel,
+    navigation: ILoginNavigation,
+    sheetState: ModalBottomSheetState,
+    coroutineScope: CoroutineScope
+) {
+    EventEffect(
+        event = events.navigateUp,
+        onConsumed = { viewModel.onNavigatedUp() },
+        action = { navigation.navigateUp() }
+    )
+    EventEffect(
+        event = events.showTermsAndConditionsPrompt,
+        onConsumed = { viewModel.onTermsAndConditionsPromptShown() },
+        action = { sheetState.show() }
+    )
+    EventEffect(
+        event = events.hideTermsAndConditionsPrompt,
+        onConsumed = { viewModel.onTermsAndConditionsPromptHidden() },
+        action = { sheetState.hide() }
+    )
+    EventEffect(
+        event = events.openTermsAndConditions,
+        onConsumed = { viewModel.onTermsAndConditionsOpened() },
+        action = { navigation.openTermsAndConditions() }
+    )
+    EventEffect(
+        event = events.openEvent,
+        onConsumed = { viewModel.onEventOpened() },
+        action = { navigation.openEvent() }
+    )
     BackHandler(sheetState.isVisible) {
         coroutineScope.launch { sheetState.hide() }
     }
@@ -102,74 +152,33 @@ private fun QrScannerEntryPoint(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun QrScannerEventHandler(
-    uiState: QrScannerUiState,
-    viewModel: QrScannerViewModel,
-    sheetState: ModalBottomSheetState,
-    navigation: ILoginNavigation
-) {
-    EventEffect(
-        event = uiState.navigateUp,
-        onConsumed = { viewModel.onNavigatedUp() },
-        action = { navigation.navigateUp() }
-    )
-    EventEffect(
-        event = uiState.showTermsAndConditionsPrompt,
-        onConsumed = { viewModel.onTermsAndConditionsPromptShown() },
-        action = { sheetState.show() }
-    )
-    EventEffect(
-        event = uiState.hideTermsAndConditionsPrompt,
-        onConsumed = { viewModel.onTermsAndConditionsPromptHidden() },
-        action = { sheetState.hide() }
-    )
-    EventEffect(
-        event = uiState.openTermsAndConditions,
-        onConsumed = { viewModel.onTermsAndConditionsOpened() },
-        action = { navigation.openTermsAndConditions() }
-    )
-    EventEffect(
-        event = uiState.openEvent,
-        onConsumed = { viewModel.onEventOpened() },
-        action = { navigation.openEvent() }
-    )
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
 private fun QrScannerScreen(
-    isLoading: Boolean,
-    dismissiveError: DismissiveError?,
-    sheetState: ModalBottomSheetState,
-    isInternetPopupEnabled: Boolean,
-    onBack: () -> Unit,
-    onScanned: (String) -> Unit,
-    onTermsAndConditionsLinkClicked: () -> Unit,
-    onTermsAndConditionsAccepted: () -> Unit,
-    onTermsAndConditionsDeclined: () -> Unit
+    data: QrScannerData,
+    actions: QrScannerActions,
+    sheetState: ModalBottomSheetState
 ) {
     BottomSheetScaffold(
         state = sheetState,
         sheetContent = {
             TermsAndConditionsBottomSheetContent(
-                onLinkClicked = onTermsAndConditionsLinkClicked,
-                onDecline = onTermsAndConditionsDeclined,
-                onAccept = onTermsAndConditionsAccepted
+                onLinkClicked = actions.onTermsAndConditionsLinkClicked,
+                onDecline = actions.onTermsAndConditionsDeclined,
+                onAccept = actions.onTermsAndConditionsAccepted
             )
         }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             QrScannerContent(
                 modifier = Modifier.fillMaxSize(),
-                isInternetPopupEnabled = isInternetPopupEnabled,
-                onBack = onBack,
-                onScanned = onScanned
+                isInternetPopupEnabled = data.isInternetPopupEnabled,
+                onBack = actions.onBack,
+                onScanned = actions.onScanned
             )
-            if (isLoading) {
+            if (data.isLoading) {
                 LoaderDialog(label = Label.loginLoadingText)
             }
-            if (dismissiveError != null) {
-                ErrorDialog(error = dismissiveError)
+            if (data.dismissiveError != null) {
+                ErrorDialog(error = data.dismissiveError)
             }
         }
     }
@@ -265,6 +274,38 @@ private fun TermsAndConditionsBottomSheetContent(
     }
 }
 
+private data class QrScannerData(
+    val isLoading: Boolean,
+    val isInternetPopupEnabled: Boolean,
+    val dismissiveError: DismissiveError?
+) {
+    companion object {
+        val Preview = QrScannerData(
+            isLoading = false,
+            isInternetPopupEnabled = false,
+            dismissiveError = null
+        )
+    }
+}
+
+private data class QrScannerActions(
+    val onBack: () -> Unit,
+    val onScanned: (String) -> Unit,
+    val onTermsAndConditionsLinkClicked: () -> Unit,
+    val onTermsAndConditionsAccepted: () -> Unit,
+    val onTermsAndConditionsDeclined: () -> Unit
+) {
+    companion object {
+        val Preview = QrScannerActions(
+            onBack = {},
+            onScanned = {},
+            onTermsAndConditionsLinkClicked = {},
+            onTermsAndConditionsAccepted = {},
+            onTermsAndConditionsDeclined = {}
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
@@ -273,15 +314,9 @@ private fun QrScannerScreenPreview() {
 
     AppTheme(darkTheme = false) {
         QrScannerScreen(
-            isLoading = false,
-            dismissiveError = null,
-            sheetState = sheetState,
-            isInternetPopupEnabled = false,
-            onBack = {},
-            onScanned = {},
-            onTermsAndConditionsLinkClicked = {},
-            onTermsAndConditionsAccepted = {},
-            onTermsAndConditionsDeclined = {}
+            data = QrScannerData.Preview,
+            actions = QrScannerActions.Preview,
+            sheetState = sheetState
         )
     }
 }

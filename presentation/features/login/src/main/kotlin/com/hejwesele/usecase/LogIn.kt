@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-internal class LoginEvent @Inject constructor(
+internal class LogIn @Inject constructor(
     private val findEvent: FindEvent,
     private val storeEvent: StoreEvent
 ) {
