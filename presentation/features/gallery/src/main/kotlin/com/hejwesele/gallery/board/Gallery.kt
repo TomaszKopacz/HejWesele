@@ -37,11 +37,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.ContinuousLottieAnimation
+import com.hejwesele.android.components.DismissiveError
 import com.hejwesele.android.components.ErrorDialog
 import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.FloatingButton
 import com.hejwesele.android.components.HintTile
 import com.hejwesele.android.components.Loader
+import com.hejwesele.android.components.PermanentError
 import com.hejwesele.android.components.RoundedCornerImage
 import com.hejwesele.android.components.TextPlaceholder
 import com.hejwesele.android.components.VerticalMargin
@@ -109,23 +111,23 @@ private fun GalleryEntryPoint(
             galleryHintVisible = galleryHintEnabled,
             galleryLinkVisible = externalGalleryEnabled,
             photos = photos,
-            imageCropFailure = imageCropFailure,
+            permanentError = permanentError,
+            dismissiveError = dismissiveError,
             onHintDismissed = { viewModel.onGalleryHintDismissed() },
             onGalleryLinkClicked = { viewModel.onGalleryLinkClicked() },
             onPhotoClicked = { index -> navigation.openPreview(photos, index) },
             onAddClicked = { viewModel.onAddPhotoClicked() },
-            onImageCropFailureDismissed = { viewModel.onImageCropErrorDismissed() }
         )
     }
 
     GalleryBoardScreen(
-        isEnabled = uiState.enabled,
-        isLoading = uiState.loading,
-        isError = uiState.error != null,
+        isEnabled = uiState.isEnabled,
+        isLoading = uiState.isLoading,
+        isError = uiState.permanentError != null,
+        dismissiveError = uiState.dismissiveError,
         galleryData = galleryData,
         snackbarState = snackbarState,
         internetPopupEnabled = true,
-        onErrorRetry = {}
     )
 }
 
@@ -162,6 +164,11 @@ private fun GalleryEventHandler(
             )
         }
     )
+    EventEffect(
+        event = uiState.openLogin,
+        onConsumed = { viewModel.onLoginOpened() },
+        action = { navigation.openLogin() }
+    )
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -175,10 +182,10 @@ private fun GalleryBoardScreen(
     isEnabled: Boolean,
     isLoading: Boolean,
     isError: Boolean,
+    dismissiveError: DismissiveError?,
     galleryData: GalleryData,
     snackbarState: SnackbarHostState,
-    internetPopupEnabled: Boolean,
-    onErrorRetry: () -> Unit
+    internetPopupEnabled: Boolean
 ) {
     Scaffold(
         snackbarHost = {
@@ -194,10 +201,7 @@ private fun GalleryBoardScreen(
             }
             when {
                 isLoading -> Loader()
-                isError -> ErrorView(
-                    modifier = Modifier.fillMaxSize(),
-                    onRetry = onErrorRetry
-                )
+                isError -> ErrorView(modifier = Modifier.fillMaxSize())
                 else -> {
                     GalleryBody(
                         modifier = Modifier.fillMaxSize(),
@@ -241,11 +245,8 @@ private fun GalleryBody(
                 enabled = shouldShowContent,
                 action = { onAddClicked() }
             )
-            if (imageCropFailure) {
-                ErrorDialog(
-                    description = Label.galleryCropPhotoErrorDescriptionText,
-                    onDismiss = onImageCropFailureDismissed
-                )
+            if (dismissiveError != null) {
+                ErrorDialog(error = dismissiveError)
             }
         } else {
             TextPlaceholder(text = Label.galleryDisabledMessageText)
@@ -425,7 +426,7 @@ private fun GalleryBoardScreenPreview() {
             galleryData = GalleryData.preview,
             snackbarState = snackbarState,
             internetPopupEnabled = false,
-            onErrorRetry = {}
+            dismissiveError = null
         )
     }
 }
@@ -435,12 +436,12 @@ private data class GalleryData(
     val galleryHintVisible: Boolean,
     val galleryLinkVisible: Boolean,
     val photos: List<String>,
-    val imageCropFailure: Boolean,
+    val permanentError: PermanentError?,
+    val dismissiveError: DismissiveError?,
     val onHintDismissed: () -> Unit,
     val onGalleryLinkClicked: () -> Unit,
     val onPhotoClicked: (Int) -> Unit,
-    val onAddClicked: () -> Unit,
-    val onImageCropFailureDismissed: () -> Unit
+    val onAddClicked: () -> Unit
 ) {
     companion object {
         val preview = GalleryData(
@@ -448,12 +449,12 @@ private data class GalleryData(
             galleryHintVisible = true,
             galleryLinkVisible = true,
             photos = List(50) { "fake photo url" },
-            imageCropFailure = false,
+            permanentError = null,
+            dismissiveError = null,
             onHintDismissed = {},
             onGalleryLinkClicked = {},
             onPhotoClicked = {},
-            onAddClicked = {},
-            onImageCropFailureDismissed = {}
+            onAddClicked = {}
         )
     }
 }

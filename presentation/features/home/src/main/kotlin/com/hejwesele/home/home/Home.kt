@@ -46,9 +46,12 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.CircleImage
+import com.hejwesele.android.components.DismissiveError
+import com.hejwesele.android.components.ErrorDialog
 import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.HorizontalMargin
 import com.hejwesele.android.components.Loader
+import com.hejwesele.android.components.PermanentError
 import com.hejwesele.android.components.TextPlaceholder
 import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.components.layouts.BottomSheetScaffold
@@ -65,6 +68,7 @@ import com.hejwesele.home.home.model.InvitationTileUiModel
 import com.hejwesele.internet.InternetConnectionPopup
 import com.hejwesele.invitations.model.InvitationTileType
 import de.palm.composestateevents.EventEffect
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
@@ -83,7 +87,6 @@ private fun HomeEntryPoint(
         systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = true)
     }
 
-    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
     val uiState by viewModel.states.collectAsState()
@@ -92,20 +95,12 @@ private fun HomeEntryPoint(
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
 
-    EventEffect(
-        event = uiState.showTileOptions,
-        onConsumed = { viewModel.onTileOptionsShown() },
-        action = { sheetState.show() }
-    )
-    EventEffect(
-        event = uiState.hideTileOptions,
-        onConsumed = { viewModel.onTileOptionsHidden() },
-        action = { sheetState.hide() }
-    )
-    EventEffect(
-        event = uiState.openIntent,
-        onConsumed = { viewModel.onIntentOpened() },
-        action = { intent -> openActivity(context, intent.intentPackage, intent.url) }
+    HomeEventHandler(
+        uiState = uiState,
+        sheetState = sheetState,
+        viewModel = viewModel,
+        navigation = navigation,
+        coroutineScope = coroutineScope
     )
 
     HomeScreen(
@@ -123,19 +118,46 @@ private fun HomeEntryPoint(
                 viewModel.onTileIntentOptionSelected(intent)
             }
         },
-        isError = uiState.error != null,
-        onErrorRetry = {
-            coroutineScope.launch {
-                viewModel.onErrorRetry()
-            }
-        },
+        permanentError = uiState.permanentError,
+        dismissiveError = uiState.dismissiveError,
         internetPopupEnabled = true
     )
+}
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun HomeEventHandler(
+    uiState: HomeUiState,
+    sheetState: ModalBottomSheetState,
+    viewModel: HomeViewModel,
+    navigation: IHomeNavigation,
+    coroutineScope: CoroutineScope
+) {
+    val context = LocalContext.current
+
+    EventEffect(
+        event = uiState.showTileOptions,
+        onConsumed = { viewModel.onTileOptionsShown() },
+        action = { sheetState.show() }
+    )
+    EventEffect(
+        event = uiState.hideTileOptions,
+        onConsumed = { viewModel.onTileOptionsHidden() },
+        action = { sheetState.hide() }
+    )
+    EventEffect(
+        event = uiState.openIntent,
+        onConsumed = { viewModel.onIntentOpened() },
+        action = { intent -> openActivity(context, intent.intentPackage, intent.url) }
+    )
+    EventEffect(
+        event = uiState.openLogin,
+        onConsumed = { viewModel.onLoginOpened() },
+        action = { navigation.openLogin() }
+    )
     BackHandler(enabled = sheetState.isVisible) {
         coroutineScope.launch { sheetState.hide() }
     }
-
     BackHandler(enabled = !sheetState.isVisible) {
         coroutineScope.launch { navigation.finishApplication() }
     }
@@ -154,8 +176,8 @@ private fun HomeScreen(
     sheetState: ModalBottomSheetState,
     intents: List<IntentUiModel>,
     onIntentSelected: (IntentUiModel) -> Unit,
-    isError: Boolean,
-    onErrorRetry: () -> Unit,
+    permanentError: PermanentError?,
+    dismissiveError: DismissiveError?,
     internetPopupEnabled: Boolean
 ) {
     BottomSheetScaffold(
@@ -173,10 +195,7 @@ private fun HomeScreen(
     ) {
         when {
             isLoading -> Loader()
-            isError -> ErrorView(
-                modifier = Modifier.fillMaxSize(),
-                onRetry = onErrorRetry
-            )
+            permanentError != null -> ErrorView(modifier = Modifier.fillMaxSize())
             else -> HomeContent(
                 modifier = Modifier
                     .fillMaxSize()
@@ -184,6 +203,9 @@ private fun HomeScreen(
                 tiles = tiles,
                 onTileClicked = onTileClicked
             )
+        }
+        if (dismissiveError != null) {
+            ErrorDialog(error = dismissiveError)
         }
         if (internetPopupEnabled) {
             InternetConnectionPopup()
@@ -460,8 +482,8 @@ internal fun HomeScreenPreview() {
                 HomePreviewData.intent2
             ),
             onIntentSelected = {},
-            isError = false,
-            onErrorRetry = {},
+            permanentError = null,
+            dismissiveError = null,
             internetPopupEnabled = false
         )
     }

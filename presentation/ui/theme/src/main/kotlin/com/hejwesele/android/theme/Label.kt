@@ -9,6 +9,7 @@ object Label {
     // Error
     const val errorTitleText = "Upss, coś poszło nie tak"
     const val errorDescriptionText = "Sprawdź połączenie z internetem i spróbuj jeszcze raz."
+    const val errorDescriptionEventNotFoundText = "Niestety, musisz zalogować się ponownie."
 
     // Network
     const val networkReconnectedText = "Przywrócono połączenie"

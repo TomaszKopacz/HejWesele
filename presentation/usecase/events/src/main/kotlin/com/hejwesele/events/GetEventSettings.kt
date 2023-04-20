@@ -1,6 +1,5 @@
-package com.hejwesele.gallery.board.usecase
+package com.hejwesele.events
 
-import com.hejwesele.events.EventsRepository
 import com.hejwesele.events.model.EventSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

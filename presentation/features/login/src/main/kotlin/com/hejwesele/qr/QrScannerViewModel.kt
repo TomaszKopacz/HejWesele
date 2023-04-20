@@ -1,6 +1,7 @@
 package com.hejwesele.qr
 
 import androidx.lifecycle.viewModelScope
+import com.hejwesele.android.components.DismissiveError
 import com.hejwesele.android.mvvm.StateViewModel
 import com.hejwesele.usecase.LoginEvent
 import com.hejwesele.usecase.ParseEventQr
@@ -65,12 +66,6 @@ internal class QrScannerViewModel @Inject constructor(
         }
     }
 
-    fun onErrorDismissed() {
-        viewModelScope.launch {
-            updateState { copy(isError = false) }
-        }
-    }
-
     fun onNavigatedUp() {
         viewModelScope.launch {
             updateState { copy(navigateUp = consumed) }
@@ -105,7 +100,7 @@ internal class QrScannerViewModel @Inject constructor(
         updateState {
             copy(
                 isLoading = false,
-                isError = true
+                dismissiveError = DismissiveError.Default.copy(onDismiss = ::onErrorDismissed)
             )
         }
     }
@@ -115,8 +110,14 @@ internal class QrScannerViewModel @Inject constructor(
             copy(
                 showTermsAndConditionsPrompt = triggered,
                 isLoading = false,
-                isError = false
+                dismissiveError = null
             )
+        }
+    }
+
+    private fun onErrorDismissed() {
+        viewModelScope.launch {
+            updateState { copy(dismissiveError = null) }
         }
     }
 
@@ -132,7 +133,7 @@ internal data class QrScannerUiState(
     val hideTermsAndConditionsPrompt: StateEvent,
     val openEvent: StateEvent,
     val isLoading: Boolean,
-    val isError: Boolean
+    val dismissiveError: DismissiveError?
 ) {
     companion object {
         val DEFAULT = QrScannerUiState(
@@ -142,7 +143,7 @@ internal data class QrScannerUiState(
             hideTermsAndConditionsPrompt = consumed,
             openEvent = consumed,
             isLoading = false,
-            isError = false
+            dismissiveError = null
         )
     }
 }

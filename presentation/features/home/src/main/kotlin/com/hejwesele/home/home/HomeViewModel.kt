@@ -1,8 +1,12 @@
 package com.hejwesele.home.home
 
 import androidx.lifecycle.viewModelScope
+import com.hejwesele.android.components.DismissiveError
+import com.hejwesele.android.components.PermanentError
 import com.hejwesele.android.mvvm.StateViewModel
 import com.hejwesele.android.theme.Label
+import com.hejwesele.events.GetEventSettings
+import com.hejwesele.events.model.EventSettings
 import com.hejwesele.home.R
 import com.hejwesele.home.home.model.IntentUiModel
 import com.hejwesele.home.home.model.InvitationTileUiModel
@@ -23,6 +27,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class HomeViewModel @Inject constructor(
+    private val getEventSettings: GetEventSettings,
     private val observeInvitation: ObserveInvitation
 ) : StateViewModel<HomeUiState>(HomeUiState.DEFAULT) {
 
@@ -30,9 +35,20 @@ internal class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
 
-            observeInvitation("")
-                .collect { result ->
-                    handleInvitationResult(result)
+            getEventSettings()
+                .onSuccess { settings ->
+                    handleEventSettings(settings)
+                }
+                .onFailure {
+                    updateState {
+                        copy(
+                            isLoading = false,
+                            dismissiveError = DismissiveError.Default.copy(
+                                title = Label.errorDescriptionEventNotFoundText,
+                                onDismiss = ::onEventNotFoundErrorDismissed
+                            )
+                        )
+                    }
                 }
         }
     }
@@ -55,19 +71,46 @@ internal class HomeViewModel @Inject constructor(
     }
 
     fun onTileOptionsShown() {
-        updateState { copy(showTileOptions = consumed) }
+        viewModelScope.launch {
+            updateState { copy(showTileOptions = consumed) }
+        }
     }
 
     fun onTileOptionsHidden() {
-        updateState { copy(hideTileOptions = consumed) }
+        viewModelScope.launch {
+            updateState { copy(hideTileOptions = consumed) }
+        }
     }
 
     fun onIntentOpened() {
-        updateState { copy(openIntent = consumed()) }
+        viewModelScope.launch {
+            updateState { copy(openIntent = consumed()) }
+        }
     }
 
-    fun onErrorRetry() {
-        // no-op
+    fun onLoginOpened() {
+        viewModelScope.launch {
+            updateState { copy(openLogin = consumed) }
+        }
+    }
+
+    private suspend fun handleEventSettings(settings: EventSettings) {
+        val invitationId = settings.invitationId
+
+        if (invitationId != null) {
+            observeInvitation(invitationId)
+                .collect { handleInvitationResult(it) }
+        } else {
+            updateState {
+                copy(isLoading = false, permanentError = PermanentError.Default)
+            }
+        }
+    }
+
+    private fun onEventNotFoundErrorDismissed() {
+        updateState {
+            copy(openLogin = triggered, dismissiveError = null)
+        }
     }
 
     private fun handleInvitationResult(result: Result<Invitation>) {
@@ -77,8 +120,8 @@ internal class HomeViewModel @Inject constructor(
                     copy(isLoading = false, tiles = invitation.tiles.map { it.toUiModel() })
                 }
             }
-            .onFailure { error ->
-                updateState { copy(isLoading = false, error = error) }
+            .onFailure {
+                updateState { copy(isLoading = false, permanentError = PermanentError.Default) }
             }
     }
 
@@ -126,20 +169,24 @@ internal data class HomeUiState(
     val openIntent: StateEventWithContent<IntentUiModel>,
     val showTileOptions: StateEvent,
     val hideTileOptions: StateEvent,
+    val openLogin: StateEvent,
     val isLoading: Boolean,
     val tiles: List<InvitationTileUiModel>,
     val intents: List<IntentUiModel>,
-    val error: Throwable?
+    val permanentError: PermanentError?,
+    val dismissiveError: DismissiveError?
 ) {
     companion object {
         val DEFAULT = HomeUiState(
             showTileOptions = consumed,
             hideTileOptions = consumed,
             openIntent = consumed(),
+            openLogin = consumed,
             isLoading = true,
             tiles = emptyList(),
             intents = emptyList(),
-            error = null
+            permanentError = null,
+            dismissiveError = null
         )
     }
 }

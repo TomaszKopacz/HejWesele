@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.ILoginNavigation
+import com.hejwesele.android.components.DismissiveError
 import com.hejwesele.android.components.ErrorDialog
 import com.hejwesele.android.components.HyperlinkText
 import com.hejwesele.android.components.LoaderDialog
@@ -84,15 +85,14 @@ private fun QrScannerEntryPoint(
 
     QrScannerScreen(
         isLoading = uiState.isLoading,
-        isError = uiState.isError,
+        dismissiveError = uiState.dismissiveError,
         sheetState = sheetState,
         isInternetPopupEnabled = true,
         onBack = { viewModel.onBackClicked() },
         onScanned = { text -> viewModel.onQrScanned(text) },
         onTermsAndConditionsLinkClicked = { viewModel.onTermsAndConditionsRequested() },
         onTermsAndConditionsAccepted = { viewModel.onTermsAndConditionsPromptAccepted() },
-        onTermsAndConditionsDeclined = { viewModel.onTermsAndConditionsPromptDeclined() },
-        onErrorDismiss = { viewModel.onErrorDismissed() }
+        onTermsAndConditionsDeclined = { viewModel.onTermsAndConditionsPromptDeclined() }
     )
 
     BackHandler(sheetState.isVisible) {
@@ -139,15 +139,14 @@ private fun QrScannerEventHandler(
 @Composable
 private fun QrScannerScreen(
     isLoading: Boolean,
-    isError: Boolean,
+    dismissiveError: DismissiveError?,
     sheetState: ModalBottomSheetState,
     isInternetPopupEnabled: Boolean,
     onBack: () -> Unit,
     onScanned: (String) -> Unit,
     onTermsAndConditionsLinkClicked: () -> Unit,
     onTermsAndConditionsAccepted: () -> Unit,
-    onTermsAndConditionsDeclined: () -> Unit,
-    onErrorDismiss: () -> Unit
+    onTermsAndConditionsDeclined: () -> Unit
 ) {
     BottomSheetScaffold(
         state = sheetState,
@@ -169,10 +168,8 @@ private fun QrScannerScreen(
             if (isLoading) {
                 LoaderDialog(label = Label.loginLoadingText)
             }
-            if (isError) {
-                ErrorDialog(
-                    onDismiss = onErrorDismiss
-                )
+            if (dismissiveError != null) {
+                ErrorDialog(error = dismissiveError)
             }
         }
     }
@@ -277,15 +274,14 @@ private fun QrScannerScreenPreview() {
     AppTheme(darkTheme = false) {
         QrScannerScreen(
             isLoading = false,
-            isError = false,
+            dismissiveError = null,
             sheetState = sheetState,
             isInternetPopupEnabled = false,
             onBack = {},
             onScanned = {},
             onTermsAndConditionsLinkClicked = {},
             onTermsAndConditionsAccepted = {},
-            onTermsAndConditionsDeclined = {},
-            onErrorDismiss = {}
+            onTermsAndConditionsDeclined = {}
         )
     }
 }

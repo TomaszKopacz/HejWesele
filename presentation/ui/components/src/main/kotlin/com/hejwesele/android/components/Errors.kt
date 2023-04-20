@@ -28,12 +28,38 @@ import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.components.R
 
+data class PermanentError(
+    val title: String,
+    val description: String,
+    val onRetry: () -> Unit
+) {
+    companion object {
+        val Default = PermanentError(
+            title = Label.errorTitleText,
+            description = Label.errorDescriptionText,
+            onRetry = {}
+        )
+    }
+}
+
+data class DismissiveError(
+    val title: String,
+    val description: String,
+    val onDismiss: () -> Unit
+) {
+    companion object {
+        val Default = DismissiveError(
+            title = Label.errorTitleText,
+            description = Label.errorDescriptionText,
+            onDismiss = {}
+        )
+    }
+}
+
 @Composable
 fun ErrorView(
     modifier: Modifier = Modifier,
-    title: String = Label.errorTitleText,
-    description: String = Label.errorDescriptionText,
-    onRetry: (() -> Unit)? = null
+    error: PermanentError = PermanentError.Default
 ) {
     ScrollableColumn(
         modifier = modifier.background(MaterialTheme.colorScheme.background),
@@ -56,7 +82,7 @@ fun ErrorView(
                         .aspectRatio(1.0f)
                 )
                 Text(
-                    text = title,
+                    text = error.title,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center,
@@ -64,7 +90,7 @@ fun ErrorView(
                 )
                 VerticalMargin(Dimension.marginNormal)
                 Text(
-                    text = description,
+                    text = error.description,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onErrorContainer,
                     textAlign = TextAlign.Center,
@@ -74,7 +100,7 @@ fun ErrorView(
                 PlainButton(
                     text = Label.retry,
                     color = MaterialTheme.colorScheme.error,
-                    onClick = { onRetry?.invoke() },
+                    onClick = { error.onRetry() },
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
             }
@@ -82,23 +108,13 @@ fun ErrorView(
     }
 }
 
-@Preview
-@Composable
-private fun ErrorViewPreview() {
-    AppTheme(darkTheme = false) {
-        ErrorView(modifier = Modifier.fillMaxSize())
-    }
-}
-
 @Composable
 fun ErrorDialog(
     modifier: Modifier = Modifier,
-    title: String = Label.errorTitleText,
-    description: String = Label.errorDescriptionText,
-    onDismiss: () -> Unit
+    error: DismissiveError = DismissiveError.Default
 ) {
     Dialog(
-        onDismissRequest = onDismiss
+        onDismissRequest = error.onDismiss
     ) {
         Surface(
             modifier = modifier,
@@ -119,7 +135,7 @@ fun ErrorDialog(
                         .aspectRatio(1.0f)
                 )
                 Text(
-                    text = title,
+                    text = error.title,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center,
@@ -127,7 +143,7 @@ fun ErrorDialog(
                 )
                 VerticalMargin(Dimension.marginNormal)
                 Text(
-                    text = description,
+                    text = error.description,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onErrorContainer,
                     textAlign = TextAlign.Center,
@@ -139,7 +155,7 @@ fun ErrorDialog(
                     text = Label.ok,
                     color = MaterialTheme.colorScheme.error,
                     size = PlainButtonSize.LARGE,
-                    onClick = onDismiss
+                    onClick = error.onDismiss
                 )
                 VerticalMargin(Dimension.marginNormal)
             }
@@ -149,8 +165,17 @@ fun ErrorDialog(
 
 @Preview
 @Composable
+private fun ErrorViewPreview() {
+    AppTheme(darkTheme = false) {
+        ErrorView()
+    }
+}
+
+
+@Preview
+@Composable
 private fun ErrorDialogPreview() {
     AppTheme(darkTheme = false) {
-        ErrorDialog(onDismiss = {})
+        ErrorDialog()
     }
 }

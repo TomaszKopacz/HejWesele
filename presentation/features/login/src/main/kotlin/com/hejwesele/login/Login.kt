@@ -116,8 +116,7 @@ private fun LoginEntryPoint(
         onTermsAndConditionsCheckedChanged = { viewModel.onTermsAndConditionsCheckedChanged(it) },
         onTermsAndConditionsLinkClicked = { viewModel.onTermsAndConditionsRequested() },
         onNextButtonClicked = { viewModel.onSubmit() },
-        onScanQrButtonClicked = { viewModel.onScanQrClicked() },
-        onErrorDismissed = { viewModel.onErrorDismissed() }
+        onScanQrButtonClicked = { viewModel.onScanQrClicked() }
     )
 
     LoginScreen(
@@ -198,7 +197,7 @@ private fun LoginScreen(
             isInternetPopupEnabled = isInternetPopupEnabled
         )
         if (isError) {
-            ErrorDialog(onDismiss = actions.onErrorDismissed)
+            ErrorDialog()
         }
         if (isLoading) {
             LoaderDialog(label = Label.loginLoadingText)
@@ -401,8 +400,7 @@ private data class LoginActions(
     val onTermsAndConditionsCheckedChanged: (Boolean) -> Unit,
     val onTermsAndConditionsLinkClicked: () -> Unit,
     val onNextButtonClicked: () -> Unit,
-    val onScanQrButtonClicked: () -> Unit,
-    val onErrorDismissed: () -> Unit
+    val onScanQrButtonClicked: () -> Unit
 )
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -433,8 +431,7 @@ private fun LoginScreenPreview() {
                 onTermsAndConditionsCheckedChanged = {},
                 onTermsAndConditionsLinkClicked = {},
                 onNextButtonClicked = {},
-                onScanQrButtonClicked = {},
-                onErrorDismissed = {}
+                onScanQrButtonClicked = {}
             )
         )
     }

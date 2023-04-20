@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hejwesele.android.components.DismissiveError
 import com.hejwesele.android.components.ErrorDialog
 import com.hejwesele.android.components.Loader
 import com.hejwesele.android.components.LoaderDialog
@@ -89,16 +90,15 @@ private fun PhotoConfirmationEntryPoint(
         onPhotoAccepted = { viewModel.onPhotoAccepted() },
         onPhotoDeclined = { viewModel.onPhotoDeclined() },
         onPhotoConfirmationAccepted = { viewModel.onPhotoConfirmationAccepted() },
-        onPhotoConfirmationDeclined = { viewModel.onPhotoConfirmationDeclined() },
-        onErrorDismissed = { viewModel.onErrorDismissed() }
+        onPhotoConfirmationDeclined = { viewModel.onPhotoConfirmationDeclined() }
     )
 
     PhotoConfirmationScreen(
         isLoading = uiState.loadingData,
-        isError = uiState.error != null,
         photo = uiState.photo,
         isUploadingPhoto = uiState.uploadingPhoto,
         uploadingMessage = uiState.uploadingMessage,
+        dismissiveError = uiState.dismissiveError,
         sheetState = sheetState,
         internetPopupEnabled = true,
         actions = actions
@@ -147,10 +147,10 @@ private fun PhotoConfirmationEventHandler(
 @Composable
 private fun PhotoConfirmationScreen(
     isLoading: Boolean,
-    isError: Boolean,
     photo: Bitmap?,
     isUploadingPhoto: Boolean,
     uploadingMessage: String?,
+    dismissiveError: DismissiveError?,
     sheetState: ModalBottomSheetState,
     internetPopupEnabled: Boolean,
     actions: PhotoConfirmationActions
@@ -183,7 +183,7 @@ private fun PhotoConfirmationScreen(
                 when {
                     isLoading -> Loader()
                     isUploadingPhoto -> LoaderDialog(label = uploadingMessage)
-                    isError -> ErrorDialog { actions.onErrorDismissed() }
+                    dismissiveError != null -> ErrorDialog(error = dismissiveError)
                 }
             }
         }
@@ -279,8 +279,7 @@ private data class PhotoConfirmationActions(
     val onPhotoAccepted: () -> Unit,
     val onPhotoDeclined: () -> Unit,
     val onPhotoConfirmationAccepted: () -> Unit,
-    val onPhotoConfirmationDeclined: () -> Unit,
-    val onErrorDismissed: () -> Unit
+    val onPhotoConfirmationDeclined: () -> Unit
 )
 
 @Suppress("MagicNumber")
@@ -293,10 +292,10 @@ private fun PhotoConfirmationScreenPreview() {
     AppTheme(darkTheme = false) {
         PhotoConfirmationScreen(
             isLoading = false,
-            isError = false,
             photo = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888),
             isUploadingPhoto = false,
             uploadingMessage = null,
+            dismissiveError = null,
             sheetState = sheetState,
             internetPopupEnabled = false,
             actions = PhotoConfirmationActions(
@@ -304,7 +303,6 @@ private fun PhotoConfirmationScreenPreview() {
                 onPhotoDeclined = {},
                 onPhotoConfirmationAccepted = {},
                 onPhotoConfirmationDeclined = {},
-                onErrorDismissed = {}
             )
         )
     }

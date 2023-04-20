@@ -36,6 +36,7 @@ include ":presentation:tools:thememanager"
 include ":presentation:ui:components"
 include ":presentation:ui:extensions"
 include ":presentation:ui:theme"
+include ":presentation:usecase:events"
 
 include ":services:events"
 include ":services:galleries"
