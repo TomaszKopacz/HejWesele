@@ -68,6 +68,7 @@ private fun GalleryPreviewEntryPoint(
     }
 
     val uiState by viewModel.states.collectAsState()
+    val uiEvents by viewModel.events.collectAsState()
     val snackbarState = remember { SnackbarHostState() }
 
     val permissionsLauncher = rememberLauncherForActivityResult(RequestMultiplePermissions()) { permissionsResult ->
@@ -75,45 +76,57 @@ private fun GalleryPreviewEntryPoint(
     }
 
     GalleryPreviewEventsHandler(
-        uiState = uiState,
-        snackbarState = snackbarState,
+        events = uiEvents,
         viewModel = viewModel,
         navigation = navigation,
+        snackbarState = snackbarState,
         permissionsLauncher = permissionsLauncher
     )
 
+    val data = with(uiState) {
+        GalleryPreviewData(
+            isLoading = isLoading,
+            photoUrls = photoUrls,
+            selectedPhotoIndex = selectedPhotoIndex,
+            isSavingPhoto = isSavingPhoto,
+            isInternetPopupEnabled = true
+        )
+    }
+
+    val actions = with(viewModel) {
+        GalleryPreviewActions(
+            onBackClicked = { onBack() },
+            onSaveClicked = { photoUrl -> onSavePhotoClicked(photoUrl) }
+        )
+    }
+
     GalleryPreviewScreen(
-        isLoading = uiState.loading,
-        photoUrls = uiState.photoUrls,
-        selectedPhotoIndex = uiState.selectedPhotoIndex,
-        isSavingPhoto = uiState.savingPhoto,
-        snackbarState = snackbarState,
-        isInternetPopupEnabled = true,
-        onBackClicked = { viewModel.onBack() },
-        onSaveClicked = { photoUrl -> viewModel.onSavePhotoClicked(photoUrl) }
+        data = data,
+        actions = actions,
+        snackbarState = snackbarState
     )
 }
 
 @Composable
 private fun GalleryPreviewEventsHandler(
-    uiState: GalleryPreviewUiState,
+    events: GalleryPreviewUiEvents,
     viewModel: GalleryPreviewViewModel,
     navigation: IGalleryNavigation,
     permissionsLauncher: ManagedActivityResultLauncher<Array<String>, Map<String, @JvmSuppressWildcards Boolean>>,
     snackbarState: SnackbarHostState
 ) {
     EventEffect(
-        event = uiState.closeScreen,
+        event = events.closeScreen,
         onConsumed = { viewModel.onScreenClosed() },
         action = { navigation.navigateUp() }
     )
     EventEffect(
-        event = uiState.requestStoragePermissions,
+        event = events.requestStoragePermissions,
         onConsumed = { viewModel.onStoragePermissionsRequested() },
         action = { permissions -> permissionsLauncher.launch(permissions) }
     )
     EventEffect(
-        event = uiState.showSavePhotoSuccess,
+        event = events.showSavePhotoSuccess,
         onConsumed = { viewModel.onSavePhotoResultShown() },
         action = {
             snackbarState.showSnackbar(
@@ -123,7 +136,7 @@ private fun GalleryPreviewEventsHandler(
         }
     )
     EventEffect(
-        event = uiState.showSavePhotoError,
+        event = events.showSavePhotoError,
         onConsumed = { viewModel.onSavePhotoResultShown() },
         action = {
             snackbarState.showSnackbar(
@@ -141,34 +154,29 @@ private fun GalleryPreviewEventsHandler(
 )
 @Composable
 private fun GalleryPreviewScreen(
-    isLoading: Boolean,
-    photoUrls: List<String>,
-    selectedPhotoIndex: Int,
-    isSavingPhoto: Boolean,
-    snackbarState: SnackbarHostState,
-    isInternetPopupEnabled: Boolean,
-    onBackClicked: () -> Unit,
-    onSaveClicked: (String) -> Unit
+    data: GalleryPreviewData,
+    actions: GalleryPreviewActions,
+    snackbarState: SnackbarHostState
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarState) }
     ) { padding ->
         Surface(color = md_theme_dark_background) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                if (isInternetPopupEnabled) {
+                if (data.isInternetPopupEnabled) {
                     InternetConnectionPopup()
                 }
                 GalleryPreviewContent(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(bottom = padding.calculateBottomPadding()),
-                    photoUrls = photoUrls,
-                    selectedPhotoIndex = selectedPhotoIndex,
-                    isSavingPhoto = isSavingPhoto,
-                    onBack = onBackClicked,
-                    onSave = { photoUrl -> onSaveClicked(photoUrl) }
+                    photoUrls = data.photoUrls,
+                    selectedPhotoIndex = data.selectedPhotoIndex,
+                    isSavingPhoto = data.isSavingPhoto,
+                    onBack = actions.onBackClicked,
+                    onSave = { photoUrl -> actions.onSaveClicked(photoUrl) }
                 )
-                if (isLoading) {
+                if (data.isLoading) {
                     Loader()
                 }
             }
@@ -258,6 +266,36 @@ private fun PhotosCarousel(
     }
 }
 
+private data class GalleryPreviewData(
+    val isLoading: Boolean,
+    val photoUrls: List<String>,
+    val selectedPhotoIndex: Int,
+    val isSavingPhoto: Boolean,
+    val isInternetPopupEnabled: Boolean
+) {
+    companion object {
+        val Preview = GalleryPreviewData(
+            isLoading = false,
+            photoUrls = listOf("fake url 1", "fake url 2"),
+            selectedPhotoIndex = 1,
+            isSavingPhoto = false,
+            isInternetPopupEnabled = false
+        )
+    }
+}
+
+private data class GalleryPreviewActions(
+    val onBackClicked: () -> Unit,
+    val onSaveClicked: (String) -> Unit
+) {
+    companion object {
+        val Preview = GalleryPreviewActions(
+            onBackClicked = {},
+            onSaveClicked = {}
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun GalleryPreviewScreenPreview() {
@@ -265,14 +303,9 @@ private fun GalleryPreviewScreenPreview() {
 
     AppTheme(darkTheme = false) {
         GalleryPreviewScreen(
-            isLoading = false,
-            photoUrls = listOf("fake url 1", "fake url 2"),
-            selectedPhotoIndex = 1,
-            isSavingPhoto = false,
-            snackbarState = snackbarState,
-            isInternetPopupEnabled = false,
-            onBackClicked = {},
-            onSaveClicked = {}
+            data = GalleryPreviewData.Preview,
+            actions = GalleryPreviewActions.Preview,
+            snackbarState = snackbarState
         )
     }
 }

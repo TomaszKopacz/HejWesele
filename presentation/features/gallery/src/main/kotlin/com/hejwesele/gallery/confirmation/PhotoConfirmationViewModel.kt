@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.components.DismissiveError
-import com.hejwesele.android.mvvm.StateViewModel
+import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.android.theme.Label
 import com.hejwesele.bitmap.BitmapProvider
 import com.hejwesele.gallery.confirmation.usecase.AddPhotoToGallery
@@ -21,36 +21,39 @@ internal class PhotoConfirmationViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val bitmapProvider: BitmapProvider,
     private val addPhotoToGallery: AddPhotoToGallery
-) : StateViewModel<PhotoConfirmationUiState>(PhotoConfirmationUiState.DEFAULT) {
+) : StateEventsViewModel<PhotoConfirmationUiState, PhotoConfirmationUiEvents>(
+    PhotoConfirmationUiState.Default,
+    PhotoConfirmationUiEvents.Default
+) {
 
-    private var state = InternalState()
+    private var state = State()
 
     init {
         viewModelScope.launch {
-            updateState { copy(loadingData = true) }
+            updateState { copy(isLoading = true) }
 
             val uri = PhotoConfirmationDestination.argsFrom(savedStateHandle).photoUri
             val galleryId = PhotoConfirmationDestination.argsFrom(savedStateHandle).galleryId
             val photo = bitmapProvider.fromUri(uri)
 
             state = state.copy(photo = photo, galleryId = galleryId)
-            updateState { copy(loadingData = false, photo = photo) }
+            updateState { copy(isLoading = false, photo = photo) }
         }
     }
 
     fun onPhotoDeclined() {
-        updateState { copy(closeScreen = triggered) }
+        updateEvents { copy(closeScreen = triggered) }
     }
 
     fun onPhotoAccepted() {
         viewModelScope.launch {
-            updateState { copy(showPhotoConfirmation = triggered) }
+            updateEvents { copy(showPhotoConfirmation = triggered) }
         }
     }
 
     fun onPhotoConfirmationDeclined() {
         viewModelScope.launch {
-            updateState { copy(hidePhotoConfirmation = triggered) }
+            updateEvents { copy(hidePhotoConfirmation = triggered) }
         }
     }
 
@@ -61,26 +64,21 @@ internal class PhotoConfirmationViewModel @Inject constructor(
         viewModelScope.launch {
             updateState {
                 copy(
-                    uploadingPhoto = true,
-                    uploadingMessage = Label.galleryPublishingPhotoInProgressText,
-                    hidePhotoConfirmation = triggered
+                    isUploadingPhoto = true,
+                    uploadingMessage = Label.galleryPublishingPhotoInProgressText
                 )
             }
+            updateEvents { copy(hidePhotoConfirmation = triggered) }
             addPhotoToGallery(
                 galleryId = galleryId,
                 photo = photo
             ).onSuccess {
-                updateState {
-                    copy(
-                        uploadingPhoto = false,
-                        uploadingMessage = null,
-                        closeScreenWithSuccess = triggered
-                    )
-                }
+                updateState { copy(isUploadingPhoto = false, uploadingMessage = null) }
+                updateEvents { copy(closeScreenWithSuccess = triggered) }
             }.onFailure {
                 updateState {
                     copy(
-                        uploadingPhoto = false,
+                        isUploadingPhoto = false,
                         uploadingMessage = null,
                         dismissiveError = DismissiveError.Default.copy(onDismiss = ::onErrorDismissed)
                     )
@@ -91,61 +89,64 @@ internal class PhotoConfirmationViewModel @Inject constructor(
 
     fun onPhotoConfirmationShown() {
         viewModelScope.launch {
-            updateState { copy(showPhotoConfirmation = consumed) }
+            updateEvents { copy(showPhotoConfirmation = consumed) }
         }
     }
 
     fun onPhotoConfirmationHidden() {
         viewModelScope.launch {
-            updateState { copy(hidePhotoConfirmation = consumed) }
-        }
-    }
-
-    fun onErrorDismissed() {
-        viewModelScope.launch {
-            updateState { copy(dismissiveError = null) }
+            updateEvents { copy(hidePhotoConfirmation = consumed) }
         }
     }
 
     fun onScreenClosed() {
         viewModelScope.launch {
-            updateState {
-                copy(
-                    closeScreen = consumed,
-                    closeScreenWithSuccess = consumed
-                )
-            }
+            updateEvents { copy(closeScreen = consumed, closeScreenWithSuccess = consumed) }
         }
     }
 
-    private data class InternalState(
+    private fun onErrorDismissed() {
+        viewModelScope.launch {
+            updateState { copy(dismissiveError = null) }
+        }
+    }
+
+    private data class State(
         val photo: Bitmap? = null,
         val galleryId: String? = null
     )
 }
 
 internal data class PhotoConfirmationUiState(
-    val showPhotoConfirmation: StateEvent,
-    val hidePhotoConfirmation: StateEvent,
-    val closeScreen: StateEvent,
-    val closeScreenWithSuccess: StateEvent,
-    val loadingData: Boolean,
+    val isLoading: Boolean,
     val photo: Bitmap?,
-    val uploadingPhoto: Boolean,
+    val isUploadingPhoto: Boolean,
     val uploadingMessage: String?,
     val dismissiveError: DismissiveError?
 ) {
     companion object {
-        val DEFAULT = PhotoConfirmationUiState(
+        val Default = PhotoConfirmationUiState(
+            isLoading = false,
+            photo = null,
+            isUploadingPhoto = false,
+            uploadingMessage = null,
+            dismissiveError = null
+        )
+    }
+}
+
+internal data class PhotoConfirmationUiEvents(
+    val showPhotoConfirmation: StateEvent,
+    val hidePhotoConfirmation: StateEvent,
+    val closeScreen: StateEvent,
+    val closeScreenWithSuccess: StateEvent
+) {
+    companion object {
+        val Default = PhotoConfirmationUiEvents(
             showPhotoConfirmation = consumed,
             hidePhotoConfirmation = consumed,
             closeScreen = consumed,
-            closeScreenWithSuccess = consumed,
-            loadingData = false,
-            photo = null,
-            uploadingPhoto = false,
-            uploadingMessage = null,
-            dismissiveError = null
+            closeScreenWithSuccess = consumed
         )
     }
 }

@@ -3,7 +3,7 @@ package com.hejwesele.gallery.board
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.components.DismissiveError
 import com.hejwesele.android.components.PermanentError
-import com.hejwesele.android.mvvm.StateViewModel
+import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.android.theme.Label
 import com.hejwesele.events.GetEventSettings
 import com.hejwesele.events.model.EventSettings
@@ -29,7 +29,7 @@ internal class GalleryViewModel @Inject constructor(
     private val getEventSettings: GetEventSettings,
     private val observeGallery: ObserveGallery,
     private val dismissGalleryHint: DismissGalleryHint
-) : StateViewModel<GalleryUiState>(GalleryUiState.DEFAULT) {
+) : StateEventsViewModel<GalleryUiState, GalleryUiEvents>(GalleryUiState.Default, GalleryUiEvents.Default) {
 
     private var state = State()
 
@@ -41,15 +41,7 @@ internal class GalleryViewModel @Inject constructor(
                     handleEventSettings(settings)
                 }
                 .onFailure {
-                    updateState {
-                        copy(
-                            isLoading = false,
-                            dismissiveError = DismissiveError.Default.copy(
-                                title = Label.errorDescriptionEventNotFoundText,
-                                onDismiss = ::onEventNotFoundErrorDismissed
-                            )
-                        )
-                    }
+                    handleEventSettingsError()
                 }
         }
     }
@@ -73,9 +65,7 @@ internal class GalleryViewModel @Inject constructor(
                     intentPackage = GOOGLE_DRIVE_PACKAGE,
                     intentUrl = externalGalleryUrl
                 )
-                updateState {
-                    copy(openExternalGallery = triggered(intent))
-                }
+                updateEvents { copy(openExternalGallery = triggered(intent)) }
             }
         }
     }
@@ -83,7 +73,7 @@ internal class GalleryViewModel @Inject constructor(
     fun onAddPhotoClicked() {
         viewModelScope.launch {
             val galleryId = requireNotNull(state.galleryId)
-            updateState { copy(openImageCropper = triggered(galleryId)) }
+            updateEvents { copy(openImageCropper = triggered(galleryId)) }
         }
     }
 
@@ -99,29 +89,27 @@ internal class GalleryViewModel @Inject constructor(
 
     fun onPhotoUploadSuccess() {
         viewModelScope.launch {
-            updateState { copy(showPhotoUploadSuccess = triggered) }
+            updateEvents { copy(showPhotoUploadSuccess = triggered) }
         }
     }
 
     fun onExternalGalleryOpened() {
         viewModelScope.launch {
-            updateState {
-                copy(openExternalGallery = consumed())
-            }
+            updateEvents { copy(openExternalGallery = consumed()) }
         }
     }
 
     fun onImageCropperOpened() {
-        updateState { copy(openImageCropper = consumed()) }
+        updateEvents { copy(openImageCropper = consumed()) }
     }
 
     fun onPhotoUploadSuccessShown() {
-        updateState { copy(showPhotoUploadSuccess = consumed) }
+        updateEvents { copy(showPhotoUploadSuccess = consumed) }
     }
 
     fun onLoginOpened() {
         viewModelScope.launch {
-            updateState { copy(openLogin = consumed) }
+            updateEvents { copy(openLogin = consumed) }
         }
     }
 
@@ -151,7 +139,7 @@ internal class GalleryViewModel @Inject constructor(
                                 copy(
                                     isEnabled = true,
                                     isLoading = false,
-                                    weddingStarted = weddingStarted,
+                                    contentActive = weddingStarted,
                                     galleryHintEnabled = galleryHintEnabled,
                                     externalGalleryEnabled = galleryLinkPresent,
                                     photos = ArrayList(photos.reversed()),
@@ -182,10 +170,21 @@ internal class GalleryViewModel @Inject constructor(
         }
     }
 
-    private fun onEventNotFoundErrorDismissed() {
+    private fun handleEventSettingsError() {
         updateState {
-            copy(openLogin = triggered, dismissiveError = null)
+            copy(
+                isLoading = false,
+                dismissiveError = DismissiveError.Default.copy(
+                    title = Label.errorDescriptionEventNotFoundText,
+                    onDismiss = ::onEventNotFoundErrorDismissed
+                )
+            )
         }
+    }
+
+    private fun onEventNotFoundErrorDismissed() {
+        updateState { copy(dismissiveError = null) }
+        updateEvents { copy(openLogin = triggered) }
     }
 
     private fun onImageCropErrorDismissed() {
@@ -201,13 +200,9 @@ internal class GalleryViewModel @Inject constructor(
 }
 
 internal data class GalleryUiState(
-    val openExternalGallery: StateEventWithContent<IntentData>,
-    val openImageCropper: StateEventWithContent<String>,
-    val showPhotoUploadSuccess: StateEvent,
-    val openLogin: StateEvent,
     val isEnabled: Boolean,
     val isLoading: Boolean,
-    val weddingStarted: Boolean,
+    val contentActive: Boolean,
     val galleryHintEnabled: Boolean,
     val externalGalleryEnabled: Boolean,
     val photos: ArrayList<String>,
@@ -215,19 +210,31 @@ internal data class GalleryUiState(
     val dismissiveError: DismissiveError?
 ) {
     companion object {
-        val DEFAULT = GalleryUiState(
-            openExternalGallery = consumed(),
-            openImageCropper = consumed(),
-            showPhotoUploadSuccess = consumed,
-            openLogin = consumed,
+        val Default = GalleryUiState(
             isEnabled = true,
             isLoading = false,
-            weddingStarted = false,
+            contentActive = false,
             galleryHintEnabled = true,
             externalGalleryEnabled = false,
             photos = arrayListOf(),
             permanentError = null,
             dismissiveError = null
+        )
+    }
+}
+
+internal data class GalleryUiEvents(
+    val openExternalGallery: StateEventWithContent<IntentData>,
+    val openImageCropper: StateEventWithContent<String>,
+    val showPhotoUploadSuccess: StateEvent,
+    val openLogin: StateEvent
+) {
+    companion object {
+        val Default = GalleryUiEvents(
+            openExternalGallery = consumed(),
+            openImageCropper = consumed(),
+            showPhotoUploadSuccess = consumed,
+            openLogin = consumed
         )
     }
 }

@@ -1,7 +1,6 @@
 package com.hejwesele.gallery.board
 
 import android.annotation.SuppressLint
-import android.content.Context
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -85,8 +84,8 @@ private fun GalleryEntryPoint(
         systemUiController.setStatusBarColor(color = Transparent, darkIcons = true)
     }
 
-    val context = LocalContext.current
     val uiState by viewModel.states.collectAsState()
+    val uiEvents by viewModel.events.collectAsState()
     val snackbarState = remember { SnackbarHostState() }
 
     ImageCropper.install()
@@ -98,53 +97,59 @@ private fun GalleryEntryPoint(
     }
 
     GalleryEventHandler(
-        uiState = uiState,
-        snackbarState = snackbarState,
+        events = uiEvents,
         viewModel = viewModel,
         navigation = navigation,
-        context = context
+        snackbarState = snackbarState
     )
 
-    val galleryData = with(uiState) {
-        GalleryData(
-            shouldShowContent = weddingStarted,
+    val galleryContentData = with(uiState) {
+        GalleryContentData(
+            contentActive = contentActive,
             galleryHintVisible = galleryHintEnabled,
             galleryLinkVisible = externalGalleryEnabled,
             photos = photos,
             permanentError = permanentError,
-            dismissiveError = dismissiveError,
-            onHintDismissed = { viewModel.onGalleryHintDismissed() },
-            onGalleryLinkClicked = { viewModel.onGalleryLinkClicked() },
-            onPhotoClicked = { index -> navigation.openPreview(photos, index) },
-            onAddClicked = { viewModel.onAddPhotoClicked() }
+            dismissiveError = dismissiveError
         )
     }
 
-    GalleryBoardScreen(
-        isEnabled = uiState.isEnabled,
+    val galleryData = GalleryData(
         isLoading = uiState.isLoading,
-        isError = uiState.permanentError != null,
-        galleryData = galleryData,
-        snackbarState = snackbarState,
+        isEnabled = uiState.isEnabled,
+        contentData = galleryContentData,
         internetPopupEnabled = true
+    )
+
+    val galleryActions = GalleryActions(
+        onHintDismissed = { viewModel.onGalleryHintDismissed() },
+        onGalleryLinkClicked = { viewModel.onGalleryLinkClicked() },
+        onPhotoClicked = { index -> navigation.openPreview(uiState.photos, index) },
+        onAddClicked = { viewModel.onAddPhotoClicked() }
+    )
+
+    GalleryBoardScreen(
+        data = galleryData,
+        actions = galleryActions,
+        snackbarState = snackbarState
     )
 }
 
 @Composable
 private fun GalleryEventHandler(
-    uiState: GalleryUiState,
+    events: GalleryUiEvents,
     viewModel: GalleryViewModel,
-    context: Context,
     navigation: IGalleryNavigation,
     snackbarState: SnackbarHostState
 ) {
+    val context = LocalContext.current
     EventEffect(
-        event = uiState.openExternalGallery,
+        event = events.openExternalGallery,
         onConsumed = { viewModel.onExternalGalleryOpened() },
         action = { intent -> openActivity(context, intent.intentPackage, intent.intentUrl) }
     )
     EventEffect(
-        event = uiState.openImageCropper,
+        event = events.openImageCropper,
         onConsumed = { viewModel.onImageCropperOpened() },
         action = { galleryId ->
             ImageCropper.launch(
@@ -154,7 +159,7 @@ private fun GalleryEventHandler(
         }
     )
     EventEffect(
-        event = uiState.showPhotoUploadSuccess,
+        event = events.showPhotoUploadSuccess,
         onConsumed = { viewModel.onPhotoUploadSuccessShown() },
         action = {
             snackbarState.showSnackbar(
@@ -164,7 +169,7 @@ private fun GalleryEventHandler(
         }
     )
     EventEffect(
-        event = uiState.openLogin,
+        event = events.openLogin,
         onConsumed = { viewModel.onLoginOpened() },
         action = { navigation.openLogin() }
     )
@@ -178,12 +183,9 @@ private fun GalleryEventHandler(
 )
 @Composable
 private fun GalleryBoardScreen(
-    isEnabled: Boolean,
-    isLoading: Boolean,
-    isError: Boolean,
-    galleryData: GalleryData,
-    snackbarState: SnackbarHostState,
-    internetPopupEnabled: Boolean
+    data: GalleryData,
+    actions: GalleryActions,
+    snackbarState: SnackbarHostState
 ) {
     Scaffold(
         snackbarHost = {
@@ -194,17 +196,18 @@ private fun GalleryBoardScreen(
         }
     ) {
         Column {
-            if (internetPopupEnabled) {
+            if (data.internetPopupEnabled) {
                 InternetConnectionPopup()
             }
             when {
-                isLoading -> Loader()
-                isError -> ErrorView(modifier = Modifier.fillMaxSize())
+                data.isLoading -> Loader()
+                data.contentData.permanentError != null -> ErrorView(modifier = Modifier.fillMaxSize())
                 else -> {
                     GalleryBody(
                         modifier = Modifier.fillMaxSize(),
-                        galleryEnabled = isEnabled,
-                        galleryData = galleryData
+                        isEnabled = data.isEnabled,
+                        data = data.contentData,
+                        actions = actions
                     )
                 }
             }
@@ -215,19 +218,20 @@ private fun GalleryBoardScreen(
 @Composable
 private fun GalleryBody(
     modifier: Modifier = Modifier,
-    galleryEnabled: Boolean,
-    galleryData: GalleryData
-) = with(galleryData) {
+    isEnabled: Boolean,
+    data: GalleryContentData,
+    actions: GalleryActions
+) {
     Box(modifier = modifier) {
-        if (galleryEnabled) {
-            if (shouldShowContent) {
+        if (isEnabled) {
+            if (data.contentActive) {
                 GalleryContent(
-                    photos = photos,
-                    galleryHintVisible = galleryHintVisible,
-                    galleryLinkVisible = galleryLinkVisible,
-                    onHintDismissed = onHintDismissed,
-                    onGalleryLinkClicked = onGalleryLinkClicked,
-                    onPhotoClicked = onPhotoClicked
+                    photos = data.photos,
+                    galleryHintVisible = data.galleryHintVisible,
+                    galleryLinkVisible = data.galleryLinkVisible,
+                    onHintDismissed = actions.onHintDismissed,
+                    onGalleryLinkClicked = actions.onGalleryLinkClicked,
+                    onPhotoClicked = actions.onPhotoClicked
                 )
             } else {
                 TextPlaceholder(text = Label.galleryBeforeWeddingPlaceholderText)
@@ -240,11 +244,11 @@ private fun GalleryBody(
                         bottom = Dimension.marginSmall
                     ),
                 icon = Icons.Default.Add,
-                enabled = shouldShowContent,
-                action = { onAddClicked() }
+                enabled = data.contentActive,
+                action = { actions.onAddClicked() }
             )
-            if (dismissiveError != null) {
-                ErrorDialog(error = dismissiveError)
+            if (data.dismissiveError != null) {
+                ErrorDialog(error = data.dismissiveError)
             }
         } else {
             TextPlaceholder(text = Label.galleryDisabledMessageText)
@@ -411,6 +415,58 @@ private fun GalleryTile(
     }
 }
 
+private data class GalleryData(
+    val isLoading: Boolean,
+    val isEnabled: Boolean,
+    val contentData: GalleryContentData,
+    val internetPopupEnabled: Boolean
+) {
+    companion object {
+        val Preview = GalleryData(
+            isLoading = false,
+            isEnabled = true,
+            contentData = GalleryContentData.Preview,
+            internetPopupEnabled = false
+        )
+    }
+}
+
+private data class GalleryContentData(
+    val contentActive: Boolean,
+    val galleryHintVisible: Boolean,
+    val galleryLinkVisible: Boolean,
+    val photos: List<String>,
+    val permanentError: PermanentError?,
+    val dismissiveError: DismissiveError?
+) {
+    companion object {
+        val Preview = GalleryContentData(
+            contentActive = true,
+            galleryHintVisible = true,
+            galleryLinkVisible = true,
+            photos = List(50) { "fake photo url" },
+            permanentError = null,
+            dismissiveError = null
+        )
+    }
+}
+
+private data class GalleryActions(
+    val onHintDismissed: () -> Unit,
+    val onGalleryLinkClicked: () -> Unit,
+    val onPhotoClicked: (Int) -> Unit,
+    val onAddClicked: () -> Unit
+) {
+    companion object {
+        val Preview = GalleryActions(
+            onHintDismissed = {},
+            onGalleryLinkClicked = {},
+            onPhotoClicked = {},
+            onAddClicked = {}
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun GalleryBoardScreenPreview() {
@@ -418,40 +474,9 @@ private fun GalleryBoardScreenPreview() {
 
     AppTheme(darkTheme = false) {
         GalleryBoardScreen(
-            isEnabled = true,
-            isLoading = false,
-            isError = false,
-            galleryData = GalleryData.preview,
-            snackbarState = snackbarState,
-            internetPopupEnabled = false
-        )
-    }
-}
-
-private data class GalleryData(
-    val shouldShowContent: Boolean,
-    val galleryHintVisible: Boolean,
-    val galleryLinkVisible: Boolean,
-    val photos: List<String>,
-    val permanentError: PermanentError?,
-    val dismissiveError: DismissiveError?,
-    val onHintDismissed: () -> Unit,
-    val onGalleryLinkClicked: () -> Unit,
-    val onPhotoClicked: (Int) -> Unit,
-    val onAddClicked: () -> Unit
-) {
-    companion object {
-        val preview = GalleryData(
-            shouldShowContent = true,
-            galleryHintVisible = true,
-            galleryLinkVisible = true,
-            photos = List(50) { "fake photo url" },
-            permanentError = null,
-            dismissiveError = null,
-            onHintDismissed = {},
-            onGalleryLinkClicked = {},
-            onPhotoClicked = {},
-            onAddClicked = {}
+            data = GalleryData.Preview,
+            actions = GalleryActions.Preview,
+            snackbarState = snackbarState
         )
     }
 }

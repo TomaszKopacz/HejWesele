@@ -4,7 +4,7 @@ import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.hejwesele.android.mvvm.StateViewModel
+import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.android.osinfo.OsInfo
 import com.hejwesele.gallery.destinations.GalleryPreviewDestination
 import com.hejwesele.gallery.preview.usecase.SaveImage
@@ -24,20 +24,23 @@ internal class GalleryPreviewViewModel @Inject constructor(
     private val permissionsHandler: PermissionsHandler,
     private val osInfo: OsInfo,
     private val savePhoto: SaveImage
-) : StateViewModel<GalleryPreviewUiState>(GalleryPreviewUiState.DEFAULT) {
+) : StateEventsViewModel<GalleryPreviewUiState, GalleryPreviewUiEvents>(
+    GalleryPreviewUiState.Default,
+    GalleryPreviewUiEvents.Default
+) {
 
     private var state = State()
 
     init {
         viewModelScope.launch {
-            updateState { copy(loading = true) }
+            updateState { copy(isLoading = true) }
 
             val photoUrls = GalleryPreviewDestination.argsFrom(state).photoUrls
             val selectedPhotoIndex = GalleryPreviewDestination.argsFrom(state).selectedPhotoIndex
 
             updateState {
                 copy(
-                    loading = false,
+                    isLoading = false,
                     photoUrls = photoUrls,
                     selectedPhotoIndex = selectedPhotoIndex
                 )
@@ -47,7 +50,7 @@ internal class GalleryPreviewViewModel @Inject constructor(
 
     fun onBack() {
         viewModelScope.launch {
-            updateState { copy(closeScreen = triggered) }
+            updateEvents { copy(closeScreen = triggered) }
         }
     }
 
@@ -63,9 +66,7 @@ internal class GalleryPreviewViewModel @Inject constructor(
                     savePhotoToStorage(photoUrl)
                 } else {
                     state = state.copy(pendingPhotoUrl = photoUrl)
-                    updateState {
-                        copy(requestStoragePermissions = triggered(permissions))
-                    }
+                    updateEvents { copy(requestStoragePermissions = triggered(permissions)) }
                 }
             }
         }
@@ -73,7 +74,7 @@ internal class GalleryPreviewViewModel @Inject constructor(
 
     fun onStoragePermissionsRequested() {
         viewModelScope.launch {
-            updateState { copy(requestStoragePermissions = consumed()) }
+            updateEvents { copy(requestStoragePermissions = consumed()) }
         }
     }
 
@@ -89,40 +90,27 @@ internal class GalleryPreviewViewModel @Inject constructor(
 
     fun onSavePhotoResultShown() {
         viewModelScope.launch {
-            updateState {
-                copy(
-                    showSavePhotoSuccess = consumed,
-                    showSavePhotoError = consumed
-                )
-            }
+            updateEvents { copy(showSavePhotoSuccess = consumed, showSavePhotoError = consumed) }
         }
     }
 
     fun onScreenClosed() {
         viewModelScope.launch {
-            updateState { copy(closeScreen = consumed) }
+            updateEvents { copy(closeScreen = consumed) }
         }
     }
 
     private suspend fun savePhotoToStorage(photoUrl: String) {
-        updateState { copy(savingPhoto = true) }
+        updateState { copy(isSavingPhoto = true) }
         viewModelScope.launch(Dispatchers.IO) {
             savePhoto(photoUrl)
                 .onSuccess {
-                    updateState {
-                        copy(
-                            showSavePhotoSuccess = triggered,
-                            savingPhoto = false
-                        )
-                    }
+                    updateState { copy(isSavingPhoto = false) }
+                    updateEvents { copy(showSavePhotoSuccess = triggered) }
                 }
                 .onFailure {
-                    updateState {
-                        copy(
-                            showSavePhotoError = triggered,
-                            savingPhoto = false
-                        )
-                    }
+                    updateState { copy(isSavingPhoto = false) }
+                    updateEvents { copy(showSavePhotoError = triggered) }
                 }
         }
     }
@@ -133,25 +121,33 @@ internal class GalleryPreviewViewModel @Inject constructor(
 }
 
 internal data class GalleryPreviewUiState(
+    val isLoading: Boolean,
+    val photoUrls: ArrayList<String>,
+    val selectedPhotoIndex: Int,
+    val isSavingPhoto: Boolean
+) {
+    companion object {
+        val Default = GalleryPreviewUiState(
+            isLoading = false,
+            photoUrls = arrayListOf(),
+            selectedPhotoIndex = 0,
+            isSavingPhoto = false
+        )
+    }
+}
+
+internal data class GalleryPreviewUiEvents(
     val closeScreen: StateEvent,
     val requestStoragePermissions: StateEventWithContent<Array<String>>,
     val showSavePhotoSuccess: StateEvent,
-    val showSavePhotoError: StateEvent,
-    val photoUrls: ArrayList<String>,
-    val selectedPhotoIndex: Int,
-    val loading: Boolean,
-    val savingPhoto: Boolean
+    val showSavePhotoError: StateEvent
 ) {
     companion object {
-        val DEFAULT = GalleryPreviewUiState(
+        val Default = GalleryPreviewUiEvents(
             closeScreen = consumed,
             requestStoragePermissions = consumed(),
             showSavePhotoSuccess = consumed,
-            showSavePhotoError = consumed,
-            photoUrls = arrayListOf(),
-            selectedPhotoIndex = 0,
-            loading = false,
-            savingPhoto = false
+            showSavePhotoError = consumed
         )
     }
 }

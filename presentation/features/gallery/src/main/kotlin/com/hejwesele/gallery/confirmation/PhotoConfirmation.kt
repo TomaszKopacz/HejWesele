@@ -49,6 +49,7 @@ import com.hejwesele.internet.InternetConnectionPopup
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.result.ResultBackNavigator
 import de.palm.composestateevents.EventEffect
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
@@ -74,69 +75,79 @@ private fun PhotoConfirmationEntryPoint(
     val coroutineScope = rememberCoroutineScope()
 
     val uiState by viewModel.states.collectAsState()
+    val uiEvents by viewModel.events.collectAsState()
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded }
     )
 
     PhotoConfirmationEventHandler(
-        uiState = uiState,
+        events = uiEvents,
         sheetState = sheetState,
         viewModel = viewModel,
-        resultSender = resultSender
+        resultSender = resultSender,
+        coroutineScope = coroutineScope
     )
 
-    val actions = PhotoConfirmationActions(
-        onPhotoAccepted = { viewModel.onPhotoAccepted() },
-        onPhotoDeclined = { viewModel.onPhotoDeclined() },
-        onPhotoConfirmationAccepted = { viewModel.onPhotoConfirmationAccepted() },
-        onPhotoConfirmationDeclined = { viewModel.onPhotoConfirmationDeclined() }
-    )
+    val data = with(uiState) {
+        PhotoConfirmationData(
+            isLoading = isLoading,
+            photo = photo,
+            isUploadingPhoto = isUploadingPhoto,
+            uploadingMessage = uploadingMessage,
+            internetPopupEnabled = true,
+            dismissiveError = dismissiveError
+        )
+    }
+
+    val actions = with(viewModel) {
+        PhotoConfirmationActions(
+            onPhotoAccepted = { onPhotoAccepted() },
+            onPhotoDeclined = { onPhotoDeclined() },
+            onPhotoConfirmationAccepted = { onPhotoConfirmationAccepted() },
+            onPhotoConfirmationDeclined = { onPhotoConfirmationDeclined() }
+        )
+    }
 
     PhotoConfirmationScreen(
-        isLoading = uiState.loadingData,
-        photo = uiState.photo,
-        isUploadingPhoto = uiState.uploadingPhoto,
-        uploadingMessage = uiState.uploadingMessage,
-        dismissiveError = uiState.dismissiveError,
-        sheetState = sheetState,
-        internetPopupEnabled = true,
-        actions = actions
+        data = data,
+        actions = actions,
+        sheetState = sheetState
     )
-
-    BackHandler(sheetState.isVisible) {
-        coroutineScope.launch { sheetState.hide() }
-    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun PhotoConfirmationEventHandler(
-    uiState: PhotoConfirmationUiState,
+    events: PhotoConfirmationUiEvents,
     viewModel: PhotoConfirmationViewModel,
     sheetState: ModalBottomSheetState,
-    resultSender: ResultBackNavigator<Boolean>
+    resultSender: ResultBackNavigator<Boolean>,
+    coroutineScope: CoroutineScope
 ) {
     EventEffect(
-        event = uiState.showPhotoConfirmation,
+        event = events.showPhotoConfirmation,
         onConsumed = { viewModel.onPhotoConfirmationShown() },
         action = { sheetState.show() }
     )
     EventEffect(
-        event = uiState.hidePhotoConfirmation,
+        event = events.hidePhotoConfirmation,
         onConsumed = { viewModel.onPhotoConfirmationHidden() },
         action = { sheetState.hide() }
     )
     EventEffect(
-        event = uiState.closeScreen,
+        event = events.closeScreen,
         onConsumed = { viewModel.onScreenClosed() },
         action = { resultSender.navigateBack(result = false) }
     )
     EventEffect(
-        event = uiState.closeScreenWithSuccess,
+        event = events.closeScreenWithSuccess,
         onConsumed = { viewModel.onScreenClosed() },
         action = { resultSender.navigateBack(result = true) }
     )
+    BackHandler(sheetState.isVisible) {
+        coroutineScope.launch { sheetState.hide() }
+    }
 }
 
 @OptIn(
@@ -146,14 +157,9 @@ private fun PhotoConfirmationEventHandler(
 )
 @Composable
 private fun PhotoConfirmationScreen(
-    isLoading: Boolean,
-    photo: Bitmap?,
-    isUploadingPhoto: Boolean,
-    uploadingMessage: String?,
-    dismissiveError: DismissiveError?,
-    sheetState: ModalBottomSheetState,
-    internetPopupEnabled: Boolean,
-    actions: PhotoConfirmationActions
+    data: PhotoConfirmationData,
+    actions: PhotoConfirmationActions,
+    sheetState: ModalBottomSheetState
 ) {
     BottomSheetScaffold(
         state = sheetState,
@@ -169,21 +175,21 @@ private fun PhotoConfirmationScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                if (internetPopupEnabled) {
+                if (data.internetPopupEnabled) {
                     InternetConnectionPopup()
                 }
-                if (photo != null) {
+                if (data.photo != null) {
                     PhotoPreviewContent(
                         modifier = Modifier.fillMaxSize(),
-                        photo = photo,
+                        photo = data.photo,
                         onAccept = actions.onPhotoAccepted,
                         onCancel = actions.onPhotoDeclined
                     )
                 }
                 when {
-                    isLoading -> Loader()
-                    isUploadingPhoto -> LoaderDialog(label = uploadingMessage)
-                    dismissiveError != null -> ErrorDialog(error = dismissiveError)
+                    data.isLoading -> Loader()
+                    data.isUploadingPhoto -> LoaderDialog(label = data.uploadingMessage)
+                    data.dismissiveError != null -> ErrorDialog(error = data.dismissiveError)
                 }
             }
         }
@@ -275,14 +281,43 @@ private fun ConfirmationBottomSheetContent(
     }
 }
 
+private data class PhotoConfirmationData(
+    val isLoading: Boolean,
+    val photo: Bitmap?,
+    val isUploadingPhoto: Boolean,
+    val uploadingMessage: String?,
+    val internetPopupEnabled: Boolean,
+    val dismissiveError: DismissiveError?
+) {
+    companion object {
+        @Suppress("MagicNumber")
+        val Preview = PhotoConfirmationData(
+            isLoading = false,
+            photo = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888),
+            isUploadingPhoto = false,
+            uploadingMessage = null,
+            internetPopupEnabled = false,
+            dismissiveError = null
+        )
+    }
+}
+
 private data class PhotoConfirmationActions(
     val onPhotoAccepted: () -> Unit,
     val onPhotoDeclined: () -> Unit,
     val onPhotoConfirmationAccepted: () -> Unit,
     val onPhotoConfirmationDeclined: () -> Unit
-)
+) {
+    companion object {
+        val Preview = PhotoConfirmationActions(
+            onPhotoAccepted = {},
+            onPhotoDeclined = {},
+            onPhotoConfirmationAccepted = {},
+            onPhotoConfirmationDeclined = {}
+        )
+    }
+}
 
-@Suppress("MagicNumber")
 @OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
@@ -291,19 +326,9 @@ private fun PhotoConfirmationScreenPreview() {
 
     AppTheme(darkTheme = false) {
         PhotoConfirmationScreen(
-            isLoading = false,
-            photo = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888),
-            isUploadingPhoto = false,
-            uploadingMessage = null,
-            dismissiveError = null,
-            sheetState = sheetState,
-            internetPopupEnabled = false,
-            actions = PhotoConfirmationActions(
-                onPhotoAccepted = {},
-                onPhotoDeclined = {},
-                onPhotoConfirmationAccepted = {},
-                onPhotoConfirmationDeclined = {}
-            )
+            data = PhotoConfirmationData.Preview,
+            actions = PhotoConfirmationActions.Preview,
+            sheetState = sheetState
         )
     }
 }
