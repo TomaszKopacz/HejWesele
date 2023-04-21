@@ -10,6 +10,7 @@ object Label {
     const val errorTitleText = "Upss, coś poszło nie tak"
     const val errorDescriptionText = "Sprawdź połączenie z internetem i spróbuj jeszcze raz."
     const val errorDescriptionEventNotFoundText = "Niestety, musisz zalogować się ponownie."
+    const val errorDescriptionLogoutFailedText = "Coś poszło nie tak podczas wylogowania. Niektóre funkcjonalności mogą nie działać poprawnie."
 
     // Network
     const val networkReconnectedText = "Przywrócono połączenie"
@@ -45,8 +46,11 @@ object Label {
     // Home
     const val homeDisabledMessageText = "Dla tego wydarzenia wstepne informacje nie są dostępne."
     const val homeNoInvitationTilesText = "Aktualnie nie ma tutaj żadnych informacji do wyświetlenia, może pojawią się za chwilkę :)"
+    const val homeMenuItemInformationText = "Informacje"
+    const val homeMenuItemLogoutText = "Wyloguj"
     const val homeIntentMapsLabel = "Mapy Google"
     const val homeIntentWebLabel = "Strona internetowa"
+    const val homeLoggingOutText = "Wylogowywanie..."
 
     // Gallery
     const val galleryDisabledMessageText = "Dla tego wydarzenia galeria zdjęć jest niedostępna."

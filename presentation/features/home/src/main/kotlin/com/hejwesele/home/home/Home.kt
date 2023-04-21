@@ -20,8 +20,10 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,13 +47,16 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.hejwesele.android.components.CircleImage
 import com.hejwesele.android.components.AlertData
 import com.hejwesele.android.components.AlertDialog
+import com.hejwesele.android.components.CircleImage
+import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.HorizontalMargin
 import com.hejwesele.android.components.Loader
-import com.hejwesele.android.components.ErrorData
+import com.hejwesele.android.components.LoaderDialog
+import com.hejwesele.android.components.MenuComponent
+import com.hejwesele.android.components.MenuItemData
 import com.hejwesele.android.components.TextPlaceholder
 import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.components.layouts.BottomSheetScaffold
@@ -104,20 +109,33 @@ private fun HomeEntryPoint(
         coroutineScope = coroutineScope
     )
 
-    val homeData = HomeData(
-        isLoading = uiState.isLoading,
-        isEnabled = uiState.enabled,
-        tiles = uiState.tiles,
-        intents = uiState.intents,
-        errorData = uiState.errorData,
-        alertData = uiState.alertData,
-        internetPopupEnabled = true
-    )
+    val homeData = with(uiState) {
+        HomeData(
+            isLoading = isLoading,
+            isEnabled = isEnabled,
+            isLoggingOut = isLoggingOut,
+            tiles = tiles,
+            intents = intents,
+            errorData = errorData,
+            alertData = alertData,
+            internetPopupEnabled = true
+        )
+    }
 
     val homeActions = HomeActions(
+        onInformationItemClicked = {
+            coroutineScope.launch {
+                viewModel.onInformationRequested()
+            }
+        },
+        onLogoutItemClicked = {
+            coroutineScope.launch {
+                viewModel.onLogoutRequested()
+            }
+        },
         onTileClicked = { invitation ->
             coroutineScope.launch {
-                viewModel.onTileClicked(invitation)
+                viewModel.onTileSelected(invitation)
             }
         },
         onIntentSelected = { intent ->
@@ -145,6 +163,11 @@ private fun HomeEventHandler(
 ) {
     val context = LocalContext.current
 
+    EventEffect(
+        event = events.openInformation,
+        onConsumed = { viewModel.onInformationOpened() },
+        action = { navigation.openInformation() }
+    )
     EventEffect(
         event = events.showTileOptions,
         onConsumed = { viewModel.onTileOptionsShown() },
@@ -176,7 +199,8 @@ private fun HomeEventHandler(
 @OptIn(
     ExperimentalMaterialApi::class,
     ExperimentalAnimationApi::class,
-    ExperimentalCoroutinesApi::class
+    ExperimentalCoroutinesApi::class,
+    ExperimentalMaterial3Api::class
 )
 @Composable
 private fun HomeScreen(
@@ -197,23 +221,39 @@ private fun HomeScreen(
             )
         }
     ) {
-        when {
-            data.isLoading -> Loader()
-            !data.isEnabled -> TextPlaceholder(text = Label.homeDisabledMessageText)
-            data.errorData != null -> ErrorView(modifier = Modifier.fillMaxSize())
-            else -> HomeContent(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surface),
-                tiles = data.tiles,
-                onTileClicked = actions.onTileClicked
-            )
-        }
-        if (data.alertData != null) {
-            AlertDialog(data = data.alertData)
-        }
-        if (data.internetPopupEnabled) {
-            InternetConnectionPopup()
+        Scaffold { padding ->
+            Column(modifier = Modifier.fillMaxSize()) {
+                if (data.internetPopupEnabled) {
+                    InternetConnectionPopup(statusBarSensitive = false)
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(1.0f)
+                        .background(MaterialTheme.colorScheme.surface)
+                ) {
+                    when {
+                        data.isLoading -> Loader()
+                        !data.isEnabled -> TextPlaceholder(text = Label.homeDisabledMessageText)
+                        data.errorData != null -> ErrorView(modifier = Modifier.fillMaxSize())
+                        else -> HomeContent(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.surface)
+                                .padding(top = padding.calculateTopPadding()),
+                            tiles = data.tiles,
+                            onInformationItemClicked = actions.onInformationItemClicked,
+                            onLogoutItemClicked = actions.onLogoutItemClicked,
+                            onTileClicked = actions.onTileClicked
+                        )
+                    }
+                }
+            }
+            if (data.isLoggingOut) {
+                LoaderDialog(label = Label.homeLoggingOutText)
+            }
+            if (data.alertData != null) {
+                AlertDialog(data = data.alertData)
+            }
         }
     }
 }
@@ -222,14 +262,24 @@ private fun HomeScreen(
 private fun HomeContent(
     modifier: Modifier = Modifier,
     tiles: List<InvitationTileUiModel>,
+    onLogoutItemClicked: () -> Unit,
+    onInformationItemClicked: () -> Unit,
     onTileClicked: (InvitationTileUiModel) -> Unit
 ) {
     ScrollableColumn(modifier = modifier) {
-        CoupleLottieAnimation(
-            modifier = Modifier
-                .padding(top = Dimension.marginLarge)
-                .aspectRatio(1.0f)
-        )
+        Box(modifier = Modifier.fillMaxWidth()) {
+            CoupleLottieAnimation(modifier = Modifier.aspectRatio(1.0f))
+            MenuComponent(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(Dimension.marginNormal),
+                iconResId = R.drawable.ic_options,
+                items = listOf(
+                    MenuItemData(text = Label.homeMenuItemInformationText, action = onInformationItemClicked),
+                    MenuItemData(text = Label.homeMenuItemLogoutText, action = onLogoutItemClicked)
+                )
+            )
+        }
         when {
             tiles.isEmpty() -> TextPlaceholder(
                 text = Label.homeNoInvitationTilesText
@@ -240,6 +290,18 @@ private fun HomeContent(
             )
         }
     }
+}
+
+@Composable
+private fun CoupleLottieAnimation(
+    modifier: Modifier = Modifier
+) {
+    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.lottie_wedding_couple))
+    LottieAnimation(
+        modifier = modifier,
+        composition = composition,
+        iterations = LottieConstants.IterateForever
+    )
 }
 
 @OptIn(ExperimentalPagerApi::class)
@@ -404,18 +466,6 @@ private fun InvitationTileLottieAnimation(
 }
 
 @Composable
-private fun CoupleLottieAnimation(
-    modifier: Modifier = Modifier
-) {
-    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.lottie_wedding_couple))
-    LottieAnimation(
-        modifier = modifier,
-        composition = composition,
-        iterations = LottieConstants.IterateForever
-    )
-}
-
-@Composable
 private fun InvitationBottomSheetContent(intents: List<IntentUiModel>, onIntentSelected: (IntentUiModel) -> Unit) {
     fun Int.isLastItem() = this == intents.size - 1
 
@@ -466,6 +516,7 @@ private fun IntentItem(
 private data class HomeData(
     val isLoading: Boolean,
     val isEnabled: Boolean,
+    val isLoggingOut: Boolean,
     val tiles: List<InvitationTileUiModel>,
     val intents: List<IntentUiModel>,
     val internetPopupEnabled: Boolean,
@@ -476,6 +527,7 @@ private data class HomeData(
         val Preview = HomeData(
             isLoading = false,
             isEnabled = true,
+            isLoggingOut = false,
             tiles = listOf(
                 HomePreviewData.tile1,
                 HomePreviewData.tile2
@@ -492,11 +544,15 @@ private data class HomeData(
 }
 
 private data class HomeActions(
+    val onInformationItemClicked: () -> Unit,
+    val onLogoutItemClicked: () -> Unit,
     val onTileClicked: (InvitationTileUiModel) -> Unit,
     val onIntentSelected: (IntentUiModel) -> Unit
 ) {
     companion object {
         val Preview = HomeActions(
+            onInformationItemClicked = {},
+            onLogoutItemClicked = {},
             onTileClicked = {},
             onIntentSelected = {}
         )

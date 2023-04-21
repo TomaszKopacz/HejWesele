@@ -8,5 +8,7 @@ interface EventsLocalSource {
 
     suspend fun setEventSettings(eventSettings: EventSettings): Result<EventSettings>
 
+    suspend fun removeEventSettings(): Result<Unit>
+
     suspend fun setGalleryHintDismissed(dismissed: Boolean): Result<Boolean>
 }

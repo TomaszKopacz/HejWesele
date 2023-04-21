@@ -35,14 +35,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.hejwesele.android.components.ContinuousLottieAnimation
 import com.hejwesele.android.components.AlertData
 import com.hejwesele.android.components.AlertDialog
+import com.hejwesele.android.components.ContinuousLottieAnimation
+import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.FloatingButton
 import com.hejwesele.android.components.HintTile
 import com.hejwesele.android.components.Loader
-import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.components.RoundedCornerImage
 import com.hejwesele.android.components.TextPlaceholder
 import com.hejwesele.android.components.VerticalMargin

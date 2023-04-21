@@ -35,6 +35,10 @@ class EventsRepository @Inject constructor(
         localSource.getEventSettings()
     }
 
+    suspend fun removeStoredEventSettings(): Result<Unit> = withContext(Dispatchers.IO) {
+        localSource.removeEventSettings()
+    }
+
     suspend fun setGalleryHintDismissed(dismissed: Boolean): Result<Boolean> = withContext(Dispatchers.IO) {
         localSource.setGalleryHintDismissed(dismissed)
     }

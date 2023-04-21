@@ -10,6 +10,7 @@ import com.hejwesele.events.model.EventSettings
 import com.hejwesele.home.R
 import com.hejwesele.home.home.model.IntentUiModel
 import com.hejwesele.home.home.model.InvitationTileUiModel
+import com.hejwesele.home.home.usecase.Logout
 import com.hejwesele.home.home.usecase.ObserveInvitation
 import com.hejwesele.intent.IntentData
 import com.hejwesele.intent.IntentType
@@ -22,13 +23,15 @@ import de.palm.composestateevents.StateEvent
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 internal class HomeViewModel @Inject constructor(
     private val getEventSettings: GetEventSettings,
-    private val observeInvitation: ObserveInvitation
+    private val observeInvitation: ObserveInvitation,
+    private val logout: Logout
 ) : StateEventsViewModel<HomeUiState, HomeUiEvents>(HomeUiState.Default, HomeUiEvents.Default) {
 
     init {
@@ -45,7 +48,35 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onTileClicked(tile: InvitationTileUiModel) {
+    fun onInformationRequested() {
+        viewModelScope.launch {
+            updateEvents { copy(openInformation = triggered) }
+        }
+    }
+
+    fun onLogoutRequested() {
+        viewModelScope.launch(Dispatchers.IO) {
+            updateState { copy(isLoggingOut = true) }
+            logout()
+                .onSuccess {
+                    updateState { copy(isLoggingOut = false) }
+                    updateEvents { copy(openLogin = triggered) }
+                }
+                .onFailure {
+                    updateState {
+                        copy(
+                            isLoggingOut = false,
+                            alertData = AlertData.Default.copy(
+                                title = Label.errorDescriptionLogoutFailedText,
+                                onDismiss = ::onLogoutAlertDismissed
+                            )
+                        )
+                    }
+                }
+        }
+    }
+
+    fun onTileSelected(tile: InvitationTileUiModel) {
         viewModelScope.launch {
             val intents = tile.intents
             if (intents.isNotEmpty()) {
@@ -60,6 +91,12 @@ internal class HomeViewModel @Inject constructor(
     fun onTileIntentOptionSelected(intent: IntentUiModel) {
         viewModelScope.launch {
             updateEvents { copy(hideTileOptions = triggered, openIntent = triggered(intent)) }
+        }
+    }
+
+    fun onInformationOpened() {
+        viewModelScope.launch {
+            updateEvents { copy(openInformation = consumed) }
         }
     }
 
@@ -95,7 +132,7 @@ internal class HomeViewModel @Inject constructor(
                 .collect { handleInvitationResult(it) }
         } else {
             updateState {
-                copy(isLoading = false, enabled = false)
+                copy(isLoading = false, isEnabled = false)
             }
         }
     }
@@ -125,6 +162,11 @@ internal class HomeViewModel @Inject constructor(
     }
 
     private fun onEventNotFoundAlertDismissed() {
+        updateState { copy(alertData = null) }
+        updateEvents { copy(openLogin = triggered) }
+    }
+
+    private fun onLogoutAlertDismissed() {
         updateState { copy(alertData = null) }
         updateEvents { copy(openLogin = triggered) }
     }
@@ -170,8 +212,9 @@ internal class HomeViewModel @Inject constructor(
 }
 
 internal data class HomeUiState(
-    val enabled: Boolean,
     val isLoading: Boolean,
+    val isEnabled: Boolean,
+    val isLoggingOut: Boolean,
     val tiles: List<InvitationTileUiModel>,
     val intents: List<IntentUiModel>,
     val errorData: ErrorData?,
@@ -180,7 +223,8 @@ internal data class HomeUiState(
     companion object {
         val Default = HomeUiState(
             isLoading = false,
-            enabled = true,
+            isEnabled = true,
+            isLoggingOut = false,
             tiles = emptyList(),
             intents = emptyList(),
             errorData = null,
@@ -190,6 +234,7 @@ internal data class HomeUiState(
 }
 
 internal data class HomeUiEvents(
+    val openInformation: StateEvent,
     val openIntent: StateEventWithContent<IntentUiModel>,
     val showTileOptions: StateEvent,
     val hideTileOptions: StateEvent,
@@ -197,6 +242,7 @@ internal data class HomeUiEvents(
 ) {
     companion object {
         val Default = HomeUiEvents(
+            openInformation = consumed,
             showTileOptions = consumed,
             hideTileOptions = consumed,
             openIntent = consumed(),

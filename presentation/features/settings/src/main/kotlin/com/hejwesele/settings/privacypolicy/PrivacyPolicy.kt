@@ -28,9 +28,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.Loader
-import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
