@@ -4,9 +4,9 @@ import androidx.navigation.NavController
 import com.hejwesele.home.IHomeNavigation
 import com.hejwesele.navigation.CommonNavigation
 import com.hejwesele.navigation.ICommonNavigation
+import com.hejwesele.navigation.InformationNavGraph
 import com.hejwesele.navigation.LoginNavGraph
 import com.hejwesele.navigation.MainNavGraph
-import com.hejwesele.navigation.InformationNavGraph
 
 class HomeFeatureNavigation(
     private val navController: NavController

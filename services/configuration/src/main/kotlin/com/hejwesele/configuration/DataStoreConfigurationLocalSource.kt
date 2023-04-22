@@ -1,13 +1,13 @@
 package com.hejwesele.configuration
 
-import com.hejwesele.datastore.DataStore
-import com.hejwesele.datastore.MessageSpecification
 import com.hejwesele.configuration.di.ConfigurationDataStore
 import com.hejwesele.configuration.dto.ConfigurationDto
 import com.hejwesele.configuration.mappers.mapDto
 import com.hejwesele.configuration.mappers.mapModel
 import com.hejwesele.configuration.model.Configuration
 import com.hejwesele.configuration.model.Theme
+import com.hejwesele.datastore.DataStore
+import com.hejwesele.datastore.MessageSpecification
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn

@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.android.osinfo.OsInfo
 import com.hejwesele.gallery.destinations.GalleryPreviewDestination
-import com.hejwesele.gallery.preview.usecase.SaveImage
+import com.hejwesele.gallery.usecase.SaveImage
 import com.hejwesele.permissions.PermissionsHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent

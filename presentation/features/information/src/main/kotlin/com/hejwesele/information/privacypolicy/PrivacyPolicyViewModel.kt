@@ -3,8 +3,8 @@ package com.hejwesele.information.privacypolicy
 import androidx.lifecycle.viewModelScope
 import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.mvvm.StateEventsViewModel
-import com.hejwesele.legaldocument.LegalPoint
 import com.hejwesele.information.usecase.GetPrivacyPolicy
+import com.hejwesele.legaldocument.LegalPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent
 import de.palm.composestateevents.consumed

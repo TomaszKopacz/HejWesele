@@ -13,15 +13,15 @@ import com.hejwesele.android.theme.Transitions
 import com.hejwesele.gallery.IGalleryNavigation
 import com.hejwesele.gallery.destinations.PhotoConfirmationDestination
 import com.hejwesele.home.IHomeNavigation
+import com.hejwesele.information.IInformationFeatureNavigation
 import com.hejwesele.main.IMainFeatureProvider
 import com.hejwesele.navigation.features.GalleryFeatureNavigation
 import com.hejwesele.navigation.features.HomeFeatureNavigation
+import com.hejwesele.navigation.features.InformationFeatureNavigation
 import com.hejwesele.navigation.features.LoginFeatureNavigation
 import com.hejwesele.navigation.features.MainFeatureProvider
 import com.hejwesele.navigation.features.ScheduleFeatureNavigation
-import com.hejwesele.navigation.features.InformationFeatureNavigation
 import com.hejwesele.schedule.IScheduleNavigation
-import com.hejwesele.information.IInformationFeatureNavigation
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine

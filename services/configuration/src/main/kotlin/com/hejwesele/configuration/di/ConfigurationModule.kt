@@ -1,8 +1,8 @@
 package com.hejwesele.configuration.di
 
 import android.content.Context
-import com.hejwesele.datastore.DataStore
 import com.hejwesele.configuration.DataStoreConfigurationLocalSource
+import com.hejwesele.datastore.DataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,4 +1,4 @@
-package com.hejwesele.gallery.board.usecase
+package com.hejwesele.gallery.usecase
 
 import com.hejwesele.events.EventsRepository
 import com.hejwesele.events.model.EventSettings

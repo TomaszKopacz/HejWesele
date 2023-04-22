@@ -1,4 +1,4 @@
-package com.hejwesele.gallery.board.usecase
+package com.hejwesele.gallery.usecase
 
 import com.hejwesele.details.DetailsRepository
 import kotlinx.coroutines.Dispatchers

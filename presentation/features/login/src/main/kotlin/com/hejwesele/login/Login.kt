@@ -122,14 +122,14 @@ private fun LoginEntryPoint(
     )
 
     val actions = LoginActions(
-        onNameInputChanged = { text -> viewModel.onNameInputChanged(text) },
-        onPasswordInputChanged = { text -> viewModel.onPasswordInputChanged(text) },
-        onInfoClicked = { viewModel.onInformationRequested() },
-        onHelpClicked = { viewModel.onHelpRequested() },
-        onTermsAndConditionsCheckedChanged = { viewModel.onTermsAndConditionsCheckedChanged(it) },
-        onTermsAndConditionsLinkClicked = { viewModel.onTermsAndConditionsRequested() },
-        onNextButtonClicked = { viewModel.onSubmit() },
-        onScanQrButtonClicked = { viewModel.onScanQrClicked() }
+        onNameInputChanged = viewModel::onNameInputChanged,
+        onPasswordInputChanged = viewModel::onPasswordInputChanged,
+        onInfoClicked = viewModel::onInformationRequested,
+        onHelpClicked = viewModel::onHelpRequested,
+        onTermsAndConditionsCheckedChanged = viewModel::onTermsAndConditionsCheckedChanged,
+        onTermsAndConditionsLinkClicked = viewModel::onTermsAndConditionsRequested,
+        onNextButtonClicked = viewModel::onSubmit,
+        onScanQrButtonClicked = viewModel::onScanQrClicked
     )
 
     LoginScreen(
@@ -151,33 +151,33 @@ private fun LoginEventHandler(
 ) {
     EventEffect(
         event = events.openInformation,
-        onConsumed = { viewModel.onInformationOpened() },
-        action = { navigation.openInformation() }
+        onConsumed = viewModel::onInformationOpened,
+        action = navigation::openInformation
     )
     EventEffect(
         event = events.showHelp,
-        onConsumed = { viewModel.onHelpShown() },
-        action = { sheetState.show() }
+        onConsumed = viewModel::onHelpShown,
+        action = sheetState::show
     )
     EventEffect(
         event = events.openTermsAndConditions,
-        onConsumed = { viewModel.onTermsAndConditionsOpened() },
-        action = { navigation.openTermsAndConditions() }
+        onConsumed = viewModel::onTermsAndConditionsOpened,
+        action = navigation::openTermsAndConditions
     )
     EventEffect(
         event = events.openEvent,
-        onConsumed = { viewModel.onEventOpened() },
-        action = { navigation.openEvent() }
+        onConsumed = viewModel::onEventOpened,
+        action = navigation::openEvent
     )
     EventEffect(
         event = events.requestCameraPermission,
-        onConsumed = { viewModel.onCameraPermissionRequested() },
-        action = { permission -> cameraPermissionLauncher.launch(permission) }
+        onConsumed = viewModel::onCameraPermissionRequested,
+        action = cameraPermissionLauncher::launch
     )
     EventEffect(
         event = events.openQrScanner,
-        onConsumed = { viewModel.onQrScannerOpened() },
-        action = { navigation.openQrScanner() }
+        onConsumed = viewModel::onQrScannerOpened,
+        action = navigation::openQrScanner
     )
     BackHandler(sheetState.isVisible) {
         coroutineScope.launch { sheetState.hide() }

@@ -96,11 +96,11 @@ private fun QrScannerEntryPoint(
 
     val actions = with(viewModel) {
         QrScannerActions(
-            onBack = { onBackClicked() },
-            onScanned = { text -> onQrScanned(text) },
-            onTermsAndConditionsLinkClicked = { onTermsAndConditionsRequested() },
-            onTermsAndConditionsAccepted = { onTermsAndConditionsPromptAccepted() },
-            onTermsAndConditionsDeclined = { onTermsAndConditionsPromptDeclined() }
+            onBack = ::onBackClicked,
+            onScanned = ::onQrScanned,
+            onTermsAndConditionsLinkClicked = ::onTermsAndConditionsRequested,
+            onTermsAndConditionsAccepted = ::onTermsAndConditionsPromptAccepted,
+            onTermsAndConditionsDeclined = ::onTermsAndConditionsPromptDeclined
         )
     }
 
@@ -122,28 +122,28 @@ private fun QrScannerEventHandler(
 ) {
     EventEffect(
         event = events.navigateUp,
-        onConsumed = { viewModel.onNavigatedUp() },
-        action = { navigation.navigateUp() }
+        onConsumed = viewModel::onNavigatedUp,
+        action = navigation::navigateUp
     )
     EventEffect(
         event = events.showTermsAndConditionsPrompt,
-        onConsumed = { viewModel.onTermsAndConditionsPromptShown() },
-        action = { sheetState.show() }
+        onConsumed = viewModel::onTermsAndConditionsPromptShown,
+        action = sheetState::show
     )
     EventEffect(
         event = events.hideTermsAndConditionsPrompt,
-        onConsumed = { viewModel.onTermsAndConditionsPromptHidden() },
-        action = { sheetState.hide() }
+        onConsumed = viewModel::onTermsAndConditionsPromptHidden,
+        action = sheetState::hide
     )
     EventEffect(
         event = events.openTermsAndConditions,
-        onConsumed = { viewModel.onTermsAndConditionsOpened() },
-        action = { navigation.openTermsAndConditions() }
+        onConsumed = viewModel::onTermsAndConditionsOpened,
+        action = navigation::openTermsAndConditions
     )
     EventEffect(
         event = events.openEvent,
-        onConsumed = { viewModel.onEventOpened() },
-        action = { navigation.openEvent() }
+        onConsumed = viewModel::onEventOpened,
+        action = navigation::openEvent
     )
     BackHandler(sheetState.isVisible) {
         coroutineScope.launch { sheetState.hide() }

@@ -7,8 +7,8 @@ import com.hejwesele.android.components.AlertData
 import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.android.theme.Label
 import com.hejwesele.bitmap.BitmapProvider
-import com.hejwesele.gallery.confirmation.usecase.AddPhotoToGallery
 import com.hejwesele.gallery.destinations.PhotoConfirmationDestination
+import com.hejwesele.gallery.usecase.AddPhotoToGallery
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent
 import de.palm.composestateevents.consumed

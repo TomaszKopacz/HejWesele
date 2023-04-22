@@ -165,8 +165,8 @@ private fun HomeEventHandler(
 
     EventEffect(
         event = events.openInformation,
-        onConsumed = { viewModel.onInformationOpened() },
-        action = { navigation.openInformation() }
+        onConsumed = viewModel::onInformationOpened,
+        action = navigation::openInformation
     )
     EventEffect(
         event = events.showTileOptions,
@@ -180,13 +180,13 @@ private fun HomeEventHandler(
     )
     EventEffect(
         event = events.openIntent,
-        onConsumed = { viewModel.onIntentOpened() },
+        onConsumed = viewModel::onIntentOpened,
         action = { intent -> openActivity(context, intent.intentPackage, intent.url) }
     )
     EventEffect(
         event = events.openLogin,
-        onConsumed = { viewModel.onLoginOpened() },
-        action = { navigation.openLogin() }
+        onConsumed = viewModel::onLoginOpened,
+        action = navigation::openLogin
     )
     BackHandler(enabled = sheetState.isVisible) {
         coroutineScope.launch { sheetState.hide() }

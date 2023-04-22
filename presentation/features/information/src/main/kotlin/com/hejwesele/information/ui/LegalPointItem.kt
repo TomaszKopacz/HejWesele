@@ -7,9 +7,9 @@ import androidx.compose.runtime.Composable
 import com.hejwesele.android.components.HorizontalMargin
 import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.theme.Dimension
+import com.hejwesele.information.ui.LegalPointItemConstants.GAP
 import com.hejwesele.legaldocument.LegalPoint
 import com.hejwesele.legaldocument.LegalPointType
-import com.hejwesele.information.ui.LegalPointItemConstants.GAP
 import kotlin.math.min
 
 @Composable

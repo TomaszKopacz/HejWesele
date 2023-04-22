@@ -1,12 +1,12 @@
 package com.hejwesele.navigation.features
 
 import androidx.navigation.NavController
-import com.hejwesele.navigation.CommonNavigation
-import com.hejwesele.navigation.ICommonNavigation
-import com.hejwesele.navigation.InformationNavGraph
 import com.hejwesele.information.IInformationFeatureNavigation
 import com.hejwesele.information.destinations.PrivacyPolicyDestination
 import com.hejwesele.information.destinations.TermsAndConditionsDestination
+import com.hejwesele.navigation.CommonNavigation
+import com.hejwesele.navigation.ICommonNavigation
+import com.hejwesele.navigation.InformationNavGraph
 import com.ramcosta.composedestinations.dynamic.within
 import com.ramcosta.composedestinations.navigation.navigate
 

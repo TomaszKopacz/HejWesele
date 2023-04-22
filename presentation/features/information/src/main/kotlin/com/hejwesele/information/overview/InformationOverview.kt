@@ -36,9 +36,9 @@ import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.extensions.disabled
-import com.hejwesele.internet.InternetConnectionPopup
 import com.hejwesele.information.IInformationFeatureNavigation
 import com.hejwesele.information.R
+import com.hejwesele.internet.InternetConnectionPopup
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -80,9 +80,9 @@ private fun InformationOverviewEntryPoint(
 
     val actions = with(viewModel) {
         InformationOverviewActions(
-            onBackClicked = { onBack() },
-            onTermsAndConditionClicked = { onTermsAndConditionsRequested() },
-            onPrivacyPolicyClicked = { onPrivacyPolicyRequested() }
+            onBackClicked = ::onBack,
+            onTermsAndConditionClicked = ::onTermsAndConditionsRequested,
+            onPrivacyPolicyClicked = ::onPrivacyPolicyRequested
         )
     }
 
@@ -100,18 +100,18 @@ private fun InformationOverviewEventHandler(
 ) {
     EventEffect(
         event = events.navigateUp,
-        onConsumed = { viewModel.onNavigatedUp() },
-        action = { navigation.navigateUp() }
+        onConsumed = viewModel::onNavigatedUp,
+        action = navigation::navigateUp
     )
     EventEffect(
         event = events.openTermsAndConditions,
-        onConsumed = { viewModel.onTermsAndConditionsOpened() },
-        action = { navigation.openTermsAndConditions() }
+        onConsumed = viewModel::onTermsAndConditionsOpened,
+        action = navigation::openTermsAndConditions
     )
     EventEffect(
         event = events.openPrivacyPolicy,
-        onConsumed = { viewModel.onDataPrivacyOpened() },
-        action = { navigation.openPrivacyPolicy() }
+        onConsumed = viewModel::onDataPrivacyOpened,
+        action = navigation::openPrivacyPolicy
     )
 }
 

@@ -4,10 +4,10 @@ import com.hejwesele.destinations.LoginDestination
 import com.hejwesele.destinations.QrScannerDestination
 import com.hejwesele.gallery.destinations.GalleryPreviewDestination
 import com.hejwesele.gallery.destinations.PhotoConfirmationDestination
-import com.hejwesele.main.destinations.MainDestination
-import com.hejwesele.information.destinations.PrivacyPolicyDestination
 import com.hejwesele.information.destinations.InformationOverviewDestination
+import com.hejwesele.information.destinations.PrivacyPolicyDestination
 import com.hejwesele.information.destinations.TermsAndConditionsDestination
+import com.hejwesele.main.destinations.MainDestination
 import com.ramcosta.composedestinations.dynamic.routedIn
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.NavGraphSpec

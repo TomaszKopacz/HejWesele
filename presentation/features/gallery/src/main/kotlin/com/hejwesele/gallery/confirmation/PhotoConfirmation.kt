@@ -102,10 +102,10 @@ private fun PhotoConfirmationEntryPoint(
 
     val actions = with(viewModel) {
         PhotoConfirmationActions(
-            onPhotoAccepted = { onPhotoAccepted() },
-            onPhotoDeclined = { onPhotoDeclined() },
-            onPhotoConfirmationAccepted = { onPhotoConfirmationAccepted() },
-            onPhotoConfirmationDeclined = { onPhotoConfirmationDeclined() }
+            onPhotoAccepted = ::onPhotoAccepted,
+            onPhotoDeclined = ::onPhotoDeclined,
+            onPhotoConfirmationAccepted = ::onPhotoConfirmationAccepted,
+            onPhotoConfirmationDeclined = ::onPhotoConfirmationDeclined
         )
     }
 
@@ -127,22 +127,22 @@ private fun PhotoConfirmationEventHandler(
 ) {
     EventEffect(
         event = events.showPhotoConfirmation,
-        onConsumed = { viewModel.onPhotoConfirmationShown() },
-        action = { sheetState.show() }
+        onConsumed = viewModel::onPhotoConfirmationShown,
+        action = sheetState::show
     )
     EventEffect(
         event = events.hidePhotoConfirmation,
-        onConsumed = { viewModel.onPhotoConfirmationHidden() },
-        action = { sheetState.hide() }
+        onConsumed = viewModel::onPhotoConfirmationHidden,
+        action = sheetState::hide
     )
     EventEffect(
         event = events.closeScreen,
-        onConsumed = { viewModel.onScreenClosed() },
+        onConsumed = viewModel::onScreenClosed,
         action = { resultSender.navigateBack(result = false) }
     )
     EventEffect(
         event = events.closeScreenWithSuccess,
-        onConsumed = { viewModel.onScreenClosed() },
+        onConsumed = viewModel::onScreenClosed,
         action = { resultSender.navigateBack(result = true) }
     )
     BackHandler(sheetState.isVisible) {

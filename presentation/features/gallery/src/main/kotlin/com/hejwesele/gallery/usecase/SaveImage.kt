@@ -1,4 +1,4 @@
-package com.hejwesele.gallery.preview.usecase
+package com.hejwesele.gallery.usecase
 
 import android.content.ContentValues
 import android.content.Context

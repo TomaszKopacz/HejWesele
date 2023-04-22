@@ -95,8 +95,8 @@ private fun GalleryPreviewEntryPoint(
 
     val actions = with(viewModel) {
         GalleryPreviewActions(
-            onBackClicked = { onBack() },
-            onSaveClicked = { photoUrl -> onSavePhotoClicked(photoUrl) }
+            onBackClicked = ::onBack,
+            onSaveClicked = ::onSavePhotoClicked
         )
     }
 
@@ -117,17 +117,17 @@ private fun GalleryPreviewEventsHandler(
 ) {
     EventEffect(
         event = events.closeScreen,
-        onConsumed = { viewModel.onScreenClosed() },
-        action = { navigation.navigateUp() }
+        onConsumed = viewModel::onScreenClosed,
+        action = navigation::navigateUp
     )
     EventEffect(
         event = events.requestStoragePermissions,
-        onConsumed = { viewModel.onStoragePermissionsRequested() },
-        action = { permissions -> permissionsLauncher.launch(permissions) }
+        onConsumed = viewModel::onStoragePermissionsRequested,
+        action = permissionsLauncher::launch
     )
     EventEffect(
         event = events.showSavePhotoSuccess,
-        onConsumed = { viewModel.onSavePhotoResultShown() },
+        onConsumed = viewModel::onSavePhotoResultShown,
         action = {
             snackbarState.showSnackbar(
                 message = Label.gallerySavingPhotoSuccessText,
@@ -137,7 +137,7 @@ private fun GalleryPreviewEventsHandler(
     )
     EventEffect(
         event = events.showSavePhotoError,
-        onConsumed = { viewModel.onSavePhotoResultShown() },
+        onConsumed = viewModel::onSavePhotoResultShown,
         action = {
             snackbarState.showSnackbar(
                 message = Label.gallerySavingPhotoFailureText,

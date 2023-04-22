@@ -122,10 +122,10 @@ private fun GalleryEntryPoint(
     )
 
     val galleryActions = GalleryActions(
-        onHintDismissed = { viewModel.onGalleryHintDismissed() },
-        onGalleryLinkClicked = { viewModel.onGalleryLinkClicked() },
+        onHintDismissed = viewModel::onGalleryHintDismissed,
+        onGalleryLinkClicked = viewModel::onGalleryLinkClicked,
         onPhotoClicked = { index -> navigation.openPreview(uiState.photos, index) },
-        onAddClicked = { viewModel.onAddPhotoClicked() }
+        onAddClicked = viewModel::onAddPhotoClicked
     )
 
     GalleryBoardScreen(
@@ -145,7 +145,7 @@ private fun GalleryEventHandler(
     val context = LocalContext.current
     EventEffect(
         event = events.openExternalGallery,
-        onConsumed = { viewModel.onExternalGalleryOpened() },
+        onConsumed = viewModel::onExternalGalleryOpened,
         action = { intent -> openActivity(context, intent.intentPackage, intent.intentUrl) }
     )
     EventEffect(
@@ -154,13 +154,13 @@ private fun GalleryEventHandler(
         action = { galleryId ->
             ImageCropper.launch(
                 onImageCropped = { uri -> navigation.openPhotoConfirmation(uri, galleryId) },
-                onImageCropError = { viewModel.onImageCropError() }
+                onImageCropError = viewModel::onImageCropError
             )
         }
     )
     EventEffect(
         event = events.showPhotoUploadSuccess,
-        onConsumed = { viewModel.onPhotoUploadSuccessShown() },
+        onConsumed = viewModel::onPhotoUploadSuccessShown,
         action = {
             snackbarState.showSnackbar(
                 message = Label.galleryPublishingPhotoSuccessText,
@@ -170,8 +170,8 @@ private fun GalleryEventHandler(
     )
     EventEffect(
         event = events.openLogin,
-        onConsumed = { viewModel.onLoginOpened() },
-        action = { navigation.openLogin() }
+        onConsumed = viewModel::onLoginOpened,
+        action = navigation::openLogin
     )
 }
 
