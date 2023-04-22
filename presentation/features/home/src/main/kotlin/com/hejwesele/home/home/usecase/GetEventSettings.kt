@@ -1,5 +1,6 @@
-package com.hejwesele.events
+package com.hejwesele.home.home.usecase
 
+import com.hejwesele.events.EventsRepository
 import com.hejwesele.events.model.EventSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

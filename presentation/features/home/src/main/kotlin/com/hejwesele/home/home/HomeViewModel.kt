@@ -5,11 +5,11 @@ import com.hejwesele.android.components.AlertData
 import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.android.theme.Label
-import com.hejwesele.events.GetEventSettings
 import com.hejwesele.events.model.EventSettings
 import com.hejwesele.home.R
 import com.hejwesele.home.home.model.IntentUiModel
 import com.hejwesele.home.home.model.InvitationTileUiModel
+import com.hejwesele.home.home.usecase.GetEventSettings
 import com.hejwesele.home.home.usecase.Logout
 import com.hejwesele.home.home.usecase.ObserveInvitation
 import com.hejwesele.intent.IntentData

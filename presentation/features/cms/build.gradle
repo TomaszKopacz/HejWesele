@@ -1,0 +1,25 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+}
+
+android {
+    namespace "com.hejwesele.cms"
+}
+
+dependencies {
+    implementation projects.libraries.encryption
+    implementation projects.libraries.intent
+
+    implementation projects.repositories.details
+    implementation projects.repositories.events
+    implementation projects.repositories.galleries
+    implementation projects.repositories.invitations
+
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.kotlinx.datetime
+
+    implementation libs.hilt.core
+    kapt libs.hilt.compiler
+}

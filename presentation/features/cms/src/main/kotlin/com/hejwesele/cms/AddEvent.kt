@@ -1,4 +1,4 @@
-package com.hejwesele.usecase
+package com.hejwesele.cms
 
 import com.hejwesele.encryption.base64
 import com.hejwesele.encryption.bytes
@@ -10,7 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-// TODO - this use case is only for development, should be removed from here
 internal class AddEvent @Inject constructor(
     private val repository: EventsRepository
 ) {

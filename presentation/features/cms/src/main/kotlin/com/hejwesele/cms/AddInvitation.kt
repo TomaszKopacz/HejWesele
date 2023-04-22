@@ -1,4 +1,4 @@
-package com.hejwesele.home.home.usecase
+package com.hejwesele.cms
 
 import com.hejwesele.intent.IntentData
 import com.hejwesele.intent.IntentPackage

@@ -6,10 +6,10 @@ import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.android.theme.Label
 import com.hejwesele.details.model.Details
-import com.hejwesele.events.GetEventSettings
 import com.hejwesele.events.model.EventSettings
 import com.hejwesele.galleries.model.Gallery
 import com.hejwesele.gallery.board.usecase.DismissGalleryHint
+import com.hejwesele.gallery.board.usecase.GetEventSettings
 import com.hejwesele.gallery.board.usecase.ObserveDetails
 import com.hejwesele.gallery.board.usecase.ObserveGallery
 import com.hejwesele.intent.IntentData

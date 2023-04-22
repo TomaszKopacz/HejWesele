@@ -22,6 +22,7 @@ dependencyResolutionManagement {
 
 include ":app"
 
+include ":presentation:features:cms"
 include ":presentation:features:gallery"
 include ":presentation:features:home"
 include ":presentation:features:login:"
@@ -36,7 +37,6 @@ include ":presentation:tools:thememanager"
 include ":presentation:ui:components"
 include ":presentation:ui:extensions"
 include ":presentation:ui:theme"
-include ":presentation:usecase:events"
 
 include ":services:details"
 include ":services:events"

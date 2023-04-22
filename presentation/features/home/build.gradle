@@ -22,7 +22,6 @@ dependencies {
     implementation projects.presentation.ui.components
     implementation projects.presentation.ui.extensions
     implementation projects.presentation.ui.theme
-    implementation projects.presentation.usecase.events
 
     implementation projects.repositories.events
     implementation projects.repositories.invitations

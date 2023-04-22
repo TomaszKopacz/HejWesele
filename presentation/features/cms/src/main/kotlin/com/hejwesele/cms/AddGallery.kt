@@ -1,4 +1,4 @@
-package com.hejwesele.gallery.board.usecase
+package com.hejwesele.cms
 
 import com.hejwesele.galleries.GalleriesRepository
 import com.hejwesele.galleries.model.Gallery
