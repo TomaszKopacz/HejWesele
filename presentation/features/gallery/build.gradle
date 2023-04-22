@@ -27,6 +27,7 @@ dependencies {
     implementation projects.presentation.ui.theme
     implementation projects.presentation.usecase.events
 
+    implementation projects.repositories.details
     implementation projects.repositories.galleries
 
     implementation projects.libraries.bitmap

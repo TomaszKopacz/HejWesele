@@ -5,21 +5,25 @@ import com.hejwesele.android.components.AlertData
 import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.android.theme.Label
+import com.hejwesele.details.model.Details
 import com.hejwesele.events.GetEventSettings
 import com.hejwesele.events.model.EventSettings
+import com.hejwesele.galleries.model.Gallery
 import com.hejwesele.gallery.board.usecase.DismissGalleryHint
+import com.hejwesele.gallery.board.usecase.ObserveDetails
 import com.hejwesele.gallery.board.usecase.ObserveGallery
 import com.hejwesele.intent.IntentData
 import com.hejwesele.intent.IntentPackage.GOOGLE_DRIVE_PACKAGE
 import com.hejwesele.intent.IntentType.GOOGLE_DRIVE
+import com.hejwesele.result.extensions.merge
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
@@ -27,6 +31,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class GalleryViewModel @Inject constructor(
     private val getEventSettings: GetEventSettings,
+    private val observeDetails: ObserveDetails,
     private val observeGallery: ObserveGallery,
     private val dismissGalleryHint: DismissGalleryHint
 ) : StateEventsViewModel<GalleryUiState, GalleryUiEvents>(GalleryUiState.Default, GalleryUiEvents.Default) {
@@ -72,19 +77,23 @@ internal class GalleryViewModel @Inject constructor(
 
     fun onAddPhotoClicked() {
         viewModelScope.launch {
-            val galleryId = requireNotNull(state.galleryId)
-            updateEvents { copy(openImageCropper = triggered(galleryId)) }
+            getEventSettings()
+                .onSuccess { settings ->
+                    val galleryId = settings.galleryId
+                    if (galleryId != null) {
+                        updateEvents { copy(openImageCropper = triggered(galleryId)) }
+                    } else {
+                        updateState { copy(alertData = AlertData.Default.copy(onDismiss = ::onAlertDismissed)) }
+                    }
+                }
+                .onFailure {
+                    handleEventSettingsError()
+                }
         }
     }
 
     fun onImageCropError() {
-        updateState {
-            copy(
-                alertData = AlertData.Default.copy(
-                    onDismiss = ::onImageCropAlertDismissed
-                )
-            )
-        }
+        updateState { copy(alertData = AlertData.Default.copy(onDismiss = ::onAlertDismissed)) }
     }
 
     fun onPhotoUploadSuccess() {
@@ -115,58 +124,70 @@ internal class GalleryViewModel @Inject constructor(
 
     private suspend fun handleEventSettings(settings: EventSettings) {
         state = state.copy(
-            eventDate = settings.date,
-            galleryId = settings.galleryId,
             hintDismissed = settings.galleryHintDismissed
         )
 
+        val detailsId = settings.detailsId
         val galleryId = settings.galleryId
+
         if (galleryId != null) {
-            observeGallery(galleryId)
+            val detailsFlow = observeDetails(detailsId)
+            val galleryFlow = observeGallery(galleryId)
+
+            detailsFlow
+                .combine(galleryFlow) { detailsResult, galleryResult ->
+                    detailsResult.merge(galleryResult) { details, gallery -> details to gallery }
+                }
                 .collect { result ->
                     result
-                        .onSuccess { gallery ->
+                        .onSuccess { (details, gallery) ->
                             state = state.copy(externalGalleryUrl = gallery.externalGallery)
-
-                            val weddingDate = requireNotNull(state.eventDate)
-                            val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-                            val weddingStarted = now >= weddingDate
-                            val galleryLinkPresent = !gallery.externalGallery.isNullOrEmpty()
-                            val galleryHintEnabled = weddingStarted && !state.hintDismissed && !galleryLinkPresent
-                            val photos = gallery.photos
-
-                            updateState {
-                                copy(
-                                    isEnabled = true,
-                                    isLoading = false,
-                                    contentActive = weddingStarted,
-                                    galleryHintEnabled = galleryHintEnabled,
-                                    externalGalleryEnabled = galleryLinkPresent,
-                                    photos = ArrayList(photos.reversed()),
-                                    errorData = null
-                                )
-                            }
+                            sendGalleryContentState(details, gallery)
                         }
                         .onFailure {
-                            updateState {
-                                copy(
-                                    isLoading = false,
-                                    errorData = ErrorData.Default
-                                )
-                            }
+                            sendGalleryErrorState()
                         }
                 }
         } else {
-            updateState {
-                copy(
-                    isEnabled = false,
-                    isLoading = false,
-                    galleryHintEnabled = false,
-                    externalGalleryEnabled = false,
-                    photos = arrayListOf(),
-                    errorData = null
-                )
-            }
+            sendGalleryDisabledState()
+        }
+    }
+
+    private fun sendGalleryContentState(details: Details, gallery: Gallery) {
+        val weddingDate = details.date
+        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val weddingStarted = now >= weddingDate
+        val galleryLinkPresent = !gallery.externalGallery.isNullOrEmpty()
+        val galleryHintEnabled = weddingStarted && !state.hintDismissed && !galleryLinkPresent
+        val photos = gallery.photos
+
+        updateState {
+            copy(
+                isEnabled = true,
+                isLoading = false,
+                contentActive = weddingStarted,
+                galleryHintEnabled = galleryHintEnabled,
+                externalGalleryEnabled = galleryLinkPresent,
+                photos = ArrayList(photos.reversed()),
+                errorData = null
+            )
+        }
+    }
+
+    private fun sendGalleryErrorState() {
+        updateState { copy(isLoading = false, errorData = ErrorData.Default) }
+    }
+
+    private fun sendGalleryDisabledState() {
+        updateState {
+            copy(
+                isEnabled = false,
+                isLoading = false,
+                galleryHintEnabled = false,
+                externalGalleryEnabled = false,
+                photos = arrayListOf(),
+                errorData = null
+            )
         }
     }
 
@@ -187,13 +208,11 @@ internal class GalleryViewModel @Inject constructor(
         updateEvents { copy(openLogin = triggered) }
     }
 
-    private fun onImageCropAlertDismissed() {
+    private fun onAlertDismissed() {
         updateState { copy(alertData = null) }
     }
 
     private data class State(
-        val eventDate: LocalDateTime? = null,
-        val galleryId: String? = null,
         val hintDismissed: Boolean = false,
         val externalGalleryUrl: String? = null
     )

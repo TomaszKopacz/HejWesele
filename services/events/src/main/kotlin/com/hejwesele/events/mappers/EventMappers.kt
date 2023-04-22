@@ -4,13 +4,12 @@ import com.hejwesele.events.dto.EventDto
 import com.hejwesele.events.dto.EventSettingsDto
 import com.hejwesele.events.model.Event
 import com.hejwesele.events.model.EventSettings
-import kotlinx.datetime.toLocalDateTime
 
 internal fun EventDto.mapModel() = Event(
     id = id ?: throw IllegalArgumentException("Required event ID is not present."),
     name = name ?: throw IllegalArgumentException("Required event name is not present."),
     password = password ?: throw IllegalArgumentException("Required event password is not present."),
-    date = date?.toLocalDateTime() ?: throw IllegalArgumentException("Required event date is not present."),
+    detailsId = detailsId ?: throw IllegalArgumentException("Required event details are not present."),
     invitationId = invitationId,
     galleryId = galleryId
 )
@@ -21,7 +20,7 @@ internal fun Event.mapDto() = EventDto(
     id = id,
     name = name,
     password = password,
-    date = date.toString(),
+    detailsId = detailsId,
     invitationId = invitationId,
     galleryId = galleryId
 )
@@ -29,7 +28,7 @@ internal fun Event.mapDto() = EventDto(
 internal fun EventSettings.mapDto() = EventSettingsDto(
     id = id,
     name = name,
-    date = date.toString(),
+    detailsId = detailsId,
     invitationId = invitationId,
     galleryId = galleryId,
     galleryHintDismissed = galleryHintDismissed
@@ -38,7 +37,7 @@ internal fun EventSettings.mapDto() = EventSettingsDto(
 internal fun EventSettingsDto.mapModel() = EventSettings(
     id = id ?: throw IllegalArgumentException("Required event ID is not present."),
     name = name ?: throw IllegalArgumentException("Required event name is not present."),
-    date = date?.toLocalDateTime() ?: throw IllegalArgumentException("Required event date is not present."),
+    detailsId = detailsId ?: throw IllegalArgumentException("Required event details are not present."),
     invitationId = invitationId,
     galleryId = galleryId,
     galleryHintDismissed = galleryHintDismissed

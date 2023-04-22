@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class EventSettingsDto(
     val id: String? = null,
     val name: String? = null,
-    val date: String? = null,
+    val detailsId: String? = null,
     val invitationId: String? = null,
     val galleryId: String? = null,
     val galleryHintDismissed: Boolean = false

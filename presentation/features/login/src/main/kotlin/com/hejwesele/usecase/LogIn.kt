@@ -96,7 +96,7 @@ internal class LogIn @Inject constructor(
     private fun Event.toEventSettings() = EventSettings(
         id = id,
         name = name,
-        date = date,
+        detailsId = detailsId,
         invitationId = invitationId,
         galleryId = galleryId,
         galleryHintDismissed = false
