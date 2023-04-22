@@ -12,7 +12,7 @@ dependencies {
     implementation projects.libraries.coroutines
     implementation projects.libraries.osinfo
 
-    implementation projects.repositories.settings
+    implementation projects.repositories.configuration
 
     implementation libs.androidx.appcompat
 

@@ -35,13 +35,13 @@ object Label {
     const val loginScanQrTermsAndConditionsAcceptText = "Akceptuję"
     const val loginLoadingText = "Logowanie..."
 
-    // Settings
-    const val settingsTitleLabel = "Ustawienia"
-    const val settingsTermsAndConditionsLabel = "Regulamin"
-    const val settingsPrivacyPolicyLabel = "Polityka prywatności"
-    const val settingsContactLabelText = "Kontakt:"
-    const val settingsContactEmailText = "tomasz.kopacz.g@gmail.com"
-    const val settingsAppVersionLabelText = "Wersja aplikacji:"
+    // Information
+    const val informationTitleLabel = "Ustawienia"
+    const val informationTermsAndConditionsLabel = "Regulamin"
+    const val informationPrivacyPolicyLabel = "Polityka prywatności"
+    const val informationContactLabelText = "Kontakt:"
+    const val informationContactEmailText = "tomasz.kopacz.g@gmail.com"
+    const val informationAppVersionLabelText = "Wersja aplikacji:"
 
     // Home
     const val homeDisabledMessageText = "Dla tego wydarzenia wstepne informacje nie są dostępne."

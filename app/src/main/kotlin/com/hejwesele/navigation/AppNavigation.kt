@@ -19,9 +19,9 @@ import com.hejwesele.navigation.features.HomeFeatureNavigation
 import com.hejwesele.navigation.features.LoginFeatureNavigation
 import com.hejwesele.navigation.features.MainFeatureProvider
 import com.hejwesele.navigation.features.ScheduleFeatureNavigation
-import com.hejwesele.navigation.features.SettingsFeatureNavigation
+import com.hejwesele.navigation.features.InformationFeatureNavigation
 import com.hejwesele.schedule.IScheduleNavigation
-import com.hejwesele.settings.ISettingsFeatureNavigation
+import com.hejwesele.information.IInformationFeatureNavigation
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
@@ -67,12 +67,12 @@ private fun provideDependencies(
         galleryFeatureRecipient = galleryFeatureRecipient
     )
 
-    val settingsNavigation: ISettingsFeatureNavigation = SettingsFeatureNavigation(navController)
+    val informationNavigation: IInformationFeatureNavigation = InformationFeatureNavigation(navController)
 
     dependency(loginFeatureNavigation)
     dependency(mainFeatureProvider)
     dependency(homeNavigation)
     dependency(scheduleNavigation)
     dependency(galleryNavigation)
-    dependency(settingsNavigation)
+    dependency(informationNavigation)
 }

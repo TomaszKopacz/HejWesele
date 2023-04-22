@@ -20,10 +20,10 @@ import com.hejwesele.android.splashscreen.Splash.initializeSplashScreen
 import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.thememanager.ThemeManager
 import com.hejwesele.navigation.AppNavigation
-import com.hejwesele.settings.model.Theme
-import com.hejwesele.settings.model.Theme.DARK
-import com.hejwesele.settings.model.Theme.LIGHT
-import com.hejwesele.settings.model.Theme.SYSTEM_DEFAULT
+import com.hejwesele.configuration.model.Theme
+import com.hejwesele.configuration.model.Theme.DARK
+import com.hejwesele.configuration.model.Theme.LIGHT
+import com.hejwesele.configuration.model.Theme.SYSTEM_DEFAULT
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

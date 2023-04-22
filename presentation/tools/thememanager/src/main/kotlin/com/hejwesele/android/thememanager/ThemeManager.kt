@@ -1,6 +1,6 @@
 package com.hejwesele.android.thememanager
 
-import com.hejwesele.settings.model.Theme
+import com.hejwesele.configuration.model.Theme
 import kotlinx.coroutines.flow.Flow
 
 interface ThemeManager {

@@ -1,0 +1,50 @@
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+    alias libs.plugins.ksp
+}
+
+android {
+    namespace "com.hejwesele.information"
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
+    }
+
+    ksp {
+        arg("compose-destinations.moduleName", "informationFeature")
+        arg("compose-destinations.mode", "destinations")
+    }
+}
+
+dependencies {
+    implementation projects.libraries.appinfo
+    implementation projects.libraries.legaldocument
+    implementation projects.libraries.mvvm
+
+    implementation projects.presentation.tools.internet
+    implementation projects.presentation.ui.components
+    implementation projects.presentation.ui.extensions
+    implementation projects.presentation.ui.theme
+
+    implementation projects.repositories.legals
+
+    implementation libs.accompanist.systemuicontroller
+    implementation libs.androidx.compose.ui
+    implementation libs.androidx.compose.foundation
+    implementation libs.androidx.compose.material3
+    implementation libs.androidx.compose.tooling.preview
+    implementation libs.androidx.hilt.navigation.compose
+    implementation libs.stateevents.compose
+
+    debugImplementation libs.androidx.compose.tooling
+
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
+
+    implementation libs.destinations.core
+    ksp libs.destinations.ksp
+}

@@ -124,7 +124,7 @@ private fun LoginEntryPoint(
     val actions = LoginActions(
         onNameInputChanged = { text -> viewModel.onNameInputChanged(text) },
         onPasswordInputChanged = { text -> viewModel.onPasswordInputChanged(text) },
-        onInfoClicked = { viewModel.onSettingsRequested() },
+        onInfoClicked = { viewModel.onInformationRequested() },
         onHelpClicked = { viewModel.onHelpRequested() },
         onTermsAndConditionsCheckedChanged = { viewModel.onTermsAndConditionsCheckedChanged(it) },
         onTermsAndConditionsLinkClicked = { viewModel.onTermsAndConditionsRequested() },
@@ -150,9 +150,9 @@ private fun LoginEventHandler(
     coroutineScope: CoroutineScope
 ) {
     EventEffect(
-        event = events.openSettings,
-        onConsumed = { viewModel.onSettingsOpened() },
-        action = { navigation.openSettings() }
+        event = events.openInformation,
+        onConsumed = { viewModel.onInformationOpened() },
+        action = { navigation.openInformation() }
     )
     EventEffect(
         event = events.showHelp,

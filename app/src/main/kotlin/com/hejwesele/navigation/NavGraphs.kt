@@ -5,9 +5,9 @@ import com.hejwesele.destinations.QrScannerDestination
 import com.hejwesele.gallery.destinations.GalleryPreviewDestination
 import com.hejwesele.gallery.destinations.PhotoConfirmationDestination
 import com.hejwesele.main.destinations.MainDestination
-import com.hejwesele.settings.destinations.PrivacyPolicyDestination
-import com.hejwesele.settings.destinations.SettingsOverviewDestination
-import com.hejwesele.settings.destinations.TermsAndConditionsDestination
+import com.hejwesele.information.destinations.PrivacyPolicyDestination
+import com.hejwesele.information.destinations.InformationOverviewDestination
+import com.hejwesele.information.destinations.TermsAndConditionsDestination
 import com.ramcosta.composedestinations.dynamic.routedIn
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.NavGraphSpec
@@ -20,7 +20,7 @@ internal fun getRootGraph(startRoute: Route) = object : NavGraphSpec {
     override val nestedNavGraphs = listOf(
         LoginNavGraph,
         MainNavGraph,
-        SettingsNavGraph
+        InformationNavGraph
     )
 }
 
@@ -43,11 +43,11 @@ internal object MainNavGraph : NavGraphSpec {
     ).routedIn(this).associateBy { it.route }
 }
 
-internal object SettingsNavGraph : NavGraphSpec {
-    override val route: String = "settingsNavGraph"
-    override val startRoute: Route = SettingsOverviewDestination routedIn this
+internal object InformationNavGraph : NavGraphSpec {
+    override val route: String = "informationNavGraph"
+    override val startRoute: Route = InformationOverviewDestination routedIn this
     override val destinationsByRoute = listOf<DestinationSpec<*>>(
-        SettingsOverviewDestination,
+        InformationOverviewDestination,
         TermsAndConditionsDestination,
         PrivacyPolicyDestination
     ).routedIn(this).associateBy { it.route }

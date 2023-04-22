@@ -98,9 +98,9 @@ internal class LoginViewModel @Inject constructor(
         )
     }
 
-    fun onSettingsRequested() {
+    fun onInformationRequested() {
         viewModelScope.launch {
-            updateEvents { copy(openSettings = triggered) }
+            updateEvents { copy(openInformation = triggered) }
         }
     }
 
@@ -172,8 +172,8 @@ internal class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onSettingsOpened() {
-        updateEvents { copy(openSettings = consumed) }
+    fun onInformationOpened() {
+        updateEvents { copy(openInformation = consumed) }
     }
 
     fun onHelpShown() {
@@ -314,7 +314,7 @@ internal data class LoginUiState(
 }
 
 internal data class LoginUiEvents(
-    val openSettings: StateEvent,
+    val openInformation: StateEvent,
     val showHelp: StateEvent,
     val openTermsAndConditions: StateEvent,
     val openEvent: StateEvent,
@@ -324,7 +324,7 @@ internal data class LoginUiEvents(
 
     companion object {
         val Default = LoginUiEvents(
-            openSettings = consumed,
+            openInformation = consumed,
             showHelp = consumed,
             openTermsAndConditions = consumed,
             openEvent = consumed,
