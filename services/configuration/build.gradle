@@ -8,6 +8,7 @@ plugins {
 
 android {
     namespace "com.hejwesele.configuration"
+
     buildTypes {
         qa {
             matchingFallbacks = ["release"]

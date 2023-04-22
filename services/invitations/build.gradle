@@ -8,6 +8,7 @@ plugins {
 
 android {
     namespace "com.hejwesele.invitations"
+
     buildTypes {
         qa {
             matchingFallbacks = ["release"]

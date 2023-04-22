@@ -6,6 +6,12 @@ plugins {
 android {
     namespace "com.hejwesele.imageloader"
 
+    buildTypes {
+        qa {
+            matchingFallbacks = ["release"]
+        }
+    }
+
     buildFeatures {
         compose true
     }

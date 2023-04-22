@@ -5,7 +5,14 @@ plugins {
 }
 
 android {
-    namespace "com.hejwesele.splashsceen"
+    namespace "com.hejwesele.internet"
+
+    buildTypes {
+        qa {
+            matchingFallbacks = ["release"]
+        }
+    }
+
     buildFeatures {
         compose true
     }

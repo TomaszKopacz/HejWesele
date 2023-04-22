@@ -6,6 +6,12 @@ plugins {
 
 android {
     namespace "com.hejwesele.crashlytics"
+
+    buildTypes {
+        qa {
+            matchingFallbacks = ["release"]
+        }
+    }
 }
 
 dependencies {

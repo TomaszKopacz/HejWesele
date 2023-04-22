@@ -6,6 +6,12 @@ plugins {
 
 android {
     namespace "com.hejwesele.messaging"
+
+    buildTypes {
+        qa {
+            matchingFallbacks = ["release"]
+        }
+    }
 }
 
 dependencies {

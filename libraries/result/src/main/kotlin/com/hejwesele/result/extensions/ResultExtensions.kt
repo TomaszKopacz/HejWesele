@@ -22,6 +22,10 @@ fun <T, R, N> Result<T>.merge(other: Result<R>, transform: (T, R) -> N): Result<
     }
 }
 
+fun <T, R> Result<T>.mergeToPair(other: Result<R>): Result<Pair<T, R>> {
+    return merge(other) { first, second -> first to second }
+}
+
 private object ExceptionMessage {
     const val EXCEPTION_NOT_DEFINED = "Failure but exception not defined."
 }

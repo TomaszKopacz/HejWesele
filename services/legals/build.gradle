@@ -8,6 +8,7 @@ plugins {
 
 android {
     namespace "com.hejwesele.legals"
+
     buildTypes {
         qa {
             matchingFallbacks = ["release"]

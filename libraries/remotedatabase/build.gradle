@@ -6,6 +6,12 @@ plugins {
 
 android {
     namespace "com.hejwesele.realtimedatabase"
+
+    buildTypes {
+        qa {
+            matchingFallbacks = ["release"]
+        }
+    }
 }
 
 dependencies {

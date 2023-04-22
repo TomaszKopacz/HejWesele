@@ -5,6 +5,12 @@ plugins {
 
 android {
     namespace "com.hejwesele.qr"
+
+    buildTypes {
+        qa {
+            matchingFallbacks = ["release"]
+        }
+    }
 }
 
 dependencies {

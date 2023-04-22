@@ -15,12 +15,13 @@ import com.hejwesele.gallery.board.usecase.ObserveGallery
 import com.hejwesele.intent.IntentData
 import com.hejwesele.intent.IntentPackage.GOOGLE_DRIVE_PACKAGE
 import com.hejwesele.intent.IntentType.GOOGLE_DRIVE
-import com.hejwesele.result.extensions.merge
+import com.hejwesele.result.extensions.mergeToPair
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -131,23 +132,21 @@ internal class GalleryViewModel @Inject constructor(
         val galleryId = settings.galleryId
 
         if (galleryId != null) {
-            val detailsFlow = observeDetails(detailsId)
-            val galleryFlow = observeGallery(galleryId)
+            val galleryFlow = viewModelScope.async { observeGallery(galleryId) }
+            val detailsFlow = viewModelScope.async { observeDetails(detailsId) }
 
-            detailsFlow
-                .combine(galleryFlow) { detailsResult, galleryResult ->
-                    detailsResult.merge(galleryResult) { details, gallery -> details to gallery }
-                }
-                .collect { result ->
-                    result
-                        .onSuccess { (details, gallery) ->
-                            state = state.copy(externalGalleryUrl = gallery.externalGallery)
-                            sendGalleryContentState(details, gallery)
-                        }
-                        .onFailure {
-                            sendGalleryErrorState()
-                        }
-                }
+            detailsFlow.await().combine(galleryFlow.await()) { detailsResult, galleryResult ->
+                detailsResult.mergeToPair(galleryResult)
+            }.collect { result ->
+                result
+                    .onSuccess { (details, gallery) ->
+                        state = state.copy(externalGalleryUrl = gallery.externalGallery)
+                        sendGalleryContentState(details, gallery)
+                    }
+                    .onFailure {
+                        sendGalleryErrorState()
+                    }
+            }
         } else {
             sendGalleryDisabledState()
         }

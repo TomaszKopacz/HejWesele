@@ -7,6 +7,13 @@ plugins {
 
 android {
     namespace "com.hejwesele.gallery"
+
+    buildTypes {
+        qa {
+            matchingFallbacks = ["release"]
+        }
+    }
+
     buildFeatures {
         compose true
     }
@@ -37,7 +44,7 @@ dependencies {
     implementation projects.libraries.permissions
     implementation projects.libraries.result
 
-    api libs.kotlinx.datetime
+    implementation libs.kotlinx.datetime
     implementation libs.airbnb.compose.lottie
     implementation libs.androidx.compose.ui
     implementation libs.androidx.compose.foundation

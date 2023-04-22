@@ -4,7 +4,13 @@ plugins {
 }
 
 android {
-    namespace "com.hejwesele.splashsceen"
+    namespace "com.hejwesele.splash"
+
+    buildTypes {
+        qa {
+            matchingFallbacks = ["release"]
+        }
+    }
 }
 
 dependencies {

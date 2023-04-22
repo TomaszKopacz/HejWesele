@@ -5,4 +5,10 @@ plugins {
 
 android {
     namespace "com.hejwesele.encryption"
+
+    buildTypes {
+        qa {
+            matchingFallbacks = ["release"]
+        }
+    }
 }

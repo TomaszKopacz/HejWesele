@@ -5,6 +5,13 @@ plugins {
 
 android {
     namespace "com.hejwesele.schedule"
+
+    buildTypes {
+        qa {
+            matchingFallbacks = ["release"]
+        }
+    }
+
     buildFeatures {
         compose true
     }

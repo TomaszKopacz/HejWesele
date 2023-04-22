@@ -5,12 +5,10 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.Result.Companion.failure
@@ -21,31 +19,29 @@ import kotlin.reflect.KClass
 
 class RemoteDatabase @Inject constructor() {
     private val root = Firebase.database.reference
-    private val firestoreScope = CoroutineScope(Dispatchers.Default)
 
     suspend fun <T : Any> observe(path: String, id: String, type: KClass<T>): Flow<Result<T>> = withContext(Dispatchers.IO) {
-        val snapshots = MutableSharedFlow<Result<T>>()
-        val reference = root.child(path).child(id)
-
-        reference.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                runCatching {
-                    snapshot.getValue(type.java)
-                }.onSuccess { item ->
-                    if (item != null) {
-                        firestoreScope.launch {
-                            snapshots.emit(success(item))
+        callbackFlow {
+            val reference = root.child(path).child(id)
+            val listener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    runCatching { snapshot.getValue(type.java) }
+                        .onSuccess { item ->
+                            item?.let { trySend(success(it)) }
                         }
-                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // no-op
                 }
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                // no-op
-            }
-        })
+            reference.addValueEventListener(listener)
 
-        snapshots.asSharedFlow()
+            awaitClose {
+                reference.removeEventListener(listener)
+            }
+        }
     }
 
     suspend fun <T : Any> read(path: String, id: String, type: KClass<T>): Result<T?> = withContext(Dispatchers.IO) {

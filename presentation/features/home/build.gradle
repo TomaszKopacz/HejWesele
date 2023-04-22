@@ -6,6 +6,13 @@ plugins {
 
 android {
     namespace "com.hejwesele.home"
+
+    buildTypes {
+        qa {
+            matchingFallbacks = ["release"]
+        }
+    }
+
     buildFeatures {
         compose true
     }

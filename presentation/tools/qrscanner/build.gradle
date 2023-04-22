@@ -6,6 +6,13 @@ plugins {
 
 android {
     namespace "com.hejwesele.qrscanner"
+
+    buildTypes {
+        qa {
+            matchingFallbacks = ["release"]
+        }
+    }
+
     buildFeatures {
         compose true
     }

@@ -6,6 +6,12 @@ plugins {
 
 android {
     namespace "com.hejwesele.osinfo"
+
+    buildTypes {
+        qa {
+            matchingFallbacks = ["release"]
+        }
+    }
 }
 
 dependencies {
