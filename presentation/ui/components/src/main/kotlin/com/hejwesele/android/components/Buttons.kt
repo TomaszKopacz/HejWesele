@@ -26,8 +26,8 @@ import com.hejwesele.android.components.PlainButtonSize.MEDIUM
 import com.hejwesele.android.components.PlainButtonSize.SMALL
 import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
-import com.hejwesele.components.R
 import com.hejwesele.extensions.disabled
+import com.hejwesele.theme.R
 
 @Composable
 fun PlainButton(

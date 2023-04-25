@@ -44,8 +44,8 @@ import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.android.theme.md_theme_dark_onBackground
 import com.hejwesele.internet.InternetConnectionPopup
-import com.hejwesele.login.R
 import com.hejwesele.qrscanner.QrScannerView
+import com.hejwesele.theme.R
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.CoroutineScope

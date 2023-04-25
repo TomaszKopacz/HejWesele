@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import com.hejwesele.android.theme.Dimension
-import com.hejwesele.components.R
+import com.hejwesele.theme.R
 
 @Composable
 fun HintTile(

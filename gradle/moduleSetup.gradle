@@ -33,12 +33,12 @@ def setupModule(isAndroid, isAndroidComponent) {
             }
 
             compileOptions {
-                sourceCompatibility JavaVersion.VERSION_11
-                targetCompatibility JavaVersion.VERSION_11
+                sourceCompatibility JavaVersion.VERSION_17
+                targetCompatibility JavaVersion.VERSION_17
             }
 
             kotlinOptions {
-                jvmTarget = "11"
+                jvmTarget = "17"
                 freeCompilerArgs += [
                     "-opt-in=kotlin.RequiresOptIn",
                     "-P",
@@ -59,11 +59,11 @@ def setupModule(isAndroid, isAndroidComponent) {
             }
         }
     } else {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
 
-        compileKotlin.kotlinOptions.jvmTarget = "11"
-        compileTestKotlin.kotlinOptions.jvmTarget = "11"
+        compileKotlin.kotlinOptions.jvmTarget = "17"
+        compileTestKotlin.kotlinOptions.jvmTarget = "17"
 
         compileKotlin.kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
         compileTestKotlin.kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"

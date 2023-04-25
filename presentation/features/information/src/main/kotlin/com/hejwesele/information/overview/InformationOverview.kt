@@ -37,8 +37,8 @@ import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.extensions.disabled
 import com.hejwesele.information.IInformationFeatureNavigation
-import com.hejwesele.information.R
 import com.hejwesele.internet.InternetConnectionPopup
+import com.hejwesele.theme.R
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.ExperimentalCoroutinesApi

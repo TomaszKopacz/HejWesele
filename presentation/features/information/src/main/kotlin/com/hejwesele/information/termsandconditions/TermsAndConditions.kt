@@ -35,11 +35,11 @@ import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.information.IInformationFeatureNavigation
-import com.hejwesele.information.R
 import com.hejwesele.information.ui.LegalPointItem
 import com.hejwesele.internet.InternetConnectionPopup
 import com.hejwesele.legaldocument.LegalPoint
 import com.hejwesele.legaldocument.LegalPointType
+import com.hejwesele.theme.R
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -1,6 +1,7 @@
 package com.hejwesele.main
 
 import androidx.annotation.DrawableRes
+import com.hejwesele.theme.R
 
 internal sealed class MainTabItem(
     val route: String,

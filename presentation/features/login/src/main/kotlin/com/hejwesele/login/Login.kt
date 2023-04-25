@@ -58,6 +58,7 @@ import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.extensions.noRippleClickable
 import com.hejwesele.internet.InternetConnectionPopup
+import com.hejwesele.theme.R
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.CoroutineScope

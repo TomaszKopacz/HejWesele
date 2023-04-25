@@ -77,6 +77,7 @@ import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import com.hejwesele.theme.R as ThemeR
 
 @Composable
 fun Home(navigation: IHomeNavigation) = HomeEntryPoint(navigation = navigation)
@@ -273,7 +274,7 @@ private fun HomeContent(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(Dimension.marginNormal),
-                iconResId = R.drawable.ic_options,
+                iconResId = ThemeR.drawable.ic_options,
                 items = listOf(
                     MenuItemData(text = Label.homeMenuItemInformationText, action = onInformationItemClicked),
                     MenuItemData(text = Label.homeMenuItemLogoutText, action = onLogoutItemClicked)
@@ -562,14 +563,14 @@ private data class HomeActions(
 private object HomePreviewData {
     val intent1 = IntentUiModel(
         title = "mr_groom",
-        iconResId = R.drawable.ic_instagram_primary,
+        iconResId = ThemeR.drawable.ic_instagram_primary,
         intentPackage = null,
         url = "fake url"
     )
 
     val intent2 = IntentUiModel(
         title = "mrs_bride",
-        iconResId = R.drawable.ic_instagram_primary,
+        iconResId = ThemeR.drawable.ic_instagram_primary,
         intentPackage = null,
         url = "fake url"
     )

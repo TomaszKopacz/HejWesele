@@ -26,6 +26,7 @@ import de.palm.composestateevents.triggered
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.hejwesele.theme.R as ThemeR
 
 @HiltViewModel
 internal class HomeViewModel @Inject constructor(
@@ -198,10 +199,10 @@ internal class HomeViewModel @Inject constructor(
     }
 
     private fun getIntentIconResId(type: IntentType) = when (type) {
-        IntentType.INSTAGRAM -> R.drawable.ic_instagram_primary
-        IntentType.GOOGLE_MAPS -> R.drawable.ic_maps_primary
-        IntentType.WWW -> R.drawable.ic_web_primary
-        else -> R.drawable.ic_web_primary
+        IntentType.INSTAGRAM -> ThemeR.drawable.ic_instagram_primary
+        IntentType.GOOGLE_MAPS -> ThemeR.drawable.ic_maps_primary
+        IntentType.WWW -> ThemeR.drawable.ic_web_primary
+        else -> ThemeR.drawable.ic_web_primary
     }
 
     private fun String.getIntentTitle(type: IntentType) = when (type) {

@@ -21,6 +21,8 @@ dependencies {
 
     implementation projects.repositories.details
 
+    implementation libs.kotlinx.datetime
+
     implementation libs.hilt.android
     kapt libs.hilt.compiler
 }
