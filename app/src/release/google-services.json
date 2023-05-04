@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "661226087913",
+    "firebase_url": "https://hejwesele-prod-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "hejwesele-prod",
     "storage_bucket": "hejwesele-prod.appspot.com"
   },
