@@ -1,5 +1,6 @@
 package com.hejwesele.gallery.preview
 
+import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -11,8 +12,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -147,6 +150,7 @@ private fun GalleryPreviewEventsHandler(
     )
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(
     ExperimentalMaterial3Api::class,
     ExperimentalAnimationApi::class,
@@ -160,7 +164,7 @@ private fun GalleryPreviewScreen(
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarState) }
-    ) { padding ->
+    ) {
         Surface(color = md_theme_dark_background) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 if (data.isInternetPopupEnabled) {
@@ -169,7 +173,8 @@ private fun GalleryPreviewScreen(
                 GalleryPreviewContent(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(bottom = padding.calculateBottomPadding()),
+                        .statusBarsPadding()
+                        .navigationBarsPadding(),
                     photoUrls = data.photoUrls,
                     selectedPhotoIndex = data.selectedPhotoIndex,
                     isSavingPhoto = data.isSavingPhoto,
@@ -198,7 +203,7 @@ private fun GalleryPreviewContent(
     Column(modifier = modifier) {
         Actions(
             modifier = Modifier
-                .padding(Dimension.marginSmall)
+                .padding(horizontal = Dimension.marginSmall)
                 .fillMaxWidth(),
             onBack = onBack,
             onSave = { onSave(photoUrls[pagerState.currentPage]) }

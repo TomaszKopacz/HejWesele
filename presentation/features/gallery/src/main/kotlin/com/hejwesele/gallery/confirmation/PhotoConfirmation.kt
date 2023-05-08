@@ -7,14 +7,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -178,19 +175,24 @@ private fun PhotoConfirmationScreen(
                 if (data.internetPopupEnabled) {
                     InternetConnectionPopup()
                 }
+                if (data.isLoading) {
+                    Loader()
+                }
                 if (data.photo != null) {
                     PhotoPreviewContent(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .statusBarsPadding()
+                            .navigationBarsPadding(),
                         photo = data.photo,
                         onAccept = actions.onPhotoAccepted,
                         onCancel = actions.onPhotoDeclined
                     )
                 }
-                when {
-                    data.isLoading -> Loader()
-                    data.isUploadingPhoto -> LoaderDialog(label = data.uploadingMessage)
-                    data.alertData != null -> AlertDialog(data = data.alertData)
-                }
+            }
+            when {
+                data.isUploadingPhoto -> LoaderDialog(label = data.uploadingMessage)
+                data.alertData != null -> AlertDialog(data = data.alertData)
             }
         }
     }
@@ -203,13 +205,8 @@ private fun PhotoPreviewContent(
     onAccept: () -> Unit,
     onCancel: () -> Unit
 ) {
-    val bottomPadding = WindowInsets.navigationBars
-        .only(WindowInsetsSides.Bottom)
-        .asPaddingValues()
-        .calculateBottomPadding()
-
     Column(
-        modifier = modifier.padding(bottom = bottomPadding + Dimension.marginLarge)
+        modifier = modifier
     ) {
         Actions(
             onAccept = onAccept,
@@ -230,7 +227,7 @@ private fun Actions(
 ) {
     Row(
         modifier = Modifier
-            .padding(Dimension.marginSmall)
+            .padding(horizontal = Dimension.marginSmall)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

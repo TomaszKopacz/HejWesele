@@ -121,7 +121,7 @@ private fun PrivacyPolicyScreen(
     Scaffold { padding ->
         Column(modifier = Modifier.fillMaxSize()) {
             if (data.internetPopupEnabled) {
-                InternetConnectionPopup(statusBarSensitive = false)
+                InternetConnectionPopup()
             }
             Box(
                 modifier = Modifier

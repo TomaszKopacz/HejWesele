@@ -1,17 +1,19 @@
 package com.hejwesele.information.overview
 
+import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -115,6 +117,7 @@ private fun InformationOverviewEventHandler(
     )
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(
     ExperimentalMaterial3Api::class,
     ExperimentalAnimationApi::class,
@@ -125,21 +128,22 @@ private fun InformationOverviewScreen(
     data: InformationOverviewData,
     actions: InformationOverviewActions
 ) {
-    Scaffold { padding ->
+    Scaffold {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = MaterialTheme.colorScheme.surface)
         ) {
             if (data.internetPopupEnabled) {
-                InternetConnectionPopup(statusBarSensitive = false)
+                InternetConnectionPopup()
             }
             InformationOverviewContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1.0f)
-                    .padding(horizontal = Dimension.marginLarge),
-                padding = padding,
+                    .padding(horizontal = Dimension.marginLarge)
+                    .statusBarsPadding()
+                    .navigationBarsPadding(),
                 contactEmail = data.contactEmail,
                 appVersion = data.appVersion,
                 onBackClicked = actions.onBackClicked,
@@ -153,7 +157,6 @@ private fun InformationOverviewScreen(
 @Composable
 private fun InformationOverviewContent(
     modifier: Modifier = Modifier,
-    padding: PaddingValues,
     contactEmail: String,
     appVersion: String,
     onBackClicked: () -> Unit,
@@ -161,7 +164,7 @@ private fun InformationOverviewContent(
     onPrivacyPolicyClicked: () -> Unit
 ) {
     Column(modifier = modifier) {
-        VerticalMargin(padding.calculateTopPadding() + Dimension.marginNormal)
+        VerticalMargin(Dimension.marginNormal)
         Icon(
             modifier = Modifier
                 .size(Dimension.iconNormal)
@@ -203,7 +206,7 @@ private fun InformationOverviewContent(
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurface.disabled
         )
-        VerticalMargin(padding.calculateBottomPadding() + Dimension.marginNormal)
+        VerticalMargin(Dimension.marginNormal)
     }
 }
 

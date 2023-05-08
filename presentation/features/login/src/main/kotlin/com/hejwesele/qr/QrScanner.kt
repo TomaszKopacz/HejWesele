@@ -11,14 +11,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -66,7 +65,7 @@ private fun QrScannerEntryPoint(
 ) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
-        systemUiController.setStatusBarColor(color = Color.Transparent, darkIcons = true)
+        systemUiController.setSystemBarsColor(color = Color.Transparent, darkIcons = true)
     }
 
     val coroutineScope = rememberCoroutineScope()
@@ -150,7 +149,7 @@ private fun QrScannerEventHandler(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class, ExperimentalCoroutinesApi::class)
 @Composable
 private fun QrScannerScreen(
     data: QrScannerData,
@@ -168,12 +167,16 @@ private fun QrScannerScreen(
         }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            QrScannerContent(
-                modifier = Modifier.fillMaxSize(),
-                isInternetPopupEnabled = data.isInternetPopupEnabled,
-                onBack = actions.onBack,
-                onScanned = actions.onScanned
-            )
+            Column {
+                if (data.isInternetPopupEnabled) {
+                    InternetConnectionPopup()
+                }
+                QrScannerContent(
+                    modifier = Modifier.fillMaxSize(),
+                    onBack = actions.onBack,
+                    onScanned = actions.onScanned
+                )
+            }
             if (data.isLoading) {
                 LoaderDialog(label = Label.loginLoadingText)
             }
@@ -184,40 +187,23 @@ private fun QrScannerScreen(
     }
 }
 
-@OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalAnimationApi::class,
-    ExperimentalCoroutinesApi::class
-)
 @Composable
 private fun QrScannerContent(
     modifier: Modifier = Modifier,
-    isInternetPopupEnabled: Boolean,
     onBack: () -> Unit,
     onScanned: (String) -> Unit
 ) {
-    Scaffold { padding ->
-        Column(modifier = modifier) {
-            if (isInternetPopupEnabled) {
-                InternetConnectionPopup(statusBarSensitive = false)
-            }
-            Box(modifier = Modifier.fillMaxSize()) {
-                QrScannerView(
-                    modifier = Modifier.fillMaxSize(),
-                    onScanned = { text -> onScanned(text) }
-                )
-                BackIcon(
-                    modifier = Modifier
-                        .padding(
-                            top = padding.calculateTopPadding(),
-                            start = Dimension.marginNormal,
-                            end = Dimension.marginNormal,
-                            bottom = Dimension.marginNormal
-                        ),
-                    onClick = onBack
-                )
-            }
-        }
+    Box(modifier = modifier) {
+        QrScannerView(
+            modifier = Modifier.fillMaxSize(),
+            onScanned = { text -> onScanned(text) }
+        )
+        BackIcon(
+            modifier = Modifier
+                .padding(Dimension.marginNormal)
+                .statusBarsPadding(),
+            onClick = onBack
+        )
     }
 }
 

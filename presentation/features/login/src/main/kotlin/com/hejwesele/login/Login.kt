@@ -10,15 +10,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -185,7 +182,7 @@ private fun LoginEventHandler(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class, ExperimentalCoroutinesApi::class)
 @Composable
 private fun LoginScreen(
     data: LoginData,
@@ -196,14 +193,19 @@ private fun LoginScreen(
         state = sheetState,
         sheetContent = { HelpBottomSheetContent() }
     ) {
-        LoginScreenContent(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surface),
-            formData = data.formData,
-            actions = actions,
-            isInternetPopupEnabled = data.isInternetPopupEnabled
-        )
+        Column {
+            if (data.isInternetPopupEnabled) {
+                InternetConnectionPopup()
+            }
+            LoginScreenContent(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .statusBarsPadding(),
+                formData = data.formData,
+                actions = actions
+            )
+        }
         if (data.loginError != null) {
             AlertDialog(data = data.loginError)
         }
@@ -213,54 +215,39 @@ private fun LoginScreen(
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalCoroutinesApi::class)
 @Composable
 private fun LoginScreenContent(
     modifier: Modifier = Modifier,
     formData: LoginFormData,
-    actions: LoginActions,
-    isInternetPopupEnabled: Boolean
+    actions: LoginActions
 ) {
-    val bottomPadding = WindowInsets.navigationBars
-        .only(WindowInsetsSides.Bottom)
-        .asPaddingValues()
-        .calculateBottomPadding()
-
-    Column(modifier = modifier) {
-        if (isInternetPopupEnabled) {
-            InternetConnectionPopup()
-        }
-        VerticalMargin(Dimension.marginNormal)
-        ScrollableColumn(
+    ScrollableColumn(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = Dimension.marginLarge)
+            .navigationBarsPadding()
+    ) {
+        InfoIconButton(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    start = Dimension.marginLarge,
-                    end = Dimension.marginLarge,
-                    bottom = bottomPadding
-                )
-        ) {
-            InfoIconButton(
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .size(Dimension.iconNormal)
-                    .noRippleClickable(onClick = { actions.onInfoClicked() })
-            )
-            VerticalMargin(Dimension.marginOutsizeLarge)
-            Icon(
-                modifier = Modifier.size(Dimension.iconOutsizeExtraLarge),
-                painter = painterResource(R.drawable.ic_logo),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
-            )
-            VerticalMargin(Dimension.marginLarge)
-            Spacer(modifier = Modifier.weight(Dimension.weightHalf))
-            LoginForm(
-                formData = formData,
-                actions = actions
-            )
-            VerticalMargin(Dimension.marginNormal)
-        }
+                .padding(top = Dimension.marginNormal)
+                .align(Alignment.End)
+                .size(Dimension.iconNormal)
+                .noRippleClickable(onClick = { actions.onInfoClicked() })
+        )
+        VerticalMargin(Dimension.marginOutsizeLarge)
+        Icon(
+            modifier = Modifier.size(Dimension.iconOutsizeExtraLarge),
+            painter = painterResource(R.drawable.ic_logo),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary
+        )
+        VerticalMargin(Dimension.marginLarge)
+        Spacer(modifier = Modifier.weight(Dimension.weightHalf))
+        LoginForm(
+            formData = formData,
+            actions = actions
+        )
+        VerticalMargin(Dimension.marginNormal)
     }
 }
 

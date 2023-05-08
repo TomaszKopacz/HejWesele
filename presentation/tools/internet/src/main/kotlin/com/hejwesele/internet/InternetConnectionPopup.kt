@@ -8,13 +8,9 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,9 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,8 +36,7 @@ private const val PopupDelay = 2_000L
 @Composable
 fun InternetConnectionPopup(
     modifier: Modifier = Modifier,
-    viewModel: InternetConnectionViewModel = hiltViewModel(),
-    statusBarSensitive: Boolean = true
+    viewModel: InternetConnectionViewModel = hiltViewModel()
 ) {
     val state by viewModel.connectionState.collectAsState()
 
@@ -57,24 +50,13 @@ fun InternetConnectionPopup(
         isPopupVisible = !isConnected
     }
 
-    val topPadding = WindowInsets.statusBars
-        .only(WindowInsetsSides.Top)
-        .asPaddingValues()
-        .calculateTopPadding()
-
     Column(modifier = modifier.fillMaxWidth()) {
         AnimatedVisibility(
             visible = isPopupVisible,
             enter = expandVertically(),
             exit = shrinkVertically()
         ) {
-            InternetConnectionStatusBox(
-                isConnected = isConnected,
-                topPadding = topPadding
-            )
-        }
-        if (statusBarSensitive && !isPopupVisible) {
-            VerticalMargin(height = topPadding)
+            InternetConnectionStatusBox(isConnected = isConnected)
         }
     }
 }
@@ -82,8 +64,7 @@ fun InternetConnectionPopup(
 @Composable
 private fun InternetConnectionStatusBox(
     modifier: Modifier = Modifier,
-    isConnected: Boolean,
-    topPadding: Dp
+    isConnected: Boolean
 ) {
     val colorScheme = MaterialTheme.colorScheme
     val backgroundColor by animateColorAsState(
@@ -96,12 +77,8 @@ private fun InternetConnectionStatusBox(
         modifier = modifier
             .background(backgroundColor)
             .fillMaxWidth()
-            .padding(
-                top = topPadding,
-                start = Dimension.marginNormal,
-                end = Dimension.marginNormal,
-                bottom = Dimension.marginNormal
-            ),
+            .padding(Dimension.marginNormal)
+            .statusBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
         Column {
