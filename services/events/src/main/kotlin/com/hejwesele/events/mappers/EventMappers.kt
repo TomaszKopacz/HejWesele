@@ -11,6 +11,7 @@ internal fun EventDto.mapModel() = Event(
     password = password ?: throw IllegalArgumentException("Required event password is not present."),
     detailsId = detailsId ?: throw IllegalArgumentException("Required event details are not present."),
     invitationId = invitationId,
+    scheduleId = scheduleId,
     galleryId = galleryId
 )
 
@@ -22,6 +23,7 @@ internal fun Event.mapDto() = EventDto(
     password = password,
     detailsId = detailsId,
     invitationId = invitationId,
+    scheduleId = scheduleId,
     galleryId = galleryId
 )
 
@@ -30,6 +32,7 @@ internal fun EventSettings.mapDto() = EventSettingsDto(
     name = name,
     detailsId = detailsId,
     invitationId = invitationId,
+    scheduleId = scheduleId,
     galleryId = galleryId,
     galleryHintDismissed = galleryHintDismissed
 )
@@ -39,6 +42,7 @@ internal fun EventSettingsDto.mapModel() = EventSettings(
     name = name ?: throw IllegalArgumentException("Required event name is not present."),
     detailsId = detailsId ?: throw IllegalArgumentException("Required event details are not present."),
     invitationId = invitationId,
+    scheduleId = scheduleId,
     galleryId = galleryId,
     galleryHintDismissed = galleryHintDismissed
 )

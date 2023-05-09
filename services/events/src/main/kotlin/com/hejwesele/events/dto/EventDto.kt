@@ -12,5 +12,6 @@ data class EventDto(
     val password: String? = null,
     val detailsId: String? = null,
     val invitationId: String? = null,
+    val scheduleId: String? = null,
     val galleryId: String? = null
 )

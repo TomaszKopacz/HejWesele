@@ -5,6 +5,7 @@ data class EventSettings(
     val name: String,
     val detailsId: String,
     val invitationId: String?,
+    val scheduleId: String?,
     val galleryId: String?,
     val galleryHintDismissed: Boolean
 )

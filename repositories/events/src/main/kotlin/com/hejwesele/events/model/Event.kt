@@ -6,5 +6,6 @@ data class Event(
     val password: String,
     val detailsId: String,
     val invitationId: String?,
+    val scheduleId: String?,
     val galleryId: String?
 )

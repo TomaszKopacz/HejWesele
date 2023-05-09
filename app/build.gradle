@@ -121,12 +121,13 @@ dependencies {
     implementation projects.presentation.tools.thememanager
     implementation projects.presentation.ui.theme
 
+    implementation projects.services.configuration
     implementation projects.services.details
     implementation projects.services.events
     implementation projects.services.galleries
     implementation projects.services.invitations
     implementation projects.services.legals
-    implementation projects.services.configuration
+    implementation projects.services.schedules
 
     implementation projects.repositories.events
     implementation projects.repositories.configuration
