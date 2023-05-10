@@ -52,6 +52,9 @@ object Label {
     const val homeIntentWebLabel = "Strona internetowa"
     const val homeLoggingOutText = "Wylogowywanie..."
 
+    // Schedule
+    const val scheduleDisabledMessageText = "Dla tego wydarzenia nie przygotowano harmonogramu."
+
     // Gallery
     const val galleryDisabledMessageText = "Dla tego wydarzenia galeria zdjęć jest niedostępna."
     const val galleryBeforeWeddingPlaceholderText = "Nic tu jeszcze nie ma. \nPodczas wesela dodawaj zdjęcia z imprezy klikając w plusik na dole."

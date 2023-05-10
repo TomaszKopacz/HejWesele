@@ -1,6 +1,7 @@
 plugins {
     id "com.android.library"
     id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
 }
 
 android {
@@ -21,9 +22,27 @@ android {
 }
 
 dependencies {
-    implementation projects.presentation.ui.components
+    implementation projects.libraries.mvvm
 
+    implementation projects.presentation.tools.internet
+    implementation projects.presentation.ui.components
+    implementation projects.presentation.ui.theme
+
+    implementation projects.repositories.events
+    implementation projects.repositories.schedules
+
+    implementation libs.accompanist.systemuicontroller
     implementation libs.androidx.compose.ui
     implementation libs.androidx.compose.foundation
     implementation libs.androidx.compose.material3
+    implementation libs.androidx.compose.tooling.preview
+    implementation libs.androidx.hilt.navigation.compose
+    implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation libs.kotlinx.datetime
+    implementation libs.stateevents.compose
+
+    debugImplementation libs.androidx.compose.tooling
+
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
 }

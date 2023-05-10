@@ -63,6 +63,7 @@ private fun provideDependencies(
     val galleryFeatureRecipient = resultRecipient<PhotoConfirmationDestination, Boolean>()
     val mainFeatureProvider: IMainFeatureProvider = MainFeatureProvider(
         homeFeatureNavigation = homeNavigation,
+        scheduleFeatureNavigation = scheduleNavigation,
         galleryFeatureNavigation = galleryNavigation,
         galleryFeatureRecipient = galleryFeatureRecipient
     )

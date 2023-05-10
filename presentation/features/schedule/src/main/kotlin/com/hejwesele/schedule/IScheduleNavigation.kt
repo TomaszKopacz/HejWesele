@@ -1,5 +1,5 @@
 package com.hejwesele.schedule
 
 interface IScheduleNavigation {
-    fun openNothing()
+    fun logout()
 }
