@@ -11,13 +11,17 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -29,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hejwesele.android.components.ErrorData
@@ -40,8 +45,10 @@ import com.hejwesele.android.components.VerticalMargin
 import com.hejwesele.android.theme.AppTheme
 import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
+import com.hejwesele.extensions.disabled
 import com.hejwesele.internet.InternetConnectionPopup
 import com.hejwesele.schedule.model.ActivityUiModel
+import com.hejwesele.schedule.model.TimerUiModel
 import com.hejwesele.theme.R
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -73,6 +80,7 @@ private fun ScheduleEntryPoint(
             isLoading = isLoading,
             isEnabled = isEnabled,
             activities = activities,
+            timer = timer,
             internetPopupEnabled = true,
             errorData = errorData
         )
@@ -120,7 +128,10 @@ private fun ScheduleScreen(data: ScheduleData) {
                         modifier = Modifier
                             .fillMaxSize()
                             .background(MaterialTheme.colorScheme.surface),
-                        activities = data.activities
+                        activities = data.activities,
+                        timerVisible = data.timer != null,
+                        timerText = data.timer?.text,
+                        timerProgress = data.timer?.progress
                     )
                 }
             }
@@ -131,25 +142,43 @@ private fun ScheduleScreen(data: ScheduleData) {
 @Composable
 private fun ScheduleContent(
     modifier: Modifier = Modifier,
-    activities: List<ActivityUiModel>
+    activities: List<ActivityUiModel>,
+    timerVisible: Boolean,
+    timerText: String?,
+    timerProgress: Float?
 ) {
-    LazyColumn(
-        modifier = modifier,
-        contentPadding = PaddingValues(
-            start = Dimension.marginLarge,
-            end = Dimension.marginLarge,
-            top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + Dimension.marginNormal,
-            bottom = Dimension.marginNormal
-        )
-    ) {
-        activities.forEach { activity ->
-            item {
-                ActivityItem(
-                    modifier = Modifier.fillMaxWidth(),
-                    activity = activity
-                )
+    Box(modifier = modifier) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
+                start = Dimension.marginLarge,
+                end = Dimension.marginLarge,
+                top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + Dimension.marginNormal,
+                bottom = Dimension.marginNormal
+            )
+        ) {
+            activities.forEach { activity ->
+                item {
+                    ActivityItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        activity = activity
+                    )
+                }
+                item { VerticalMargin(Dimension.marginNormal) }
             }
-            item { VerticalMargin(Dimension.marginNormal) }
+        }
+        if (timerVisible) {
+            Timer(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(
+                        end = Dimension.marginSmall,
+                        bottom = Dimension.marginSmall
+                    )
+                    .size(72.dp),
+                text = timerText.orEmpty(),
+                progress = timerProgress ?: 0.0f
+            )
         }
     }
 }
@@ -202,10 +231,39 @@ private fun ActivityItem(
     }
 }
 
+@Composable
+private fun Timer(
+    modifier: Modifier = Modifier,
+    text: String,
+    progress: Float
+) {
+    Surface(
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.tertiaryContainer.disabled,
+        shape = CircleShape
+    ) {
+        Box(
+            modifier = Modifier.padding(Dimension.marginSmall),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onTertiaryContainer
+            )
+        }
+        CircularProgressIndicator(
+            progress = progress,
+            color = MaterialTheme.colorScheme.tertiary
+        )
+    }
+}
+
 private data class ScheduleData(
     val isLoading: Boolean,
     val isEnabled: Boolean,
     val activities: List<ActivityUiModel>,
+    val timer: TimerUiModel?,
     val internetPopupEnabled: Boolean,
     val errorData: ErrorData?
 ) {
@@ -230,6 +288,10 @@ private data class ScheduleData(
                     title = "Oczepiny",
                     typeIconResId = R.drawable.ic_attraction
                 )
+            ),
+            timer = TimerUiModel(
+                text = "20:00",
+                progress = 0.5f
             ),
             internetPopupEnabled = false,
             errorData = null
