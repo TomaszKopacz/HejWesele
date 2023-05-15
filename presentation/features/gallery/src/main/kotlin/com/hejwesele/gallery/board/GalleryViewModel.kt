@@ -117,9 +117,9 @@ internal class GalleryViewModel @Inject constructor(
         updateEvents { copy(showPhotoUploadSuccess = consumed) }
     }
 
-    fun onLoginOpened() {
+    fun onLogout() {
         viewModelScope.launch {
-            updateEvents { copy(openLogin = consumed) }
+            updateEvents { copy(logout = consumed) }
         }
     }
 
@@ -204,7 +204,7 @@ internal class GalleryViewModel @Inject constructor(
 
     private fun onEventNotFoundAlertDismissed() {
         updateState { copy(alertData = null) }
-        updateEvents { copy(openLogin = triggered) }
+        updateEvents { copy(logout = triggered) }
     }
 
     private fun onAlertDismissed() {
@@ -245,14 +245,14 @@ internal data class GalleryUiEvents(
     val openExternalGallery: StateEventWithContent<IntentData>,
     val openImageCropper: StateEventWithContent<String>,
     val showPhotoUploadSuccess: StateEvent,
-    val openLogin: StateEvent
+    val logout: StateEvent
 ) {
     companion object {
         val Default = GalleryUiEvents(
             openExternalGallery = consumed(),
             openImageCropper = consumed(),
             showPhotoUploadSuccess = consumed,
-            openLogin = consumed
+            logout = consumed
         )
     }
 }

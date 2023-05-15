@@ -16,7 +16,7 @@ class HomeFeatureNavigation(
         navController.navigate(InformationNavGraph.route)
     }
 
-    override fun openLogin() {
+    override fun logout() {
         navController.navigate(LoginNavGraph.route) {
             popUpTo(MainNavGraph.route) { inclusive = true }
         }

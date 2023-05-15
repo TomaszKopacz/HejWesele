@@ -140,7 +140,7 @@ private fun InformationOverviewScreen(
             InformationOverviewContent(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1.0f)
+                    .weight(Dimension.weightFull)
                     .padding(horizontal = Dimension.marginLarge)
                     .statusBarsPadding()
                     .navigationBarsPadding(),
@@ -192,7 +192,7 @@ private fun InformationOverviewContent(
             onClick = onPrivacyPolicyClicked
         )
         VerticalMargin(Dimension.marginLarge)
-        Spacer(modifier = Modifier.weight(1.0f))
+        Spacer(modifier = Modifier.weight(Dimension.weightFull))
         Text(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             text = "${Label.informationContactLabelText} $contactEmail",

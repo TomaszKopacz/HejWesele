@@ -215,7 +215,7 @@ private fun PhotoPreviewContent(
         Image(
             bitmap = photo.asImageBitmap(),
             contentDescription = null,
-            modifier = Modifier.weight(1.0f)
+            modifier = Modifier.weight(Dimension.weightFull)
         )
     }
 }

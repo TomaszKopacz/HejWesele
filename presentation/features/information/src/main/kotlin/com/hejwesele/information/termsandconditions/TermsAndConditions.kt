@@ -122,7 +122,7 @@ private fun TermsAndConditionsScreen(
             }
             Box(
                 modifier = Modifier
-                    .weight(1.0f)
+                    .weight(Dimension.weightFull)
                     .background(MaterialTheme.colorScheme.surface)
             ) {
                 when {

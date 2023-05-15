@@ -4,7 +4,7 @@ interface IHomeNavigation {
 
     fun openInformation()
 
-    fun openLogin()
+    fun logout()
 
     fun finishApplication()
 }

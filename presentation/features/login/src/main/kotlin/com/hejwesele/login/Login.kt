@@ -367,7 +367,7 @@ private fun TermsAndConditionsCheckbox(
         )
         HorizontalMargin(Dimension.marginSmall)
         HyperlinkText(
-            modifier = Modifier.weight(1.0f),
+            modifier = Modifier.weight(Dimension.weightFull),
             text = Label.loginTermsAndConditionsPromptText,
             links = mapOf(
                 Label.loginTermsAndConditionsClickableText to onLinkClicked

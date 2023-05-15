@@ -61,7 +61,7 @@ internal class HomeViewModel @Inject constructor(
             logout()
                 .onSuccess {
                     updateState { copy(isLoggingOut = false) }
-                    updateEvents { copy(openLogin = triggered) }
+                    updateEvents { copy(logout = triggered) }
                 }
                 .onFailure {
                     updateState {
@@ -119,9 +119,9 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onLoginOpened() {
+    fun onLogout() {
         viewModelScope.launch {
-            updateEvents { copy(openLogin = consumed) }
+            updateEvents { copy(logout = consumed) }
         }
     }
 
@@ -164,12 +164,12 @@ internal class HomeViewModel @Inject constructor(
 
     private fun onEventNotFoundAlertDismissed() {
         updateState { copy(alertData = null) }
-        updateEvents { copy(openLogin = triggered) }
+        updateEvents { copy(logout = triggered) }
     }
 
     private fun onLogoutAlertDismissed() {
         updateState { copy(alertData = null) }
-        updateEvents { copy(openLogin = triggered) }
+        updateEvents { copy(logout = triggered) }
     }
 
     private fun InvitationTile.toUiModel() = InvitationTileUiModel(
@@ -239,7 +239,7 @@ internal data class HomeUiEvents(
     val openIntent: StateEventWithContent<IntentUiModel>,
     val showTileOptions: StateEvent,
     val hideTileOptions: StateEvent,
-    val openLogin: StateEvent
+    val logout: StateEvent
 ) {
     companion object {
         val Default = HomeUiEvents(
@@ -247,7 +247,7 @@ internal data class HomeUiEvents(
             showTileOptions = consumed,
             hideTileOptions = consumed,
             openIntent = consumed(),
-            openLogin = consumed
+            logout = consumed
         )
     }
 }

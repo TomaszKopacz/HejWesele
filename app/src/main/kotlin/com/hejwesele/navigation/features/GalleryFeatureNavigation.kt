@@ -34,7 +34,7 @@ class GalleryFeatureNavigation(
         )
     }
 
-    override fun openLogin() {
+    override fun logout() {
         navController.navigate(LoginNavGraph) {
             popUpTo(MainNavGraph.route) { inclusive = true }
         }

@@ -136,7 +136,7 @@ private fun ScheduleScreen(data: ScheduleData) {
             }
             Box(
                 modifier = Modifier
-                    .weight(1.0f)
+                    .weight(Dimension.weightFull)
                     .background(MaterialTheme.colorScheme.surface)
             ) {
                 when {
@@ -240,7 +240,7 @@ private fun ActivityItem(
             color = itemColor
         )
         HorizontalMargin(Dimension.marginSmall)
-        Column(modifier = Modifier.weight(1.0f)) {
+        Column(modifier = Modifier.weight(Dimension.weightFull)) {
             Text(
                 text = activity.title,
                 style = MaterialTheme.typography.bodyMedium,

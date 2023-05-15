@@ -87,7 +87,7 @@ fun CachedImage(
                 SubcomposeAsyncImageContent()
 
                 val imageSource = (painter.state as Success).result.dataSource
-                Log.d("TOMASZKOPACZ", "Image $url successfully loaded from source: $imageSource")
+                Log.d("LOG_HEJWESELE", "Image $url successfully loaded from source: $imageSource")
             }
         }
     }

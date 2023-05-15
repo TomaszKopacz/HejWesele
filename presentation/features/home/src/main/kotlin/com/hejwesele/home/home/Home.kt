@@ -1,5 +1,6 @@
 package com.hejwesele.home.home
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RawRes
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -185,9 +187,9 @@ private fun HomeEventHandler(
         action = { intent -> openActivity(context, intent.intentPackage, intent.url) }
     )
     EventEffect(
-        event = events.openLogin,
-        onConsumed = viewModel::onLoginOpened,
-        action = navigation::openLogin
+        event = events.logout,
+        onConsumed = viewModel::onLogout,
+        action = navigation::logout
     )
     BackHandler(enabled = sheetState.isVisible) {
         coroutineScope.launch { sheetState.hide() }
@@ -197,6 +199,7 @@ private fun HomeEventHandler(
     }
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(
     ExperimentalMaterialApi::class,
     ExperimentalAnimationApi::class,
@@ -222,14 +225,14 @@ private fun HomeScreen(
             )
         }
     ) {
-        Scaffold { padding ->
+        Scaffold {
             Column(modifier = Modifier.fillMaxSize()) {
                 if (data.internetPopupEnabled) {
                     InternetConnectionPopup()
                 }
                 Box(
                     modifier = Modifier
-                        .weight(1.0f)
+                        .weight(Dimension.weightFull)
                         .background(MaterialTheme.colorScheme.surface)
                 ) {
                     when {
@@ -240,7 +243,7 @@ private fun HomeScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .background(MaterialTheme.colorScheme.surface)
-                                .padding(top = padding.calculateTopPadding()),
+                                .statusBarsPadding(),
                             tiles = data.tiles,
                             onInformationItemClicked = actions.onInformationItemClicked,
                             onLogoutItemClicked = actions.onLogoutItemClicked,
@@ -269,7 +272,7 @@ private fun HomeContent(
 ) {
     ScrollableColumn(modifier = modifier) {
         Box(modifier = Modifier.fillMaxWidth()) {
-            CoupleLottieAnimation(modifier = Modifier.aspectRatio(1.0f))
+            CoupleLottieAnimation(modifier = Modifier.aspectRatio(Dimension.weightFull))
             MenuComponent(
                 modifier = Modifier
                     .align(Alignment.TopEnd)

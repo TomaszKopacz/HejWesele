@@ -209,7 +209,7 @@ private fun GalleryPreviewContent(
             onSave = { onSave(photoUrls[pagerState.currentPage]) }
         )
         PhotosCarousel(
-            modifier = Modifier.weight(1.0f),
+            modifier = Modifier.weight(Dimension.weightFull),
             state = pagerState,
             photoUrls = photoUrls,
             savingPhoto = isSavingPhoto

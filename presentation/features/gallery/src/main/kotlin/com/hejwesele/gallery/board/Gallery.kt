@@ -173,9 +173,9 @@ private fun GalleryEventHandler(
         }
     )
     EventEffect(
-        event = events.openLogin,
-        onConsumed = viewModel::onLoginOpened,
-        action = navigation::openLogin
+        event = events.logout,
+        onConsumed = viewModel::onLogout,
+        action = navigation::logout
     )
 }
 
@@ -378,7 +378,7 @@ private fun EmptyGalleryContent(
             )
             VerticalMargin(Dimension.marginNormal)
         }
-        Box(modifier = Modifier.weight(1.0f)) {
+        Box(modifier = Modifier.weight(Dimension.weightFull)) {
             TextPlaceholder(text = Label.galleryEmptyGalleryPlaceholderText)
         }
     }
