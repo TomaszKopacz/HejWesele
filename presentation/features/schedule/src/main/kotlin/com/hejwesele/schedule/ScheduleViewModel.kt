@@ -196,15 +196,8 @@ internal class ScheduleViewModel @Inject constructor(
         currentDate: LocalDateTime,
         startDate: LocalDateTime,
         endDate: LocalDateTime
-    ): TimerUiModel? = when {
-        startDate >= endDate -> null
-
-        currentDate < startDate -> TimerUiModel(
-            text = startDate.formatTimeString(),
-            progress = 0.0f
-        )
-
-        currentDate in startDate..endDate -> TimerUiModel(
+    ): TimerUiModel? = when (currentDate) {
+        in startDate..endDate -> TimerUiModel(
             text = currentDate.formatTimeString(),
             progress = calculateEventProgress(
                 currentDate = currentDate,
@@ -212,12 +205,6 @@ internal class ScheduleViewModel @Inject constructor(
                 endDate = endDate
             )
         )
-
-        currentDate > endDate -> TimerUiModel(
-            text = endDate.formatTimeString(),
-            progress = 100.0f
-        )
-
         else -> null
     }
 
