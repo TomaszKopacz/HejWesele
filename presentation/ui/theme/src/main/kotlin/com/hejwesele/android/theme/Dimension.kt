@@ -25,7 +25,11 @@ object Dimension {
     val radiusRoundedCornerLarge = 24.dp
     val radiusRoundedCornerExtraLarge = 28.dp
 
+    val borderWidthSmall = 1.dp
     val borderWidthNormal = 2.dp
+
+    val borderDashSize = 5.dp
+    val borderGapSize = 3.dp
 
     val elevationSmall = 2.dp
 

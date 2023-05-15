@@ -6,6 +6,10 @@ import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.mvvm.StateEventsViewModel
 import com.hejwesele.android.theme.Label
 import com.hejwesele.events.model.EventSettings
+import com.hejwesele.schedule.model.ActivityProgress
+import com.hejwesele.schedule.model.ActivityProgress.BEFORE
+import com.hejwesele.schedule.model.ActivityProgress.IN_PROGRESS
+import com.hejwesele.schedule.model.ActivityProgress.PAST
 import com.hejwesele.schedule.model.ActivityUiModel
 import com.hejwesele.schedule.model.TimerUiModel
 import com.hejwesele.schedule.usecase.GetEventSettings
@@ -22,7 +26,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import de.palm.composestateevents.StateEvent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -45,8 +50,6 @@ internal class ScheduleViewModel @Inject constructor(
         private const val TIME_PATTERN = "HH:mm"
     }
 
-    private var timerJob: Job? = null
-
     init {
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
@@ -66,12 +69,16 @@ internal class ScheduleViewModel @Inject constructor(
         val scheduleId = settings.scheduleId
 
         if (scheduleId != null) {
-            observeSchedule(scheduleId)
-                .collect { handleScheduleResult(it) }
-        } else {
-            updateState {
-                copy(isLoading = false, isEnabled = false)
+            val scheduleFlow = viewModelScope.async { observeSchedule(scheduleId) }
+            val clockFlow = viewModelScope.async { observeClock(CLOCK_TICK_TIME_SEC.seconds) }
+
+            scheduleFlow.await().combine(clockFlow.await()) { scheduleResult, time ->
+                scheduleResult to time
+            }.collect { (scheduleResult, time) ->
+                handleScheduleResult(scheduleResult, time)
             }
+        } else {
+            emitDisabledState()
         }
     }
 
@@ -87,58 +94,10 @@ internal class ScheduleViewModel @Inject constructor(
         }
     }
 
-    private fun handleScheduleResult(result: Result<Schedule>) {
+    private fun handleScheduleResult(result: Result<Schedule>, time: LocalDateTime) {
         result
-            .onSuccess { schedule ->
-                setupTimer(schedule)
-
-                val activities = schedule.activities.map {
-                    ActivityUiModel(
-                        time = it.startDate.formatTimeString(),
-                        title = it.title,
-                        description = it.description,
-                        typeIconResId = getTypeIconResId(type = it.type)
-                    )
-                }
-
-                updateState {
-                    copy(
-                        isLoading = false,
-                        isEnabled = activities.isNotEmpty(),
-                        activities = activities
-                    )
-                }
-            }
-            .onFailure {
-                updateState { copy(isLoading = false, errorData = ErrorData.Default) }
-            }
-    }
-
-    private fun setupTimer(schedule: Schedule) {
-        timerJob?.cancel()
-
-        if (schedule.activities.isNotEmpty()) {
-            val startDate = schedule.activities.first().startDate
-            val endDate = schedule.activities.last().endDate
-
-            if (startDate >= endDate) {
-                updateState { copy(timer = null) }
-            } else {
-                timerJob = viewModelScope.launch {
-                    observeClock(CLOCK_TICK_TIME_SEC.seconds)
-                        .collect { currentDate ->
-                            val timer = determineTimerData(
-                                currentDate = currentDate,
-                                startDate = startDate,
-                                endDate = endDate
-                            )
-                            updateState { copy(timer = timer) }
-                        }
-                }
-            }
-        } else {
-            updateState { copy(timer = null) }
-        }
+            .onSuccess { schedule -> handleScheduleSuccessResult(schedule, time) }
+            .onFailure { emitErrorState() }
     }
 
     private fun onEventNotFoundAlertDismissed() {
@@ -146,11 +105,91 @@ internal class ScheduleViewModel @Inject constructor(
         updateEvents { copy(logout = triggered) }
     }
 
-    private fun getTypeIconResId(type: ScheduleActivityType) = when (type) {
+    private fun handleScheduleSuccessResult(schedule: Schedule, time: LocalDateTime) {
+        if (schedule.activities.isNotEmpty()) {
+            val startDate = schedule.activities.first().startDate
+            val endDate = schedule.activities.last().endDate
+            val activities = schedule.activities.map {
+                ActivityUiModel(
+                    time = it.startDate.formatTimeString(),
+                    title = it.title,
+                    description = it.description,
+                    typeIconResId = getActivityTypeIcon(type = it.type),
+                    progress = getActivityProgress(
+                        currentDate = time,
+                        startDate = it.startDate,
+                        endDate = it.endDate
+                    )
+                )
+            }
+            val timer = determineTimerData(
+                currentDate = time,
+                startDate = startDate,
+                endDate = endDate
+            )
+            emitSuccessState(
+                activities = activities,
+                timer = timer
+            )
+        } else {
+            emitDisabledState()
+        }
+    }
+
+    private fun emitSuccessState(activities: List<ActivityUiModel>, timer: TimerUiModel?) {
+        updateState {
+            copy(
+                isLoading = false,
+                isEnabled = true,
+                activities = activities,
+                timer = timer,
+                errorData = null,
+                alertData = null
+            )
+        }
+    }
+
+    private fun emitDisabledState() {
+        updateState {
+            copy(
+                isLoading = false,
+                isEnabled = false,
+                activities = emptyList(),
+                timer = null,
+                errorData = null,
+                alertData = null
+            )
+        }
+    }
+
+    private fun emitErrorState() {
+        updateState {
+            copy(
+                isLoading = false,
+                isEnabled = false,
+                activities = emptyList(),
+                timer = null,
+                errorData = ErrorData.Default
+            )
+        }
+    }
+
+    private fun getActivityTypeIcon(type: ScheduleActivityType) = when (type) {
         CHURCH -> R.drawable.ic_church
         MEAL -> R.drawable.ic_meal
         ATTRACTION -> R.drawable.ic_attraction
         PARTY -> R.drawable.ic_party
+    }
+
+    private fun getActivityProgress(
+        currentDate: LocalDateTime,
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
+    ): ActivityProgress = when {
+        currentDate < startDate -> BEFORE
+        currentDate in startDate..endDate -> IN_PROGRESS
+        currentDate > endDate -> PAST
+        else -> BEFORE
     }
 
     private fun determineTimerData(
@@ -158,6 +197,8 @@ internal class ScheduleViewModel @Inject constructor(
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ): TimerUiModel? = when {
+        startDate >= endDate -> null
+
         currentDate < startDate -> TimerUiModel(
             text = startDate.formatTimeString(),
             progress = 0.0f
@@ -186,7 +227,7 @@ internal class ScheduleViewModel @Inject constructor(
         endDate: LocalDateTime
     ): Float = ((currentDate - startDate) / (endDate - startDate)).toFloat()
 
-    private fun LocalDateTime.formatTimeString() =
+    private fun LocalDateTime.formatTimeString(): String =
         DateTimeFormatter.ofPattern(TIME_PATTERN).format(toJavaLocalDateTime())
 
     private operator fun LocalDateTime.minus(other: LocalDateTime): Duration {

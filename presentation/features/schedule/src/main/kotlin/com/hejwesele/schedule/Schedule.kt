@@ -2,6 +2,12 @@ package com.hejwesele.schedule
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,10 +35,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -47,11 +57,20 @@ import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.extensions.disabled
 import com.hejwesele.internet.InternetConnectionPopup
+import com.hejwesele.schedule.model.ActivityProgress.BEFORE
+import com.hejwesele.schedule.model.ActivityProgress.IN_PROGRESS
+import com.hejwesele.schedule.model.ActivityProgress.PAST
 import com.hejwesele.schedule.model.ActivityUiModel
 import com.hejwesele.schedule.model.TimerUiModel
 import com.hejwesele.theme.R
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+
+private object ActivityIndicatorConstants {
+    const val rotationDuration = 3000 // 3 sec
+    const val rotationInitialValue = 0f
+    const val rotationTargetValue = 360f
+}
 
 @Composable
 fun Schedule(navigation: IScheduleNavigation) = ScheduleEntryPoint(navigation = navigation)
@@ -122,8 +141,8 @@ private fun ScheduleScreen(data: ScheduleData) {
             ) {
                 when {
                     data.isLoading -> Loader()
-                    !data.isEnabled -> TextPlaceholder(text = Label.scheduleDisabledMessageText)
                     data.errorData != null -> ErrorView(modifier = Modifier.fillMaxSize())
+                    !data.isEnabled -> TextPlaceholder(text = Label.scheduleDisabledMessageText)
                     else -> ScheduleContent(
                         modifier = Modifier
                             .fillMaxSize()
@@ -188,28 +207,44 @@ private fun ActivityItem(
     modifier: Modifier = Modifier,
     activity: ActivityUiModel
 ) {
+    val itemColor = when (activity.progress) {
+        PAST -> MaterialTheme.colorScheme.primary.disabled
+        IN_PROGRESS -> MaterialTheme.colorScheme.tertiary
+        BEFORE -> MaterialTheme.colorScheme.primary
+    }
+    val indicatorStrokeWidth = when (activity.progress) {
+        PAST -> Dimension.borderWidthNormal
+        else -> Dimension.borderWidthSmall
+    }
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.Top
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_ellipse_thin),
-            contentDescription = null,
-            modifier = Modifier.size(Dimension.iconSmall),
-            tint = MaterialTheme.colorScheme.primary
-        )
+        if (activity.progress == IN_PROGRESS) {
+            ActivityRingIndicatorInProgress(
+                modifier = Modifier.size(Dimension.iconSmall),
+                color = itemColor,
+                strokeWidth = indicatorStrokeWidth
+            )
+        } else {
+            ActivityRingIndicator(
+                modifier = Modifier.size(Dimension.iconSmall),
+                color = itemColor,
+                strokeWidth = indicatorStrokeWidth
+            )
+        }
         HorizontalMargin(Dimension.marginSmall)
         Text(
             text = activity.time,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.primary
+            color = itemColor
         )
         HorizontalMargin(Dimension.marginSmall)
         Column(modifier = Modifier.weight(1.0f)) {
             Text(
                 text = activity.title,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary,
+                color = itemColor,
                 fontWeight = FontWeight.Bold
             )
             if (!activity.description.isNullOrEmpty()) {
@@ -217,7 +252,7 @@ private fun ActivityItem(
                 Text(
                     text = activity.description,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary
+                    color = itemColor
                 )
             }
         }
@@ -226,7 +261,7 @@ private fun ActivityItem(
             painter = painterResource(id = activity.typeIconResId),
             contentDescription = null,
             modifier = Modifier.size(Dimension.iconSmall),
-            tint = MaterialTheme.colorScheme.primary
+            tint = itemColor
         )
     }
 }
@@ -259,6 +294,54 @@ private fun Timer(
     }
 }
 
+@Composable
+fun ActivityRingIndicator(
+    modifier: Modifier = Modifier,
+    color: Color,
+    strokeWidth: Dp
+) {
+    Canvas(modifier = modifier) {
+        drawCircle(
+            color = color,
+            style = Stroke(width = strokeWidth.toPx())
+        )
+    }
+}
+
+@Composable
+fun ActivityRingIndicatorInProgress(
+    modifier: Modifier = Modifier,
+    color: Color,
+    strokeWidth: Dp
+) {
+    val infiniteTransition = rememberInfiniteTransition()
+    val angle by infiniteTransition.animateFloat(
+        initialValue = ActivityIndicatorConstants.rotationInitialValue,
+        targetValue = ActivityIndicatorConstants.rotationTargetValue,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = ActivityIndicatorConstants.rotationDuration,
+                easing = LinearEasing
+            )
+        )
+    )
+
+    Canvas(modifier = modifier.rotate(angle)) {
+        drawCircle(
+            color = color,
+            style = Stroke(
+                width = strokeWidth.toPx(),
+                pathEffect = PathEffect.dashPathEffect(
+                    intervals = floatArrayOf(
+                        Dimension.borderDashSize.toPx(),
+                        Dimension.borderGapSize.toPx()
+                    )
+                )
+            )
+        )
+    }
+}
+
 private data class ScheduleData(
     val isLoading: Boolean,
     val isEnabled: Boolean,
@@ -275,18 +358,21 @@ private data class ScheduleData(
                 ActivityUiModel(
                     time = "20:00",
                     title = "Zabawa weselna",
-                    typeIconResId = R.drawable.ic_party
+                    typeIconResId = R.drawable.ic_party,
+                    progress = PAST
                 ),
                 ActivityUiModel(
                     time = "21:00",
                     title = "Posiłek II",
                     description = "Kotlet schabowy z ziemniakami",
-                    typeIconResId = R.drawable.ic_meal
+                    typeIconResId = R.drawable.ic_meal,
+                    progress = IN_PROGRESS
                 ),
                 ActivityUiModel(
                     time = "00:00",
                     title = "Oczepiny",
-                    typeIconResId = R.drawable.ic_attraction
+                    typeIconResId = R.drawable.ic_attraction,
+                    progress = BEFORE
                 )
             ),
             timer = TimerUiModel(
