@@ -40,7 +40,7 @@ object Label {
     const val informationTermsAndConditionsLabel = "Regulamin"
     const val informationPrivacyPolicyLabel = "Polityka prywatności"
     const val informationContactLabelText = "Kontakt:"
-    const val informationContactEmailText = "tomasz.kopacz.g@gmail.com"
+    const val informationContactEmailText = "kontakt.hejwesele@gmail.com"
     const val informationAppVersionLabelText = "Wersja aplikacji:"
 
     // Home
