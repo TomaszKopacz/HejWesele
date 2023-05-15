@@ -12,6 +12,8 @@ If you forget your invitation, don't worry! After successful login, you can view
 
 ### Follow live schedule
 
+Never again will you miss the first dance of the newlyweds or a delicious late-night borscht soup. The event schedule will allow you to keep track of the planned activities, ensuring that you never miss out on the most important moments.
+
 ### Meet partners and find attractions
 
 ### Event gallery
