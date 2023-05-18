@@ -8,6 +8,7 @@ import com.hejwesele.information.destinations.InformationOverviewDestination
 import com.hejwesele.information.destinations.PrivacyPolicyDestination
 import com.hejwesele.information.destinations.TermsAndConditionsDestination
 import com.hejwesele.main.destinations.MainDestination
+import com.hejwesele.services.details.destinations.ServiceDetailsDestination
 import com.ramcosta.composedestinations.dynamic.routedIn
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.NavGraphSpec
@@ -38,6 +39,7 @@ internal object MainNavGraph : NavGraphSpec {
     override val startRoute: Route = MainDestination routedIn this
     override val destinationsByRoute = listOf<DestinationSpec<*>>(
         MainDestination,
+        ServiceDetailsDestination,
         PhotoConfirmationDestination,
         GalleryPreviewDestination
     ).routedIn(this).associateBy { it.route }

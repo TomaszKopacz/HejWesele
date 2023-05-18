@@ -89,7 +89,7 @@ fun TextPlaceholder(
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.alpha(Alpha.semiTransparent)
+            modifier = Modifier.alpha(Alpha.alpha50)
         )
     }
 }

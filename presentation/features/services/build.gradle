@@ -1,6 +1,8 @@
 plugins {
     id "com.android.library"
     id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.kapt"
+    alias libs.plugins.ksp
 }
 
 android {
@@ -18,12 +20,37 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
     }
+
+    ksp {
+        arg("compose-destinations.moduleName", "galleryFeature")
+        arg("compose-destinations.mode", "destinations")
+    }
 }
 
 dependencies {
-    implementation projects.presentation.ui.components
+    implementation projects.libraries.mvvm
 
+    implementation projects.presentation.tools.internet
+    implementation projects.presentation.ui.components
+    implementation projects.presentation.ui.theme
+
+    implementation projects.repositories.events
+    implementation projects.repositories.services
+
+    implementation libs.accompanist.systemuicontroller
+    implementation libs.airbnb.compose.lottie
     implementation libs.androidx.compose.ui
     implementation libs.androidx.compose.foundation
     implementation libs.androidx.compose.material3
+    implementation libs.androidx.compose.tooling.preview
+    implementation libs.androidx.hilt.navigation.compose
+    implementation libs.stateevents.compose
+
+    debugImplementation libs.androidx.compose.tooling
+
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
+
+    implementation libs.destinations.core
+    ksp libs.destinations.ksp
 }

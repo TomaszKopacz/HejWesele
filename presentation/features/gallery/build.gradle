@@ -36,7 +36,6 @@ dependencies {
     implementation projects.repositories.details
     implementation projects.repositories.events
     implementation projects.repositories.galleries
-    implementation projects.repositories.services
 
     implementation projects.libraries.bitmap
     implementation projects.libraries.intent
