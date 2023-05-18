@@ -99,6 +99,7 @@ internal class LogIn @Inject constructor(
         detailsId = detailsId,
         invitationId = invitationId,
         scheduleId = scheduleId,
+        servicesId = servicesId,
         galleryId = galleryId,
         galleryHintDismissed = false
     )

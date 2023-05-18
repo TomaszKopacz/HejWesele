@@ -11,6 +11,7 @@ data class EventSettingsDto(
     val detailsId: String? = null,
     val invitationId: String? = null,
     val scheduleId: String? = null,
+    val servicesId: String? = null,
     val galleryId: String? = null,
     val galleryHintDismissed: Boolean = false
 )

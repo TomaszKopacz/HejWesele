@@ -45,6 +45,7 @@ include ":services:galleries"
 include ":services:invitations"
 include ":services:legals"
 include ":services:schedules"
+include ":services:services"
 
 include ":repositories:configuration"
 include ":repositories:details"
@@ -53,6 +54,7 @@ include ":repositories:galleries"
 include ":repositories:invitations"
 include ":repositories:legals"
 include ":repositories:schedules"
+include ":repositories:services"
 
 include ":libraries:analytics"
 include ":libraries:appinfo"
@@ -79,3 +81,4 @@ include ":libraries:validation"
 apply from: new File(settingsDir, "gradle/buildCache.gradle")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+include ":services:services"

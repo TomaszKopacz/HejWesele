@@ -13,5 +13,6 @@ data class EventDto(
     val detailsId: String? = null,
     val invitationId: String? = null,
     val scheduleId: String? = null,
+    val servicesId: String? = null,
     val galleryId: String? = null
 )

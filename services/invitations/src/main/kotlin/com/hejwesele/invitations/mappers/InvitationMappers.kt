@@ -1,9 +1,6 @@
 package com.hejwesele.invitations.mappers
 
-import com.hejwesele.intent.IntentData
-import com.hejwesele.intent.IntentPackage
-import com.hejwesele.intent.IntentType
-import com.hejwesele.intent.IntentUrlPrefix
+import com.hejwesele.intent.mapIntentUrlModel
 import com.hejwesele.invitations.dto.InvitationDto
 import com.hejwesele.invitations.dto.InvitationTileDto
 import com.hejwesele.invitations.model.Invitation
@@ -52,28 +49,6 @@ private fun String.mapInvitationTileTypeModel(): InvitationTileType {
         "venue" -> InvitationTileType.VENUE
         "wishes" -> InvitationTileType.WISHES
         else -> InvitationTileType.WISHES
-    }
-}
-
-private fun String.mapIntentUrlModel(): IntentData {
-    return when {
-        startsWith(IntentUrlPrefix.INSTAGRAM) -> IntentData(
-            intentType = IntentType.INSTAGRAM,
-            intentPackage = IntentPackage.instagram,
-            intentUrl = this
-        )
-        startsWith(IntentUrlPrefix.GOOGLE_MAPS) -> IntentData(
-            intentType = IntentType.GOOGLE_MAPS,
-            intentPackage = IntentPackage.google_maps,
-            intentUrl = this
-        )
-        else -> {
-            IntentData(
-                intentType = IntentType.WWW,
-                intentPackage = null,
-                intentUrl = this
-            )
-        }
     }
 }
 
