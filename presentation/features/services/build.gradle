@@ -28,10 +28,12 @@ android {
 }
 
 dependencies {
+    implementation projects.libraries.intent
     implementation projects.libraries.mvvm
 
     implementation projects.presentation.tools.internet
     implementation projects.presentation.ui.components
+    implementation projects.presentation.ui.extensions
     implementation projects.presentation.ui.theme
 
     implementation projects.repositories.events
@@ -44,6 +46,7 @@ dependencies {
     implementation libs.androidx.compose.material3
     implementation libs.androidx.compose.tooling.preview
     implementation libs.androidx.hilt.navigation.compose
+    implementation libs.collapsingtoolbar.compose
     implementation libs.stateevents.compose
 
     debugImplementation libs.androidx.compose.tooling

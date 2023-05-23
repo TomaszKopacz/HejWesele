@@ -59,16 +59,16 @@ private fun provideDependencies(
 ): @Composable (DependenciesContainerBuilder<*>.() -> Unit) = {
     val loginFeatureNavigation: ILoginNavigation = LoginFeatureNavigation(navController)
 
-    val homeNavigation: IHomeNavigation = HomeFeatureNavigation(navController)
-    val scheduleNavigation: IScheduleNavigation = ScheduleFeatureNavigation(navController)
-    val servicesNavigation: IServicesNavigation = ServicesFeatureNavigation(navController)
-    val galleryNavigation: IGalleryNavigation = GalleryFeatureNavigation(navController)
+    val homeFeatureNavigation: IHomeNavigation = HomeFeatureNavigation(navController)
+    val scheduleFeatureNavigation: IScheduleNavigation = ScheduleFeatureNavigation(navController)
+    val servicesFeatureNavigation: IServicesNavigation = ServicesFeatureNavigation(navController)
+    val galleryFeatureNavigation: IGalleryNavigation = GalleryFeatureNavigation(navController)
     val galleryFeatureRecipient = resultRecipient<PhotoConfirmationDestination, Boolean>()
     val mainFeatureProvider: IMainFeatureProvider = MainFeatureProvider(
-        homeFeatureNavigation = homeNavigation,
-        scheduleFeatureNavigation = scheduleNavigation,
-        servicesFeatureNavigation = servicesNavigation,
-        galleryFeatureNavigation = galleryNavigation,
+        homeFeatureNavigation = homeFeatureNavigation,
+        scheduleFeatureNavigation = scheduleFeatureNavigation,
+        servicesFeatureNavigation = servicesFeatureNavigation,
+        galleryFeatureNavigation = galleryFeatureNavigation,
         galleryFeatureRecipient = galleryFeatureRecipient
     )
 
@@ -76,8 +76,9 @@ private fun provideDependencies(
 
     dependency(loginFeatureNavigation)
     dependency(mainFeatureProvider)
-    dependency(homeNavigation)
-    dependency(scheduleNavigation)
-    dependency(galleryNavigation)
+    dependency(homeFeatureNavigation)
+    dependency(scheduleFeatureNavigation)
+    dependency(servicesFeatureNavigation)
+    dependency(galleryFeatureNavigation)
     dependency(informationNavigation)
 }

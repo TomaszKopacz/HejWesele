@@ -21,6 +21,7 @@ import com.hejwesele.imageloader.CachedImage
 fun RectangleImage(
     modifier: Modifier = Modifier,
     url: String,
+    contentScale: ContentScale = ContentScale.FillWidth,
     loader: @Composable () -> Unit = { Loader() },
     fallback: @Composable () -> Unit = { Loader() }
 ) {
@@ -29,7 +30,7 @@ fun RectangleImage(
         url = url,
         loader = { loader() },
         fallback = { fallback() },
-        contentScale = ContentScale.FillWidth
+        contentScale = contentScale
     )
 }
 

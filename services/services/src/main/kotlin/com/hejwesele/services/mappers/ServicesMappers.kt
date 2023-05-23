@@ -21,6 +21,7 @@ internal fun ServicesDto.mapModel() = Services(
 )
 
 internal fun ServiceDto.mapModel() = Service(
+    id = id ?: throw IllegalArgumentException("Required service id is not present."),
     type = type.mapServiceTypeModel(),
     title = title ?: throw IllegalArgumentException("Required service title is not present."),
     name = name,
@@ -32,7 +33,7 @@ internal fun ServiceDto.mapModel() = Service(
 
 internal fun ServiceDetailsDto.mapModel() = ServiceDetails(
     title = title ?: throw IllegalArgumentException("Required service details title is not present."),
-    content = content ?: throw IllegalArgumentException("Required service details content is not present.")
+    content = content
 )
 
 private fun String.mapServiceTypeModel() = when (this) {

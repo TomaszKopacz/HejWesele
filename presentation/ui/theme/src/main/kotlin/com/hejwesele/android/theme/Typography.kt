@@ -8,7 +8,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.hejwesele.theme.R
 
-private val Lato = FontFamily(
+val Lato = FontFamily(
     listOf(
         Font(R.font.lato_light, FontWeight.Light),
         Font(R.font.lato_regular, FontWeight.Normal),

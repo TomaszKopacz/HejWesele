@@ -36,6 +36,7 @@ androidx-hilt-navigation-compose = "1.0.0"
 accompanist = "0.24.7-alpha"
 airbnb-compose-lottie = "5.2.0"
 coil-compose = "2.2.2"
+collapsingtoolbar-compose = "2.3.5"
 imagecropper-compose = "4.5.0"
 stateevents-compose = "1.1.0"
 
@@ -117,6 +118,7 @@ accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 airbnb-compose-lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "airbnb-compose-lottie" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil-compose" }
+collapsingtoolbar-compose = { module = "me.onebone:toolbar-compose", version.ref = "collapsingtoolbar-compose" }
 imagecropper-compose = { module  = "com.vanniktech:android-image-cropper", version.ref = "imagecropper-compose"}
 stateevents-compose = { module  = "com.github.leonard-palm:compose-state-events", version.ref = "stateevents-compose"}
 

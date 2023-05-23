@@ -1,6 +1,9 @@
 package com.hejwesele.services
 
 interface IServicesNavigation {
-    fun openServiceDetails(title: String, name: String?, description: String)
+    fun openServiceDetails(serviceId: String)
+
+    fun navigateUp()
+
     fun logout()
 }

@@ -3,6 +3,7 @@ package com.hejwesele.services.model
 import androidx.annotation.RawRes
 
 internal data class ServiceUiModel(
+    val id: String,
     val title: String,
     val name: String?,
     val description: String,

@@ -56,9 +56,10 @@ object Label {
     const val scheduleDisabledMessageText = "Dla tego wydarzenia nie przygotowano harmonogramu."
 
     // Services
-    const val servicesDisabledMessageText = "Brak informacji na temat partnerów i usług dla tego wydarzenia"
+    const val servicesDisabledMessageText = "Brak informacji na temat usług dla tego wydarzenia"
     const val servicesPartnersText = "Partnerzy"
     const val servicesAttractionsText = "Atrakcje"
+    const val errorDescriptionServiceNotFoundText = "Niestety, wystąpił błąd w pobieraniu informacji o usłudze.."
 
     // Gallery
     const val galleryDisabledMessageText = "Dla tego wydarzenia galeria zdjęć jest niedostępna."

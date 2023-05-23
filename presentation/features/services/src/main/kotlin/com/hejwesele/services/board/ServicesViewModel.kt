@@ -48,7 +48,7 @@ internal class ServicesViewModel @Inject constructor(
 
     fun onServiceSelected(service: ServiceUiModel) {
         viewModelScope.launch {
-            updateEvents { copy(openServiceDetails = triggered(service)) }
+            updateEvents { copy(openServiceDetails = triggered(service.id)) }
         }
     }
 
@@ -75,17 +75,19 @@ internal class ServicesViewModel @Inject constructor(
     }
 
     private fun handleServicesSuccessResult(services: Services) {
+        val servicesListItems = prepareServicesListItems(services)
+
         updateState {
             copy(
                 isLoading = false,
                 isEnabled = true,
-                services = prepareServicesUiModels(services),
+                services = servicesListItems,
                 errorData = null
             )
         }
     }
 
-    private fun prepareServicesUiModels(services: Services): List<ServiceListItem> {
+    private fun prepareServicesListItems(services: Services): List<ServiceListItem> {
         val partnersLabel = Label.servicesPartnersText.toListItem()
         val attractionsLabel = Label.servicesAttractionsText.toListItem()
         val partners = services.partners.toListItems()
@@ -138,6 +140,7 @@ internal class ServicesViewModel @Inject constructor(
     private fun List<Service>.toListItems() = map { service ->
         ServiceListItem.Tile(
             service = ServiceUiModel(
+                id = service.id,
                 title = service.title,
                 name = service.name,
                 description = service.description,
@@ -177,7 +180,7 @@ internal data class ServicesUiState(
 }
 
 internal data class ServicesUiEvents(
-    val openServiceDetails: StateEventWithContent<ServiceUiModel>,
+    val openServiceDetails: StateEventWithContent<String>,
     val logout: StateEvent
 ) {
     companion object {

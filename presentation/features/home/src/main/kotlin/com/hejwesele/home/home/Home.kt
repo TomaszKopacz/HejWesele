@@ -365,7 +365,7 @@ private fun InvitationTile(
                             modifier = Modifier
                                 .padding(bottom = Dimension.marginNormal)
                                 .size(Dimension.imageSmall)
-                                .aspectRatio(1.0f),
+                                .aspectRatio(Dimension.aspectRatio_1_1),
                             animationResId = tile.animationResId
                         )
                     }

@@ -48,4 +48,8 @@ object Dimension {
 
     val bottomSheetHandleWidth = 72.dp
     val bottomSheetHandleHeight = 4.dp
+
+    const val aspectRatio_1_1 = 1.0f
+    const val aspectRatio_4_3 = 1.33f
+    const val ratioParallax = 0.2f
 }

@@ -113,11 +113,7 @@ private fun ServicesEventHandler(
     EventEffect(
         event = events.openServiceDetails,
         onConsumed = viewModel::onServiceDetailsOpened,
-        action = { service -> navigation.openServiceDetails(
-            title = service.title,
-            name = service.name,
-            description = service.description
-        ) }
+        action = { serviceId -> navigation.openServiceDetails(serviceId) }
     )
 
     EventEffect(
@@ -151,7 +147,7 @@ private fun ServicesScreen(
                 when {
                     data.isLoading -> Loader()
                     data.errorData != null -> ErrorView(modifier = Modifier.fillMaxSize())
-                    !data.isEnabled -> TextPlaceholder(text = Label.scheduleDisabledMessageText)
+                    !data.isEnabled -> TextPlaceholder(text = Label.servicesDisabledMessageText)
                     else -> ServicesContent(
                         modifier = Modifier
                             .fillMaxSize()
