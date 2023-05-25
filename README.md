@@ -6,6 +6,8 @@ An application designed for the wedding industry, allowing the bride and groom t
 
 ### Join the event
 
+Experience seamless event access with our mobile app! Forget about creating an account - simply log in to the event using your credentials or scan the QR code for instant entry. Enjoy hassle-free event attendance with our user-friendly app.
+
 ### Wedding information
 
 If you forget your invitation, don't worry! After successful login, you can view the vital information about the wedding. See the bride and grooms profiles, find out how to reach the ceremony church or venue. This is your must-see page before the wedding.
@@ -15,6 +17,8 @@ If you forget your invitation, don't worry! After successful login, you can view
 Never again will you miss the first dance of the newlyweds or a delicious late-night borscht soup. The event schedule will allow you to keep track of the planned activities, ensuring that you never miss out on the most important moments.
 
 ### Meet partners and find attractions
+
+Get acquainted with our service providers, partners, and exciting attractions, while exploring their detailed descriptions and specifications. With our app, you'll have all the information you need at your fingertips.
 
 ### Event gallery
 
@@ -39,7 +43,7 @@ The ceremony has just started and you're having a really, really good time? Shar
 
 ## Help
 
-Hej Wesele email
+Contact email: kontakt.hejwesele@gmail.com
 
 ## Authors
 
