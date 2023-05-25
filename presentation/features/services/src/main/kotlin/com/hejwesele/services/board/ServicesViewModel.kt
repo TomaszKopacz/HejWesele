@@ -151,7 +151,7 @@ internal class ServicesViewModel @Inject constructor(
     }
 
     private fun ServiceType.getAnimationResId() = when (this) {
-        VENUE -> R.raw.lottie_party
+        VENUE -> R.raw.lottie_home
         MUSIC -> R.raw.lottie_dj
         PHOTO -> R.raw.lottie_photographer
         MOVIE -> R.raw.lottie_video

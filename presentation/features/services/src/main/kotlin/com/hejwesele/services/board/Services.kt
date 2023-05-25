@@ -52,7 +52,6 @@ import com.hejwesele.android.theme.Dimension
 import com.hejwesele.android.theme.Label
 import com.hejwesele.internet.InternetConnectionPopup
 import com.hejwesele.services.IServicesNavigation
-import com.hejwesele.services.model.MaterialServiceColor.PRIMARY
 import com.hejwesele.services.model.MaterialServiceColor.SECONDARY
 import com.hejwesele.services.model.MaterialServiceColor.TERTIARY
 import com.hejwesele.services.model.ServiceListItem
@@ -226,7 +225,10 @@ private fun ServiceTile(
                 modifier = Modifier.weight(Dimension.weightFull),
                 service = service
             )
-            ServiceTileAnimation(animationResId = service.animation)
+            ServiceTileAnimation(
+                modifier = Modifier.padding(Dimension.marginSmall),
+                animationResId = service.animation
+            )
         }
     }
 }
@@ -275,7 +277,6 @@ private fun ServiceTileDescription(
 ) {
     val (backgroundColor, textColor) = with(MaterialTheme.colorScheme) {
         when (service.color) {
-            PRIMARY -> errorContainer to onErrorContainer
             SECONDARY -> secondaryContainer to onSecondaryContainer
             TERTIARY -> tertiaryContainer to onTertiaryContainer
         }

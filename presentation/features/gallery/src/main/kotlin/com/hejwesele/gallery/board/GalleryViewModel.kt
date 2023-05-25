@@ -13,7 +13,7 @@ import com.hejwesele.gallery.usecase.GetEventSettings
 import com.hejwesele.gallery.usecase.ObserveDetails
 import com.hejwesele.gallery.usecase.ObserveGallery
 import com.hejwesele.intent.IntentData
-import com.hejwesele.intent.IntentPackage.GOOGLE_DRIVE_PACKAGE
+import com.hejwesele.intent.IntentPackage.google_drive
 import com.hejwesele.intent.IntentType.GOOGLE_DRIVE
 import com.hejwesele.result.extensions.mergeToPair
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -68,7 +68,7 @@ internal class GalleryViewModel @Inject constructor(
             if (externalGalleryUrl != null) {
                 val intent = IntentData(
                     intentType = GOOGLE_DRIVE,
-                    intentPackage = GOOGLE_DRIVE_PACKAGE,
+                    intentPackage = google_drive,
                     intentUrl = externalGalleryUrl
                 )
                 updateEvents { copy(openExternalGallery = triggered(intent)) }

@@ -8,4 +8,6 @@ interface ServicesRemoteSource {
     suspend fun observeServices(servicesId: String): Flow<Result<Services>>
 
     suspend fun getServices(servicesId: String): Result<Services>
+
+    suspend fun addServices(services: Services): Result<Services>
 }

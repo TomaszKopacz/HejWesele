@@ -3,6 +3,7 @@ package com.hejwesele.services
 import com.hejwesele.remotedatabase.RemoteDatabase
 import com.hejwesele.result.notFound
 import com.hejwesele.services.dto.ServicesDto
+import com.hejwesele.services.mappers.mapDto
 import com.hejwesele.services.mappers.mapModel
 import com.hejwesele.services.model.Services
 import kotlinx.coroutines.Dispatchers
@@ -39,5 +40,12 @@ class RemoteDatabaseServicesRemoteSource @Inject constructor(
         ).mapCatching { dto ->
             dto?.mapModel() ?: throw notFound(name = "services", id = servicesId)
         }
+    }
+
+    override suspend fun addServices(services: Services): Result<Services> = withContext(Dispatchers.IO) {
+        database.write(
+            path = SERVICES_PATH,
+            item = services.mapDto()
+        ).map { services }
     }
 }

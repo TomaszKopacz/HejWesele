@@ -22,6 +22,8 @@ internal class AddEvent @Inject constructor(
                 password = "hej".bytes().sha256().base64().string(),
                 detailsId = "testid",
                 invitationId = "-NNxXTrIHZwNNP1ZUlWP",
+                scheduleId = "",
+                servicesId = "",
                 galleryId = null
             )
         )

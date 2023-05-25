@@ -1,5 +1,6 @@
 package com.hejwesele.services
 
+import com.hejwesele.services.model.Services
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -16,5 +17,9 @@ class ServicesRepository @Inject constructor(
 
     suspend fun getServices(servicesId: String) = withContext(Dispatchers.IO) {
         remoteSource.getServices(servicesId)
+    }
+
+    suspend fun addServices(services: Services) = withContext(Dispatchers.IO) {
+        remoteSource.addServices(services)
     }
 }
