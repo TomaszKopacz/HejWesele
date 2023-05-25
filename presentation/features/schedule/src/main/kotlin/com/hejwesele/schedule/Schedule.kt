@@ -46,6 +46,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hejwesele.android.components.AlertData
+import com.hejwesele.android.components.AlertDialog
 import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.HorizontalMargin
@@ -101,7 +103,8 @@ private fun ScheduleEntryPoint(
             activities = activities,
             timer = timer,
             internetPopupEnabled = true,
-            errorData = errorData
+            errorData = errorData,
+            alertData = alertData
         )
     }
 
@@ -152,6 +155,9 @@ private fun ScheduleScreen(data: ScheduleData) {
                         timerText = data.timer?.text,
                         timerProgress = data.timer?.progress
                     )
+                }
+                if (data.alertData != null) {
+                    AlertDialog(data = data.alertData)
                 }
             }
         }
@@ -348,7 +354,8 @@ private data class ScheduleData(
     val activities: List<ActivityUiModel>,
     val timer: TimerUiModel?,
     val internetPopupEnabled: Boolean,
-    val errorData: ErrorData?
+    val errorData: ErrorData?,
+    val alertData: AlertData?
 ) {
     companion object {
         val Preview = ScheduleData(
@@ -380,7 +387,8 @@ private data class ScheduleData(
                 progress = 0.5f
             ),
             internetPopupEnabled = false,
-            errorData = null
+            errorData = null,
+            alertData = null
         )
     }
 }

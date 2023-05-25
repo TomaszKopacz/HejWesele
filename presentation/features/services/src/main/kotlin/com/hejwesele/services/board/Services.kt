@@ -39,6 +39,8 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hejwesele.android.components.AlertData
+import com.hejwesele.android.components.AlertDialog
 import com.hejwesele.android.components.ErrorData
 import com.hejwesele.android.components.ErrorView
 import com.hejwesele.android.components.Loader
@@ -88,13 +90,14 @@ private fun ServicesEntryPoint(
             isEnabled = isEnabled,
             services = services,
             internetPopupEnabled = true,
-            errorData = errorData
+            errorData = errorData,
+            alertData = alertData
         )
     }
 
     val serviceActions = with(viewModel) {
         ServicesActions(
-            onServiceSelected = { service -> onServiceSelected(service) } // TODO - replace with ::
+            onServiceSelected = ::onServiceSelected
         )
     }
 
@@ -155,6 +158,9 @@ private fun ServicesScreen(
                         services = data.services,
                         actions = actions
                     )
+                }
+                if (data.alertData != null) {
+                    AlertDialog(data = data.alertData)
                 }
             }
         }
@@ -325,7 +331,8 @@ private data class ServicesData(
     val isEnabled: Boolean,
     val services: List<ServiceListItem>,
     val internetPopupEnabled: Boolean,
-    val errorData: ErrorData?
+    val errorData: ErrorData?,
+    val alertData: AlertData?
 ) {
     companion object {
         val Preview = ServicesData(
@@ -333,7 +340,8 @@ private data class ServicesData(
             isEnabled = true,
             services = emptyList(),
             internetPopupEnabled = false,
-            errorData = null
+            errorData = null,
+            alertData = null
         )
     }
 }
