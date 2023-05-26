@@ -4,6 +4,7 @@ import com.hejwesele.schedules.dto.ScheduleActivityDto
 import com.hejwesele.schedules.dto.ScheduleDto
 import com.hejwesele.schedules.model.Schedule
 import com.hejwesele.schedules.model.ScheduleActivity
+import com.hejwesele.schedules.model.ScheduleActivityType
 import com.hejwesele.schedules.model.ScheduleActivityType.ATTRACTION
 import com.hejwesele.schedules.model.ScheduleActivityType.CHURCH
 import com.hejwesele.schedules.model.ScheduleActivityType.MEAL
@@ -31,7 +32,8 @@ internal fun ScheduleActivity.mapDto(): ScheduleActivityDto {
         start = startDate.toString(),
         end = endDate.toString(),
         title = title,
-        description = description
+        description = description,
+        type = type.mapScheduleActivityTypeString()
     )
 }
 
@@ -41,4 +43,12 @@ internal fun String?.mapScheduleActivityTypeModel() = when (this) {
     "attraction" -> ATTRACTION
     "party" -> PARTY
     else -> ATTRACTION
+}
+
+internal fun ScheduleActivityType?.mapScheduleActivityTypeString() = when (this) {
+    CHURCH -> "church"
+    MEAL -> "meal"
+    ATTRACTION -> "attraction"
+    PARTY -> "party"
+    else -> "attraction"
 }
