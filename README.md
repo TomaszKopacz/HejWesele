@@ -24,6 +24,12 @@ Get acquainted with our service providers, partners, and exciting attractions, w
 
 The ceremony has just started and you're having a really, really good time? Share your mood with others by uploading a beautiful photo with your mates! You can also see photos added by others. After wedding, you can open external gallery prepared by professional photographers when ready.
 
+## Screenshots
+![Home](documentation/images/phone_screenshot_1.png "Home"){width=216px height384px}
+![Schedule](documentation/images/phone_screenshot_2.png "Schedule"){width=216px height=384px}
+![Services](documentation/images/phone_screenshot_3.png "Services"){width=216px height=384px}
+![Gallery](documentation/images/phone_screenshot_4.png "Gallery"){width=216px height=384px}
+
 ## Getting Started
 
 ### Dependencies
