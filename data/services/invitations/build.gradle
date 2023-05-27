@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace "com.hejwesele.configuration"
+    namespace "com.hejwesele.invitations"
 
     buildTypes {
         qa {
@@ -17,11 +17,11 @@ android {
 }
 
 dependencies {
-    implementation projects.libraries.datastore
+    implementation projects.libraries.intent
+    implementation projects.libraries.remotedatabase
+    implementation projects.libraries.result
 
-    implementation projects.repositories.configuration
-
-    implementation libs.kotlinx.serialization.json
+    implementation projects.data.repositories.invitations
 
     implementation libs.hilt.android
     kapt libs.hilt.compiler

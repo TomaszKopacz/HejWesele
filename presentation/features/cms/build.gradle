@@ -18,12 +18,12 @@ dependencies {
     implementation projects.libraries.encryption
     implementation projects.libraries.intent
 
-    implementation projects.repositories.details
-    implementation projects.repositories.events
-    implementation projects.repositories.galleries
-    implementation projects.repositories.invitations
-    implementation projects.repositories.schedules
-    implementation projects.repositories.services
+    implementation projects.data.repositories.details
+    implementation projects.data.repositories.events
+    implementation projects.data.repositories.galleries
+    implementation projects.data.repositories.invitations
+    implementation projects.data.repositories.schedules
+    implementation projects.data.repositories.services
 
     implementation libs.kotlinx.coroutines.core
     implementation libs.kotlinx.datetime

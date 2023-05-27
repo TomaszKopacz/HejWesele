@@ -3,11 +3,10 @@ plugins {
     id "org.jetbrains.kotlin.android"
     id "org.jetbrains.kotlin.kapt"
     id "com.google.dagger.hilt.android"
-    id "org.jetbrains.kotlin.plugin.serialization"
 }
 
 android {
-    namespace "com.hejwesele.legals"
+    namespace "com.hejwesele.galleries"
 
     buildTypes {
         qa {
@@ -18,9 +17,10 @@ android {
 
 dependencies {
     implementation projects.libraries.remotedatabase
+    implementation projects.libraries.remotestorage
     implementation projects.libraries.result
 
-    implementation projects.repositories.legals
+    implementation projects.data.repositories.galleries
 
     implementation libs.hilt.android
     kapt libs.hilt.compiler

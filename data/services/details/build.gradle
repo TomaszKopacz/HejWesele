@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace "com.hejwesele.galleries"
+    namespace "com.hejwesele.details"
 
     buildTypes {
         qa {
@@ -17,10 +17,11 @@ android {
 
 dependencies {
     implementation projects.libraries.remotedatabase
-    implementation projects.libraries.remotestorage
     implementation projects.libraries.result
 
-    implementation projects.repositories.galleries
+    implementation projects.data.repositories.details
+
+    implementation libs.kotlinx.datetime
 
     implementation libs.hilt.android
     kapt libs.hilt.compiler

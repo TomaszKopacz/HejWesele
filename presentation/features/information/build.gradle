@@ -37,7 +37,7 @@ dependencies {
     implementation projects.presentation.ui.extensions
     implementation projects.presentation.ui.theme
 
-    implementation projects.repositories.legals
+    implementation projects.data.repositories.legals
 
     implementation libs.accompanist.systemuicontroller
     implementation libs.androidx.compose.ui

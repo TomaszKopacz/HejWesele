@@ -120,17 +120,16 @@ dependencies {
     implementation projects.presentation.tools.thememanager
     implementation projects.presentation.ui.theme
 
-    implementation projects.services.configuration
-    implementation projects.services.details
-    implementation projects.services.events
-    implementation projects.services.galleries
-    implementation projects.services.invitations
-    implementation projects.services.legals
-    implementation projects.services.schedules
-    implementation projects.services.services
-
-    implementation projects.repositories.events
-    implementation projects.repositories.configuration
+    implementation projects.data.repositories.events
+    implementation projects.data.repositories.configuration
+    implementation projects.data.services.configuration
+    implementation projects.data.services.details
+    implementation projects.data.services.events
+    implementation projects.data.services.galleries
+    implementation projects.data.services.invitations
+    implementation projects.data.services.legals
+    implementation projects.data.services.schedules
+    implementation projects.data.services.services
 
     implementation projects.libraries.analytics
     implementation projects.libraries.appinfo

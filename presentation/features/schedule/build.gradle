@@ -29,8 +29,8 @@ dependencies {
     implementation projects.presentation.ui.extensions
     implementation projects.presentation.ui.theme
 
-    implementation projects.repositories.events
-    implementation projects.repositories.schedules
+    implementation projects.data.repositories.events
+    implementation projects.data.repositories.schedules
 
     implementation libs.accompanist.systemuicontroller
     implementation libs.androidx.compose.ui
