@@ -26,9 +26,6 @@ dependencyAnalysis {
                     "androidx.navigation:navigation-runtime",
                     "androidx.compose.runtime:runtime",
                     "androidx.compose.animation:animation",
-                    "androidx.datastore:datastore-core",
-                    "androidx.datastore:datastore-preferences-core",
-                    "com.google.guava:guava",
                     "org.mockito:mockito-core"
                 )
             }

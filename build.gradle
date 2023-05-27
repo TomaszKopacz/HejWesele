@@ -18,16 +18,13 @@ subprojects {
     if (isSourcesModule(it)) {
         apply from: "${rootDir}/gradle/ktlint.gradle"
         apply from: "${rootDir}/gradle/detekt.gradle"
-        apply from: "${rootDir}/gradle/jacocoModule.gradle"
         apply from: "${rootDir}/gradle/moduleSetup.gradle"
     }
 }
 
-apply from: "gradle/jacocoProject.gradle"
 apply from: "gradle/dependencyUpdates.gradle"
 apply from: "gradle/versionCatalogUpdate.gradle"
 apply from: "gradle/dependencyAnalysis.gradle"
-apply from: "gradle/releaseNotes.gradle"
 
 task clean(type: Delete) {
     delete rootProject.buildDir

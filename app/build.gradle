@@ -71,7 +71,6 @@ android {
             firebaseAppDistribution {
                 appId "1:769408858773:android:128385c64b7eac9860799c"
                 serviceCredentialsFile findProperty("serviceKey") ?: ""
-                releaseNotes generatedReleaseNotes
                 groups "qa"
             }
         }
